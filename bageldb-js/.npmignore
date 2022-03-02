@@ -1,0 +1,17 @@
+# \dist
+\node_modules
+node.js
+browser-buid-example.html
+.eslintignore
+.eslintrc.js
+unwrap.js
+webpack.config.js
+src/bagelDBRequest.ts
+src/bagelMetaRequest.ts
+src/common.ts
+src/index.ts
+src/interfaces.ts
+src/spread.ts
+src/users.ts
+src/shared.ts
+tsconfig.json

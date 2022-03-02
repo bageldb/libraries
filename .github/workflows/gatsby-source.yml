@@ -1,0 +1,27 @@
+name: Gatsby Source Plugin
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "gatsbyjs-source-plugin/**"
+      - ".github/workflows/gatsby-source.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+          registry-url: https://registry.npmjs.org/
+      - run: |
+          cd ./gatsbyjs-source-plugin
+          npm install
+          npm run build
+      - run: npm publish ./gatsbyjs-source-plugin --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_KEY}}

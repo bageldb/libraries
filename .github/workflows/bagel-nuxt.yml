@@ -1,0 +1,25 @@
+name: BagelDB Nuxt Module
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "bageldb-nuxt/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+          registry-url: https://registry.npmjs.org/
+      - run: |
+          cd ./bageldb-nuxt
+          npm ci
+      - run: npm publish ./bageldb-nuxt --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_KEY}}

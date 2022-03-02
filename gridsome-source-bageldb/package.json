@@ -1,0 +1,16 @@
+{
+  "name": "@bageldb/gridsome-source",
+  "version": "0.0.18",
+  "description": "A Gridsome source plugin for BagelDB",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [
+    "bageldb",
+    "gridsome-plugin"
+  ],
+  "author": "BagelStudio",
+  "license": "ISC",
+  "dependencies": {
+    "@bageldb/bagel-db": "^0.2.17"
+  }
+}
