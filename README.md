@@ -6,4 +6,5 @@ For further documentation on how to use this library go [here](https://docs.bage
 
 🚫⚠️✋🛑
 
-_FULL DISCLOSURE: There are libraries that are not yet completely functional at this time. Use at your own discretion._
+_FULL DISCLOSURE:_
+_There are libraries that are not yet completely functional at this time. Use at your own discretion._
