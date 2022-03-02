@@ -1,0 +1,20 @@
+\dist
+\node_modules
+node.js
+browser-buid-example.html
+
+spread.d.ts
+spread.js
+index.html bageldb.js
+index.js
+common.d.ts
+interfaces.d.ts
+users.d.ts
+index.d.ts
+bagelDBRequest.d.ts
+bagelMetaRequest.d.ts
+index.html
+bageldb.js
+shared.js
+es-bagel.js
+bageldb.js.LICENSE.txt

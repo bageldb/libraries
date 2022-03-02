@@ -1,0 +1,23 @@
+{
+  "name": "@bageldb/vue-bgl-image",
+  "version": "0.0.1",
+  "description": "A lazy loader and image resolution optimizer for Vue sites using BagelDB image object",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "BagelDB",
+    "Vue.js",
+    "Lazy Loader"
+  ],
+  "author": "BagelDB",
+  "license": "ISC",
+  "dependencies": {
+    "core-js": "^3.8.1",
+    "vue": "^2.6.12"
+  }
+}

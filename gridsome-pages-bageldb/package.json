@@ -1,0 +1,14 @@
+{
+  "name": "@bageldb/gridsome-pages",
+  "version": "0.0.17",
+  "description": "template pages generator for gridsome using bageldb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bageldb"
+  ],
+  "author": "Bagel Studio",
+  "license": "ISC"
+}

@@ -1,0 +1,26 @@
+name: JS Library
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "bageldb-js/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 10.x
+          registry-url: https://registry.npmjs.org/
+      - run: |
+          cd ./bageldb-js
+          npm ci
+          npm run build
+          npm run publish:prod
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_KEY}}
