@@ -4,7 +4,8 @@ BagelDB is a content management system with rich API features. The CMS aims to o
 
 For further documentation on how to use this library go [here](https://docs.bageldb.com/content-api/rest)
 
-🚫⚠️✋🛑
 
-_FULL DISCLOSURE:_
-_There are libraries that are not yet completely functional at this time. Use at your own discretion._
+### FULL DISCLOSURE: 🚫⚠️✋🛑
+
+There are currently libraries that are not yet supported or fully function.
+Use at your own discretion.
