@@ -1,6 +1,6 @@
 # Security Policy
 
-## Reporting a Vulnerability
+## Reporting a Vulnerability 🔐
 
 If you have found a potential security threat, vulnerability or exploit in Quasar
 or one of its upstream dependencies, please DON'T create a pull-request, DON'T
