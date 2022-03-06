@@ -3,7 +3,7 @@ name: JS Library
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "bageldb-js/**"
 
