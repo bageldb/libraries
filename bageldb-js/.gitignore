@@ -2,7 +2,7 @@
 \node_modules
 node.js
 browser-buid-example.html
-
+.env
 spread.d.ts
 spread.js
 index.html bageldb.js

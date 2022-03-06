@@ -1,4 +1,4 @@
-module.exports = {
+module.exports =  process?.env?.LOCAL_LINK ? {} : {
   parserOptions: {
     extraFileExtensions: ['.js'],
     parser: '@typescript-eslint/parser',
@@ -13,12 +13,12 @@ module.exports = {
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
-    "prettier",
+    "prettier"
   ],
   root: true,
   env: {
     node: true,
-    jest: true,
+    jest: true
   },
   ignorePatterns: [
     "test/**/*",
@@ -26,7 +26,7 @@ module.exports = {
     "src/**/*.spec.ts",
     ".eslintrc.js",
     "unwrap.js",
-    "node.js",
+    "node.js"
     // "webpack.config.js"
   ],
   rules: {
@@ -42,6 +42,6 @@ module.exports = {
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-this-alias": 1,
     "@typescript-eslint/no-var-requires": 1,
-    "@typescript-eslint/ban-types": 1,
-  },
+    "@typescript-eslint/ban-types": 1
+  }
 };
