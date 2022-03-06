@@ -4,7 +4,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 
 const generalConfig = {
-  // publicPath: 'auto',
   devtool: "inline-source-map",
   watchOptions: {
     aggregateTimeout: 600,
@@ -75,6 +74,7 @@ const nodeConfig = {
   target: "node",
   externals: [nodeExternals()],
   output: {
+    globalObject: "this",
     path: path.join(__dirname, "./dist"),
     filename: "[name].js",
   },
@@ -84,14 +84,15 @@ const browserConfig = {
   entry: "./src/index.ts",
   target: "web",
   output: {
+    // publicPath: '/',
     path: path.resolve(__dirname, "./dist"),
-    filename: "bageldb.js",
+    filename: "index.js",
     globalObject: "this",
-    // scriptType: "module",
+    scriptType: "module",
     library: {
       umdNamedDefine: true,
       name: "Bagel",
-      type: "var",
+      type: "umd",
       export: "default",
     },
   },
