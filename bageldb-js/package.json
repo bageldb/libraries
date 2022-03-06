@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.16-beta.1.02",
+  "version": "0.3.16",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "scripts": {
     "expose:cmd": "node unwrap.js",
@@ -14,8 +14,8 @@
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "clean": "rm bageldb.js.LICENSE.txt es-bagel.js shared.js spread.d.ts spread.js index.html bageldb.js index.js common.d.ts interfaces.d.ts users.d.ts index.d.ts bagelDBRequest.d.ts bagelMetaRequest.d.ts",
-    "publish:prod": "npm publish --access public --tag beta",
-    "publish:dev": "npm run clean & npm publish --access public --tag beta --dry-run"
+    "publish:prod": "npm publish --access public",
+    "publish:dev": "npm run clean & npm publish --access public --dry-run"
   },
   "repository": {
     "type": "git",
