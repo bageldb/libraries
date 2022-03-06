@@ -3,7 +3,7 @@ name: Gridsome Source Plugin
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "gridsome-source-bageldb/**"
 

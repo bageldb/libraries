@@ -3,7 +3,7 @@ name: BagelDB Images Lazy Loader
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "vue-bgl-image/**"
 

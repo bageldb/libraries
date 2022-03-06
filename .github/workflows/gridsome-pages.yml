@@ -3,7 +3,7 @@ name: Gridsome Pages Plugin
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "gridsome-pages-bageldb/**"
 

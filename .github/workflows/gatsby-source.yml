@@ -3,7 +3,7 @@ name: Gatsby Source Plugin
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - "gatsbyjs-source-plugin/**"
       - ".github/workflows/gatsby-source.yml"
