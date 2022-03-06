@@ -19,7 +19,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: |
           cd ./bageldb-js
-          npm ci
+          npm i
           npm run build
           npm run publish:prod
         env:
