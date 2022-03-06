@@ -27,7 +27,6 @@ module.exports =  process?.env?.LOCAL_LINK ? {} : {
     ".eslintrc.js",
     "unwrap.js",
     "node.js"
-    // "webpack.config.js"
   ],
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
