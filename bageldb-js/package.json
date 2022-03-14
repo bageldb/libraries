@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.18-beta.0.1",
+  "version": "0.3.18-beta.0.2",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "scripts": {
     "expose:cmd": "node unwrap.js",
