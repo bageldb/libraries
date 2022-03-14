@@ -47,8 +47,8 @@ export default class BagelDBRequest {
     return this;
   }
 
-  perPage(perPage) {
-    this.itemsPerPage = perPage;
+  perPage(perPage: number | string) {
+    this.itemsPerPage = +perPage;
     return this;
   }
 
@@ -286,13 +286,13 @@ export default class BagelDBRequest {
     return new Promise((resolve, reject) => {
       const params = new URLSearchParams();
       const nestedID = this.nestedCollectionsIDs.join(".");
-      this._pageNumber ? params.append("pageNumber", String(this._pageNumber)) : "";
-      this.sortField ? params.append("sort", this.sortField) : "";
-      this.sortOrder ? params.append("order", this.sortOrder) : "";
-      this.itemsPerPage ? params.append("perPage", String(this.itemsPerPage)) : "";
-      this.callEverything ? params.append("everything", String(this.callEverything)) : "";
-      this._projectOff != "" ? params.append("projectOff", this._projectOff) : "";
-      this._projectOn != "" ? params.append("projectOn", this._projectOn) : "";
+      this._pageNumber && params.append("pageNumber", String(this._pageNumber));
+      this.sortField && params.append("sort", this.sortField);
+      this.sortOrder && params.append("order", this.sortOrder);
+      this.itemsPerPage && params.append("perPage", String(this.itemsPerPage));
+      this.callEverything && params.append("everything", String(this.callEverything));
+      this._projectOff != "" && params.append("projectOff", this._projectOff);
+      this._projectOn != "" && params.append("projectOn", this._projectOn);
 
       const itemID = this._item ? "/" + this._item : "";
 
