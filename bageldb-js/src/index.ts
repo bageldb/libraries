@@ -8,10 +8,10 @@ import {
 export default class Bagel {
   [x: string]: any;
   isServer: boolean;
-  customStorage:  Storage | null;
+  customStorage:  Storage | void;
   apiToken: string;
   axiosInstance: AxiosInstance;
-  constructor(apiToken: string, options: {isServer: boolean; customStorage: Storage | null; } = { isServer: false, customStorage: null }) {
+  constructor(apiToken: string, options: {isServer: boolean; customStorage: Storage | void; } = { isServer: false, customStorage: undefined }) {
     this.isServer = options.isServer;
     this.customStorage = options.customStorage;
     this.apiToken = apiToken;
