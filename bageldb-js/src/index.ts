@@ -8,7 +8,7 @@ import {
 export default class Bagel {
   [x: string]: any;
   isServer: boolean;
-  customStorage:  Storage | undefined;
+  customStorage:  Storage | LocalForage | undefined;
   apiToken: string;
   axiosInstance: AxiosInstance;
   constructor(apiToken: string, options: {isServer?: boolean; customStorage?: Storage | undefined; } = { isServer: false, customStorage: undefined }) {
