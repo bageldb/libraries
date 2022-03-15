@@ -1,3 +1,4 @@
+import * as localforage from "localforage";
 import { AxiosInstance, AxiosPromise } from "./common";
 import { bagelType, BagelUser } from "./interfaces";
 const AUTH_ENDPOINT = "https://auth.bageldb.com/api/public";
@@ -11,7 +12,7 @@ export default class BagelUsersRequest {
   constructor({ instance }: { instance: bagelType}) {
     this.instance = instance;
     this.axios = this.instance.axiosInstance;
-    this.bagelStorage = this.instance.customStorage || window.localStorage;
+    this.bagelStorage = this.instance.customStorage || window?.localStorage || localforage;
   }
 
   _isBrowser(): boolean {

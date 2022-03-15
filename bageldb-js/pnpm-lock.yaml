@@ -15,6 +15,7 @@ specifiers:
   expose-loader: ^3.1.0
   form-data: ^4.0.0
   html-webpack-plugin: ^5.5.0
+  localforage: ^1.10.0
   prettier: ^2.5.1
   semver: ^7.3.5
   ts-loader: ^9.2.6
@@ -28,6 +29,7 @@ dependencies:
   '@babel/polyfill': 7.12.1
   axios: 0.25.0
   form-data: 4.0.0
+  localforage: 1.10.0
 
 devDependencies:
   '@types/eslint': 8.4.1
@@ -1225,6 +1227,10 @@ packages:
     engines: {node: '>= 4'}
     dev: true
 
+  /immediate/3.0.6:
+    resolution: {integrity: sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=}
+    dev: false
+
   /import-fresh/3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
@@ -1367,10 +1373,22 @@ packages:
       type-check: 0.4.0
     dev: true
 
+  /lie/3.1.1:
+    resolution: {integrity: sha1-mkNrLMd0bKWd56QfpGmz77dr2H4=}
+    dependencies:
+      immediate: 3.0.6
+    dev: false
+
   /loader-runner/4.2.0:
     resolution: {integrity: sha512-92+huvxMvYlMzMt0iIOukcwYBFpkYJdpl2xsZ7LrlayO7E8SOv+JJUEK17B/dJIHAOLMfh2dZZ/Y18WgmGtYNw==}
     engines: {node: '>=6.11.5'}
     dev: true
+
+  /localforage/1.10.0:
+    resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
+    dependencies:
+      lie: 3.1.1
+    dev: false
 
   /locate-path/5.0.0:
     resolution: {integrity: sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==}
