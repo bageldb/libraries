@@ -1,18 +1,25 @@
-import * as localforage from "localforage";
+
 import { AxiosInstance, AxiosPromise } from "./common";
 import { bagelType, BagelUser } from "./interfaces";
+import FallbackStorage  from './fbStorage';
+
+
 const AUTH_ENDPOINT = "https://auth.bageldb.com/api/public";
+
+if (!globalThis?.localStorage) {
+  globalThis.localStorage = new FallbackStorage({});
+}
 
 export default class BagelUsersRequest {
   instance: bagelType;
   axios: AxiosInstance;
-  bagelStorage: Storage | LocalForage;
+  bagelStorage: Storage;
   [x: string]: any;
 
   constructor({ instance }: { instance: bagelType}) {
     this.instance = instance;
     this.axios = this.instance.axiosInstance;
-    this.bagelStorage = this.instance?.customStorage || localforage;
+    this.bagelStorage = this.instance?.customStorage || globalThis?.localStorage;
   }
 
   _isBrowser(): boolean {
@@ -74,7 +81,7 @@ export default class BagelUsersRequest {
 
   async _getOtpRequestNonce() {
     const otpRequest = await this.bagelStorage.getItem("bagel-nonce");
-    const expires = +(await this.bagelStorage.getItem<string|number>("bagel-expires") || "");
+    const expires = +(await this.bagelStorage.getItem("bagel-expires") || "");
     if (otpRequest && expires) {
       const date = new Date();
       if (expires <= date.setSeconds(date.getSeconds()))
@@ -229,7 +236,7 @@ export default class BagelUsersRequest {
   }
 
   async _getAccessToken(): Promise<string | null | AxiosPromise<string>> {
-    const e = await this.bagelStorage.getItem<string|number>("bagel-expires") || "";
+    const e = await this.bagelStorage.getItem("bagel-expires") || "";
     const expires = new Date(e);
     if (expires <= new Date()) return this.refresh();
     else return await this.bagelStorage.getItem("bagel-access");
