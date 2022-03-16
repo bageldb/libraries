@@ -1,13 +1,14 @@
  import {isUndefined, without, keys, size, includes} from 'lodash-es';
 
  export default class FallbackStorage {
-    key
-    setItem
-    getItem
-    removeItem
-    clear
-    length
-    __protected
+    key: (index: any) => any
+    setItem: (key: any, value: any) => void
+    getItem: (key: any) => any
+    removeItem: (key: any) => void
+    clear: () => void
+    length: number
+    __protected: () => { data: any; }
+
  constructor (data) {
 
      let storage = this;
