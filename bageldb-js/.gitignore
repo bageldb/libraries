@@ -19,3 +19,4 @@ shared.js
 es-bagel.js
 bageldb.js.LICENSE.txt
 index.js.LICENSE.txt
+fbStorage.d.ts
