@@ -38,7 +38,7 @@ const generalConfig = {
   plugins: [
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
-      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
+      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./lib/esm"), path.resolve(__dirname, "./lib/cjs")],
     }),
     // new HtmlWebpackPlugin({
     //   title: "bageldb-js",
@@ -46,7 +46,7 @@ const generalConfig = {
   ],
 };
 
-const nodeConfig = {
+const esmConfig = {
   // optimization: {
   //   splitChunks: {
   //     // include all types of chunks
@@ -59,7 +59,7 @@ const nodeConfig = {
       import: "./src/index.ts",
       library: {
         umdNamedDefine: true,
-        type: "umd",
+        type: "commonjs-static",
         export: "default",
       },
     },
@@ -67,7 +67,7 @@ const nodeConfig = {
       import: "./src/spread.ts",
       library: {
         // umdNamedDefine: true,
-        type: "umd",
+        type: "commonjs-static",
       },
     },
   },
@@ -75,8 +75,34 @@ const nodeConfig = {
   externals: [nodeExternals()],
   output: {
     globalObject: "this",
-    path: path.join(__dirname, "./dist"),
+    path: path.join(__dirname, "./lib/esm"),
     filename: "[name].js",
+  },
+};
+const cjsConfig = {
+  entry: {
+    index: {
+      import: "./src/index.ts",
+      library: {
+        umdNamedDefine: true,
+        type: "commonjs-static",
+        export: "default",
+      },
+    },
+    spread: {
+      import: "./src/spread.ts",
+      library: {
+        // umdNamedDefine: true,
+        type: "commonjs-static",
+      },
+    },
+  },
+  target: "node",
+  externals: [nodeExternals()],
+  output: {
+    globalObject: "this",
+    path: path.join(__dirname, "./lib/cjs"),
+    filename: "[name].cjs",
   },
 };
 
@@ -85,7 +111,7 @@ const browserConfig = {
   target: "web",
   output: {
     // publicPath: '/',
-    path: path.resolve(__dirname, "./dist"),
+    path: path.resolve(__dirname, "./lib/esm"),
     filename: "index.js",
     globalObject: "this",
     scriptType: "module",
@@ -107,8 +133,9 @@ module.exports = (env, argv) => {
     throw new Error("Specify env");
   }
 
-  Object.assign(nodeConfig, generalConfig);
+  Object.assign(esmConfig, generalConfig);
+  Object.assign(cjsConfig, generalConfig);
   Object.assign(browserConfig, generalConfig);
 
-  return [nodeConfig, browserConfig];
+  return [esmConfig, cjsConfig, browserConfig];
 };
