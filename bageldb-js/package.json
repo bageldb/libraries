@@ -1,13 +1,13 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.19-alpha.0.2",
+  "version": "0.3.19-alpha.0.3",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
-  "main": "lib/cjs/index.cjs",
-  "module": "lib/esm/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "exports": {
-    "require": "./lib/cjs/index.cjs",
-    "default": "./lib/cjs/index.cjs",
-    "import": "./lib/esm/index.js"
+    "require": "./dist/index.cjs",
+    "default": "./dist/index.cjs",
+    "import": "./dist/index.js"
   },
   "types": "types",
   "scripts": {
