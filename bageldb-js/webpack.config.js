@@ -1,6 +1,6 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+// const HtmlWebpackPlugin = require("html-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 
 const generalConfig = {
@@ -38,7 +38,7 @@ const generalConfig = {
   plugins: [
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
-      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist/esm"), path.resolve(__dirname, "./dist/cjs")],
+      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
     }),
     // new HtmlWebpackPlugin({
     //   title: "bageldb-js",
@@ -46,7 +46,7 @@ const generalConfig = {
   ],
 };
 
-const esmConfig = {
+const nodeConfig = {
   // optimization: {
   //   splitChunks: {
   //     // include all types of chunks
@@ -59,7 +59,7 @@ const esmConfig = {
       import: "./src/index.ts",
       library: {
         umdNamedDefine: true,
-        type: "commonjs-static",
+        type: "umd",
         export: "default",
       },
     },
@@ -67,7 +67,7 @@ const esmConfig = {
       import: "./src/spread.ts",
       library: {
         // umdNamedDefine: true,
-        type: "commonjs-static",
+        type: "umd",
       },
     },
   },
@@ -79,32 +79,6 @@ const esmConfig = {
     filename: "[name].js",
   },
 };
-const cjsConfig = {
-  entry: {
-    index: {
-      import: "./src/index.ts",
-      library: {
-        umdNamedDefine: true,
-        type: "commonjs-static",
-        export: "default",
-      },
-    },
-    spread: {
-      import: "./src/spread.ts",
-      library: {
-        // umdNamedDefine: true,
-        type: "commonjs-static",
-      },
-    },
-  },
-  target: "node",
-  externals: [nodeExternals()],
-  output: {
-    globalObject: "this",
-    path: path.join(__dirname, "./dist"),
-    filename: "[name].cjs",
-  },
-};
 
 const browserConfig = {
   entry: "./src/index.ts",
@@ -112,14 +86,14 @@ const browserConfig = {
   output: {
     // publicPath: '/',
     path: path.resolve(__dirname, "./dist"),
-    filename: "index.js",
+    filename: "bageldb.js",
     globalObject: "this",
     scriptType: "module",
     library: {
       umdNamedDefine: true,
       name: "Bagel",
       type: "umd",
-      export: "default",
+      // export: "default",
     },
   },
 };
@@ -133,9 +107,8 @@ module.exports = (env, argv) => {
     throw new Error("Specify env");
   }
 
-  Object.assign(esmConfig, generalConfig);
-  Object.assign(cjsConfig, generalConfig);
+  Object.assign(nodeConfig, generalConfig);
   Object.assign(browserConfig, generalConfig);
 
-  return [esmConfig, cjsConfig, browserConfig];
+  return [nodeConfig, browserConfig];
 };
