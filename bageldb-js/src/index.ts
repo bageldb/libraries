@@ -5,6 +5,8 @@ import {
   BagelUsersRequest,
   axios,
 } from "./common";
+
+
 export default class Bagel {
   [x: string]: any;
   isServer: boolean;
