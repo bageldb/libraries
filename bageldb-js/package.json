@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.19-alpha.0.1",
+  "version": "0.3.19-alpha.0.2",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "main": "lib/cjs/index.cjs",
   "module": "lib/esm/index.js",
