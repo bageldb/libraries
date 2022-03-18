@@ -5,8 +5,10 @@ browser-buid-example.html
 .env
 spread.d.ts
 spread.js
+spread.cjs
 index.html bageldb.js
 index.js
+index.cjs
 common.d.ts
 interfaces.d.ts
 users.d.ts
