@@ -38,7 +38,7 @@ const generalConfig = {
   plugins: [
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
-      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./lib/esm"), path.resolve(__dirname, "./lib/cjs")],
+      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist/esm"), path.resolve(__dirname, "./dist/cjs")],
     }),
     // new HtmlWebpackPlugin({
     //   title: "bageldb-js",
@@ -75,7 +75,7 @@ const esmConfig = {
   externals: [nodeExternals()],
   output: {
     globalObject: "this",
-    path: path.join(__dirname, "./lib/esm"),
+    path: path.join(__dirname, "./dist"),
     filename: "[name].js",
   },
 };
@@ -101,7 +101,7 @@ const cjsConfig = {
   externals: [nodeExternals()],
   output: {
     globalObject: "this",
-    path: path.join(__dirname, "./lib/cjs"),
+    path: path.join(__dirname, "./dist"),
     filename: "[name].cjs",
   },
 };
@@ -111,7 +111,7 @@ const browserConfig = {
   target: "web",
   output: {
     // publicPath: '/',
-    path: path.resolve(__dirname, "./lib/esm"),
+    path: path.resolve(__dirname, "./dist"),
     filename: "index.js",
     globalObject: "this",
     scriptType: "module",

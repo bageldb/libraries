@@ -18,7 +18,7 @@
       "./node_modules/@types"
     ],
     "moduleResolution": "node",
-    "outDir": "types",
+    "outDir": "dist",
     "baseUrl": "./",
     "esModuleInterop": true,
     "allowJs": true,
