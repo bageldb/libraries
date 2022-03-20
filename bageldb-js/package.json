@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.19-beta.0.1",
+  "version": "0.3.19-beta.0.2",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "scripts": {
     "expose:cmd": "node unwrap.js",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bageldb/bagel-db-libraries.git"
+    "url": "https://github.com/bageldb/libraries/tree/main/bageldb-js"
   },
   "keywords": [
     "CMS",
@@ -28,7 +28,7 @@
   "author": "BagelStudio",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/bageldb/bagel-db-libraries/issues"
+    "url": "https://https://github.com/bageldb/libraries/issues"
   },
   "homepage": "https://docs.bageldb.com",
   "dependencies": {
