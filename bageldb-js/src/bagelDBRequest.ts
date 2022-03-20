@@ -382,7 +382,7 @@ export default class BagelDBRequest {
 
     let token: string | null | AxiosResponse<string, any>;
     if (await this.instance.users()._bagelUserActive()) token = await this.instance.users()._getAccessToken();
-    else token = this.apiToken;
+    else token = await this.apiToken;
 
     const nestedID = this.nestedCollectionsIDs.join(".");
 
@@ -415,7 +415,7 @@ export default class BagelDBRequest {
 
     this.client.addEventListener("stop", async () => {
       if (await that.instance.users()._bagelUserActive()) token = await that.instance.users()._getAccessToken();
-      else token = that.apiToken;
+      else token = await that.apiToken;
 
       that.client.close();
       const url =
