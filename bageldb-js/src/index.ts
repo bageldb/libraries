@@ -25,9 +25,10 @@ export default class Bagel {
           await new BagelUsersRequest({ instance: this })._bagelUserActive() &&
           !config.url?.includes("user/token")
         ) {
-          const accessToken = new BagelUsersRequest({
+          const bagelUserReq = new BagelUsersRequest({
             instance: this,
-          })._getAccessToken();
+          })
+          const accessToken = await bagelUserReq._getAccessToken();
           (config.headers as AxiosRequestHeaders).Authorization = "Bearer " + accessToken;
         } else {
           (config.headers as AxiosRequestHeaders).Authorization = "Bearer " + apiToken;
@@ -52,9 +53,9 @@ export default class Bagel {
         ) {
           return new BagelUsersRequest({ instance: this })
             .refresh()
-            .then(() => {
+            .then(async () => {
               const config = error.config;
-              config.headers["Authorization"] = `Bearer ${new BagelUsersRequest(
+              config.headers["Authorization"] = `Bearer ${await new BagelUsersRequest(
                 { instance: this }
               )._getAccessToken()}`;
               return new Promise((resolve, reject) => {
