@@ -45,15 +45,15 @@ export default class BagelUsersRequest {
       const body = { email, password };
       this.axios
         .post(url, body)
-        .then((res) => {
+        .then(async (res) => {
           if (res.status == 201) {
             const { data } = res;
             if (this.instance.isServer) {
               resolve(data.user_id);
               return;
             }
-            this._storeTokens(data);
-            this._storeBagelUser(data.user_id);
+            await this._storeTokens(data);
+            await this._storeBagelUser(data.user_id);
             resolve(data.user_id);
           } else {
             reject(res);
@@ -72,7 +72,7 @@ export default class BagelUsersRequest {
     const body = { otp };
     try {
       const res = await this.axios.post(url, body);
-      this._storeTokens(res.data);
+      await this._storeTokens(res.data);
       return res.data["user_id"];
     } catch (err) {
       throw "wrong authorization code";
@@ -127,11 +127,11 @@ export default class BagelUsersRequest {
       const body = { email, password };
       this.axios
         .post(url, body)
-        .then((res) => {
+        .then(async (res) => {
           if (res.status == 200) {
             const { data } = res;
-            this._storeTokens(data);
-            this._storeBagelUser(data.user_id);
+            await this._storeTokens(data);
+            await this._storeBagelUser(data.user_id);
             resolve(data.user_id);
           } else {
             reject(res);
@@ -144,10 +144,10 @@ export default class BagelUsersRequest {
   }
 
   getUser(): AxiosPromise<BagelUser> {
-    return new Promise((resolve, reject) => {
-      if (!this._bagelUserActive()) {
+    return new Promise(async (resolve, reject) => {
+      if (!(await this._bagelUserActive())) {
         reject(
-          new Error("a Bagel User must be logged in to get Bagel User info"+this._bagelUserActive())
+          new Error("a Bagel User must be logged in to get Bagel User info"+(await this._bagelUserActive()))
         );
         return;
       }
@@ -249,19 +249,19 @@ export default class BagelUsersRequest {
   }
 
   refresh(): AxiosPromise<string> {
-    return new Promise((resolve, reject) => {
-      if (!this._getRefreshToken()) {
+    return new Promise(async (resolve, reject) => {
+      if (!(await this._getRefreshToken())) {
         reject(new Error("No Bagel User is logged in"));
         return;
       }
       const url = `${AUTH_ENDPOINT}/user/token`;
-      const body = `grant_type=refresh_token&refresh_token=${this._getRefreshToken()}&client_id=project-client`;
+      const body = `grant_type=refresh_token&refresh_token=${await this._getRefreshToken()}&client_id=project-client`;
       this.axios
         .post(url, body)
-        .then((res) => {
+        .then(async (res) => {
           if (res.status === 200) {
             const { data } = res;
-            this._storeTokens(data);
+            await this._storeTokens(data);
             resolve(data.access_token);
           } else {
             reject(res);
