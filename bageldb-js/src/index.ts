@@ -8,7 +8,7 @@ import {
 
 if (typeof document !== 'undefined') {
   console.log('bagelDB is running in a browser');
-} else if (typeof navigator !== 'undefined' && navigator?.product === 'ReactNative') {
+} else if (typeof global?.navigator !== 'undefined' && global?.navigator?.product === 'ReactNative') {
   // I'm in react-native
 } else {
   // I'm in node js
