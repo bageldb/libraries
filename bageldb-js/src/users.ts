@@ -3,9 +3,15 @@ import { bagelType, BagelUser } from './interfaces';
 import FallbackStorage from './fbStorage';
 
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
-
-if (!globalThis?.localStorage) {
-  globalThis.localStorage = new FallbackStorage({});
+if (typeof document !== 'undefined') {
+// I'm on the web!
+} else if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
+  // I'm in react-native
+} else {
+  // I'm in node js
+  if (!globalThis?.localStorage) {
+    globalThis.localStorage = new FallbackStorage({});
+  }
 }
 
 export default class BagelUsersRequest {

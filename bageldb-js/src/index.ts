@@ -6,10 +6,17 @@ import {
   axios,
 } from './common';
 
-if (!globalThis?.EventSource) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const EventSource = require('eventsource');
-  globalThis.EventSource = EventSource;
+if (typeof document !== 'undefined') {
+  console.log('bagelDB is running in a browser');
+} else if (typeof navigator !== 'undefined' && navigator?.product === 'ReactNative') {
+  // I'm in react-native
+} else {
+  // I'm in node js
+  if (!globalThis?.EventSource) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const EventSource = require('eventsource');
+    globalThis.EventSource = EventSource;
+  }
 }
 export default class Bagel {
   [x: string]: any;
