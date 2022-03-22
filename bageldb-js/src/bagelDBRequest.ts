@@ -1,25 +1,42 @@
-import { AxiosInstance, AxiosPromise, AxiosResponse } from "axios";
-import { axios } from "./common";
-import { baseEndpoint, liveEndpoint } from "./common";
-import { bagelType, fileUploadArgs, structArgs } from "./interfaces";
+import { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
+import { axios } from './common';
+import { baseEndpoint, liveEndpoint } from './common';
+import { bagelType, fileUploadArgs, structArgs } from './interfaces';
 export default class BagelDBRequest {
   instance: bagelType;
+
   collectionID: string;
+
   _pageNumber: number;
+
   itemsPerPage: number;
+
   callEverything: boolean;
+
   _query: any[];
+
   nestedCollectionsIDs: any[];
+
   axiosInstance: AxiosInstance;
+
   apiToken: string;
+
   _projectOn: string;
+
   _projectOff: string;
+
   requestID: string;
+
   client!: EventSource;
+
   _item: any;
+
   _field: any;
+
   sortField: string;
+
   sortOrder: string;
+
   [x: string]: any;
 
   constructor({ instance, collectionID }: structArgs) {
@@ -32,15 +49,18 @@ export default class BagelDBRequest {
     this.nestedCollectionsIDs = [];
     this.axiosInstance = axios.create();
     this.apiToken = instance.apiToken;
-    this._projectOn = "";
-    this._projectOff = "";
-    this.requestID = "";
-    this.sortField = "";
-    this.sortOrder = "";
+    this._projectOn = '';
+    this._projectOff = '';
+    this.requestID = '';
+    this.sortField = '';
+    this.sortOrder = '';
     // this.client;
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     this._item;
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     this._field;
   }
+
   // Pagination
   pageNumber(pageNumber) {
     this._pageNumber = pageNumber;
@@ -63,10 +83,10 @@ export default class BagelDBRequest {
   }
 
   item(_id) {
-    if (!_id) throw "item cant be " + _id;
+    if (!_id) throw new Error('item cant be ' + _id);
     if (this._item) {
       if (this.nestedCollectionsIDs.length % 2 === 0)
-        throw "a nested item can only be placed after a nested collection";
+        throw new Error('a nested item can only be placed after a nested collection');
       this.nestedCollectionsIDs.push(_id);
     } else {
       this._item = _id;
@@ -76,15 +96,15 @@ export default class BagelDBRequest {
 
   query(key, operator, value) {
     if (!key) return this;
-    if (Array.isArray(value)) value = value.join(",");
-    const query = key + ":" + operator + ":" + value;
+    if (Array.isArray(value)) value = value.join(',');
+    const query = key + ':' + operator + ':' + value;
     this._query.push(encodeURIComponent(query));
     return this;
   }
 
   sort(field, order) {
     this.sortField = field;
-    this.sortOrder = order || "";
+    this.sortOrder = order || '';
     return this;
   }
 
@@ -101,22 +121,23 @@ export default class BagelDBRequest {
   // Either of imageLink or selectedImage must be used
   // selectedImage expects a file stream i.e fs.createReadStream(filename)
   uploadImage(imageSlug: string, { selectedImage, imageLink, altText, fileName }: fileUploadArgs): AxiosPromise {
-    const isNode = new Function("try {return this===global;}catch(e){return false;}");
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+    const isNode = new Function('try {return this===global;}catch(e){return false;}');
     let form;
     if (isNode()) {
       const FormData = require('form-data');
-			form = new FormData();
+      form = new FormData();
     } else {
       form = new FormData();
     }
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
     if (altText) {
-      form.append("altText", altText);
+      form.append('altText', altText);
     }
     if (imageLink) {
-      form.append("imageLink", imageLink);
+      form.append('imageLink', imageLink);
     } else {
-      form.append("imageFile", selectedImage, fileName);
+      form.append('imageFile', selectedImage, fileName);
     }
     let formHeaders;
     if (isNode()) {
@@ -134,7 +155,7 @@ export default class BagelDBRequest {
   }
 
   delete() {
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
     let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}`;
     if (nestedID) url = url + `?nestedID=${nestedID}`;
     return new Promise((resolve, reject) => {
@@ -146,7 +167,7 @@ export default class BagelDBRequest {
   }
 
   set(data: Record<string, any>): AxiosPromise {
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
     let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}?set=true`;
     if (nestedID) url = url + `&nestedID=${nestedID}`;
     return new Promise((resolve, reject) => {
@@ -160,7 +181,7 @@ export default class BagelDBRequest {
   }
 
   put(data: Record<string, any>): AxiosPromise {
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
     let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}`;
     if (nestedID) url = url + `?nestedID=${nestedID}`;
     return new Promise((resolve, reject) => {
@@ -174,7 +195,7 @@ export default class BagelDBRequest {
   }
 
   post(data: Record<string, any>): AxiosPromise {
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items`;
       if (nestedID) url = url + `/${this._item}?nestedID=${nestedID}`;
@@ -190,7 +211,7 @@ export default class BagelDBRequest {
   }
 
   append(fieldSlug, value): AxiosPromise {
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
@@ -206,15 +227,15 @@ export default class BagelDBRequest {
   }
 
   field(fieldSlug) {
-    if (!fieldSlug || fieldSlug.match(/\s/)) throw "field slug cant be " + fieldSlug;
+    if (!fieldSlug || fieldSlug.match(/\s/)) throw new Error('field slug cant be ' + fieldSlug);
     this._field = fieldSlug;
     return this;
   }
 
   increment(incrementValue): AxiosPromise {
-    if (!this._field) throw "field must be set to use the increment method";
-    if (isNaN(parseFloat(incrementValue))) throw "Increment value must be a number";
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    if (!this._field) throw new Error('field must be set to use the increment method');
+    if (isNaN(parseFloat(incrementValue))) throw new Error('Increment value must be a number');
+    const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${this._field}?increment=${incrementValue}`;
       if (nestedID) url = url + `&nestedID=${nestedID}`;
@@ -230,11 +251,11 @@ export default class BagelDBRequest {
   }
 
   decrement(decrementValue): AxiosPromise {
-    if (!this._field) throw "field must be set to use the decrement method";
-    if (typeof decrementValue == "string") decrementValue = parseFloat(decrementValue);
-    if (isNaN(decrementValue)) throw "Increment value must be a number";
+    if (!this._field) throw new Error('field must be set to use the decrement method');
+    if (typeof decrementValue == 'string') decrementValue = parseFloat(decrementValue);
+    if (isNaN(decrementValue)) throw new Error('Increment value must be a number');
     if (decrementValue > 0) decrementValue = decrementValue * -1;
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${this._field}?increment=${decrementValue}`;
       if (nestedID) url = url + `&nestedID=${nestedID}`;
@@ -250,8 +271,8 @@ export default class BagelDBRequest {
   }
 
   unset(fieldSlug, value): AxiosPromise {
-    const nestedID = this.nestedCollectionsIDs.join(".");
-    if (nestedID) throw "Unset is not yet supported in nested collections";
+    const nestedID = this.nestedCollectionsIDs.join('.');
+    if (nestedID) throw new Error('Unset is not yet supported in nested collections');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
@@ -267,7 +288,7 @@ export default class BagelDBRequest {
   }
 
   value(fieldSlug, value): AxiosPromise {
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
@@ -285,19 +306,26 @@ export default class BagelDBRequest {
   get(): AxiosPromise {
     return new Promise((resolve, reject) => {
       const params = new URLSearchParams();
-      const nestedID = this.nestedCollectionsIDs.join(".");
-      this._pageNumber && params.append("pageNumber", String(this._pageNumber));
-      this.sortField && params.append("sort", this.sortField);
-      this.sortOrder && params.append("order", this.sortOrder);
-      this.itemsPerPage && params.append("perPage", String(this.itemsPerPage));
-      this.callEverything && params.append("everything", String(this.callEverything));
-      this._projectOff != "" && params.append("projectOff", this._projectOff);
-      this._projectOn != "" && params.append("projectOn", this._projectOn);
+      const nestedID = this.nestedCollectionsIDs.join('.');
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      this._pageNumber && params.append('pageNumber', String(this._pageNumber));
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      this.sortField && params.append('sort', this.sortField);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      this.sortOrder && params.append('order', this.sortOrder);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      this.itemsPerPage && params.append('perPage', String(this.itemsPerPage));
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      this.callEverything && params.append('everything', String(this.callEverything));
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      this._projectOff != '' && params.append('projectOff', this._projectOff);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      this._projectOn != '' && params.append('projectOn', this._projectOn);
 
-      const itemID = this._item ? "/" + this._item : "";
+      const itemID = this._item ? '/' + this._item : '';
 
       let url = `${baseEndpoint}/collection/${this.collectionID}/items${itemID}?${params.toString()}`;
-      if (this._query.length > 0) url = url + "&query=" + this._query.join("%2B");
+      if (this._query.length > 0) url = url + '&query=' + this._query.join('%2B');
       if (nestedID) url = url + `&nestedID=${nestedID}`;
 
       this.instance.axiosInstance
@@ -317,9 +345,9 @@ export default class BagelDBRequest {
 
   users(): AxiosPromise {
     if (!this._item) {
-      throw new Error("Users can only be retrieved in relation to an item");
+      throw new Error('Users can only be retrieved in relation to an item');
     }
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/bagelUsers`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
@@ -336,9 +364,9 @@ export default class BagelDBRequest {
 
   addUser(bagelUserID): AxiosPromise {
     if (!this._item) {
-      throw new Error("Users can only be added in relation to an item");
+      throw new Error('Users can only be added in relation to an item');
     }
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/bagelUsers`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
@@ -355,9 +383,9 @@ export default class BagelDBRequest {
 
   removeUser(bagelUserID): AxiosPromise {
     if (!this._item) {
-      throw new Error("Users can only be removed in relation to an item");
+      throw new Error('Users can only be removed in relation to an item');
     }
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/bagelUsers`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
@@ -377,14 +405,14 @@ export default class BagelDBRequest {
   // see https://developer.mozilla.org/en-US/docs/Web/API/EventSource for more info on Server Side Events (SSE)
   async listen(onmessage: (...args: any) => unknown, onerror: (...args: any) => unknown) {
     if (!onmessage) {
-      throw new Error("onMessage callback must be defined");
+      throw new Error('onMessage callback must be defined');
     }
 
     let token: string | null | AxiosResponse<string, any>;
     if (await this.instance.users()._bagelUserActive()) token = await this.instance.users()._getAccessToken();
     else token = await this.apiToken;
 
-    const nestedID = this.nestedCollectionsIDs.join(".");
+    const nestedID = this.nestedCollectionsIDs.join('.');
 
     const url =
       liveEndpoint +
@@ -397,10 +425,10 @@ export default class BagelDBRequest {
         if (await that.instance.users()._bagelUserActive()) {
           await that.instance.users().refresh();
           token = await that.instance.users()._getAccessToken();
-          const url =
+          const liveUrl =
             liveEndpoint +
             `/collection/${that.collectionID}/live?authorization=${token}&requestID=${that.requestID}&nestedID=${nestedID}&itemID=${that._item}`;
-          that.client = new EventSource(url);
+          that.client = new EventSource(liveUrl);
           return;
         }
       }
@@ -409,19 +437,19 @@ export default class BagelDBRequest {
       }
     };
 
-    this.client.addEventListener("start", function (e: Event & Record<string, any>) {
+    this.client.addEventListener('start', function (e: Event & Record<string, any>) {
       that.requestID = e.data;
     });
 
-    this.client.addEventListener("stop", async () => {
+    this.client.addEventListener('stop', async () => {
       if (await that.instance.users()._bagelUserActive()) token = await that.instance.users()._getAccessToken();
       else token = await that.apiToken;
 
       that.client.close();
-      const url =
+      const liveUrl =
         liveEndpoint +
         `/collection/${that.collectionID}/live?authorization=${token}&requestID=${that.requestID}&nestedID=${nestedID}&itemID=${that._item}`;
-      that.client = new EventSource(url);
+      that.client = new EventSource(liveUrl);
       that.client.onmessage = onmessage;
       that.client.onerror = errorHandler;
     });

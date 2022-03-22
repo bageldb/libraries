@@ -30,7 +30,8 @@ module.exports =  process?.env?.LOCAL_LINK ? {} : {
     "src/**/*.spec.ts",
     ".eslintrc.js",
     "unwrap.js",
-    "node.js"
+    "node.js",
+    "src/**/*.d.ts",
   ],
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
