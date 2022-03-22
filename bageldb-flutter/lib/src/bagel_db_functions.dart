@@ -11,8 +11,10 @@ import 'bagel_db_users.dart';
 /// *BagelDB* class is the base class for any bagelDB request, it must be given the api [token] created at app.bageldb.com
 class BagelDB {
   String token;
+  String dbPath;
+
   late BagelUsersRequest bagelUsersRequest = new BagelUsersRequest(this);
-  BagelDB(this.token);
+  BagelDB(this.token, {required this.dbPath});
 
   /// return a *BagelDBRequest* object for a specific [collection]
   BagelDBRequest collection(String collection) {
@@ -373,26 +375,29 @@ class BagelDBRequest {
   }
 
   /// Trigger a callback when an item gets updated created or deleted on BagelDB on a full collection or on a single item
-  void listen(Function(BagelEvent) onData) async {
+  Future<StreamSubscription<Uint8List>?> listen(
+      Function(BagelEvent) onData) async {
     String requestID = "", nestedID = "";
     if (this.nestedCollectionsIDs.isNotEmpty)
       nestedID = this.nestedCollectionsIDs.join(".");
     Response<ResponseBody> rs;
-    List<dynamic> data;
+    List<dynamic> data = [];
     BagelResponse res = await this.get();
-    data = res.data;
+    data.add(res.data);
+    StreamSubscription<Uint8List>? subscription;
+
     _listen() async {
       String token = await BagelUsersRequest(this.bagelDB).getAccessToken() ??
           this.bagelDB.token;
       String uri =
-          '$liveEndpoint/collection/${this.collectionID}/live?authorization=$token&requestID=$requestID&nestedID=$nestedID&itemID=${this._item ?? ""}';
+          '$liveEndpoint/collection/${this.collectionID}/live?authorization=$token&requestID=$requestID&nestedID=$nestedID&itemID=${this._item ?? ""}&everything=$everything';
       Dio dio = await _dio();
       rs = await dio.get<ResponseBody>(uri,
           options: Options(
             responseType: ResponseType.stream,
             headers: {'Access-Control-Allow-Origin': true},
           ));
-      rs.data?.stream.listen((e) async {
+      subscription = rs.data?.stream.listen((e) async {
         Event event = Event.fromUint8List(e);
         if (event.type == "start") {
           requestID = event.data;
@@ -436,6 +441,7 @@ class BagelDBRequest {
     }
 
     _listen();
+    return subscription;
   }
 }
 
