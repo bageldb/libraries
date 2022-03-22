@@ -5,7 +5,7 @@ BagelDB is a content management system with rich API features. The CMS aims to o
 For further documentation on how to use this library go [here](https://docs.bageldb.com/content-api/rest)
 
 
-### FULL DISCLOSURE:⚠️
+### FULL DISCLOSURE: ⚠️
 
 The Swift, Python and GatsbyJS libraries are not yet supported or fully function.
 
