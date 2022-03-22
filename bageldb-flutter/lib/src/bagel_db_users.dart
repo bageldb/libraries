@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:bagel_db/src/bagel_db_localstore.dart';
 import 'package:dio/dio.dart';
-import 'package:localstore/localstore.dart';
 
 import 'bagel_db_functions.dart';
 
@@ -30,15 +30,20 @@ class AuthEvent {
 class BagelUsersRequest {
   BagelDB instance;
   late Dio dio;
-  final _db = Localstore.instance;
+  final _db = LocalStore.instance;
   BagelUser? _user;
   BagelUser? get user => _user;
   BagelUsersRequest(this.instance) {
+    LocalStore.open(this.instance.dbPath);
     dio = Dio(BaseOptions(headers: {
       'Authorization': 'Bearer ${this.instance.token}',
       "Accept-Version": "v1"
     }));
+    _getLocalUser();
+  }
 
+  _getLocalUser() {
+    print('get local user');
     _db
         .collection(Collections.user)
         .doc(Collections.user)
@@ -46,6 +51,17 @@ class BagelUsersRequest {
         .then((element) {
       _userHandler(element);
     });
+  }
+
+  // ignore: close_sinks
+  StreamController<AuthEvent> _userStateController =
+      StreamController<AuthEvent>.broadcast(
+    sync: true,
+  );
+
+  Stream<AuthEvent> get authStateChange {
+    _getLocalUser();
+    return _userStateController.stream;
   }
 
   /// use the getter [user] to get BagelUser or Null to determine if a user is logged in
@@ -67,7 +83,11 @@ class BagelUsersRequest {
   }
 
   void _userHandler(usr) async {
-    if (usr == null) return; // user has logged out
+    if (usr == null) {
+      // user has logged out
+      _userStateController.add(AuthEvent(loggedin: false));
+      return;
+    }
     Map<String, dynamic>? access =
         await _db.collection(Collections.access).doc("access").get();
     if (access == null) return _logout();
@@ -193,28 +213,6 @@ class BagelUsersRequest {
     });
   }
 
-  // ignore: close_sinks
-  StreamController<AuthEvent>? _userStateController;
-  bool _stateControllerOpen = false;
-  Stream<AuthEvent> get authStateChange {
-    
-    void startListen() async {
-      _stateControllerOpen = true;
-    }
-    
-    void stopListen() {
-      _userStateController?.close();
-      _stateControllerOpen = false;
-    }
-
-    _userStateController = StreamController<AuthEvent>.broadcast(
-      onListen: startListen,
-      onCancel: stopListen,
-      sync: true,
-    );
-    return _userStateController!.stream;
-  }
-
   Future<String?> _getRefreshToken() async {
     Map<String, dynamic>? refreshToken =
         await _db.collection(Collections.access).doc("access").get();
@@ -233,16 +231,14 @@ class BagelUsersRequest {
     if (phone != null) _user!.phone = phone;
     _user!.userID = userID;
     _storeBagelUser(_user!);
-    if (_stateControllerOpen) {
-      AuthEvent event = AuthEvent(user: _user, loggedin: true);
-      _userStateController?.add(event);
-    }
+    AuthEvent event = AuthEvent(user: _user, loggedin: true);
+    _userStateController.add(event);
     return _user;
   }
 
   void _logout() async {
     _user = null;
-    if (_stateControllerOpen) _userStateController?.add(AuthEvent());
+    _userStateController.add(AuthEvent());
     await _db.collection(Collections.access).doc("access").delete();
     await _db.collection(Collections.user).doc("user").delete();
   }
