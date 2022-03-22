@@ -1,9 +1,10 @@
-import type bagelDBRequestType from "./bagelDBRequest";
-import type bagelMetaRequestType from "./bagelMetaRequest";
-import type bagelUsersRequestType from "./users";
-import type bagelType from ".";
-import Bagel from ".";
-import { BagelDBRequest, BagelMetaRequest, BagelUsersRequest } from "./common";
+import type bagelDBRequestType from './bagelDBRequest';
+import type bagelMetaRequestType from './bagelMetaRequest';
+import type bagelUsersRequestType from './users';
+import type bagelType from '.';
+import Bagel from '.';
+import { BagelDBRequest, BagelMetaRequest, BagelUsersRequest } from './common';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 type fileUploadArgs = {
   selectedImage?: any;
   imageLink?: string;
@@ -11,11 +12,11 @@ type fileUploadArgs = {
   fileName?: string;
 } & (
   | {
-      selectedImage: any;
-    }
+    selectedImage: any;
+  }
   | {
-      imageLink: string;
-    }
+    imageLink: string;
+  }
 );
 
 type UserGroups = string;
@@ -27,10 +28,11 @@ interface BagelUser {
   userGroups?: UserGroups[];
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 interface structArgs {
   instance: bagelType;
   collectionID:  string;
- }
+}
 export {
   fileUploadArgs,
   BagelUser,
@@ -39,7 +41,7 @@ export {
   bagelMetaRequestType,
   bagelUsersRequestType,
   bagelType,
-  structArgs
+  structArgs,
 };
 
 export type {
@@ -47,4 +49,4 @@ export type {
   BagelDBRequest,
   BagelMetaRequest,
   Bagel,
- };
+};

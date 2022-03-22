@@ -2,18 +2,22 @@ module.exports =  process?.env?.LOCAL_LINK ? {} : {
   parserOptions: {
     extraFileExtensions: ['.js'],
     parser: '@typescript-eslint/parser',
-    project: resolve(__dirname, './tsconfig.json'),
+    project:  './tsconfig.json',
     tsconfigRootDir: __dirname,
     ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
     sourceType: 'module' // Allow
   },
-  // parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint/eslint-plugin"],
+  // parser: "@typescript-eslint/parser", parser: '@typescript-eslint/parser',
+  plugins: [
+    '@typescript-eslint',
+  ],
   extends: [
+    'eslint:recommended',
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
-    "prettier"
+    'airbnb-typescript',
+    // "prettier"
   ],
   root: true,
   env: {
@@ -26,7 +30,8 @@ module.exports =  process?.env?.LOCAL_LINK ? {} : {
     "src/**/*.spec.ts",
     ".eslintrc.js",
     "unwrap.js",
-    "node.js"
+    "node.js",
+    "src/**/*.d.ts",
   ],
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
@@ -37,6 +42,9 @@ module.exports =  process?.env?.LOCAL_LINK ? {} : {
     "no-console": 1,
     "no-debugger": 1,
     "prettier/prettier": 0,
+    "import/extensions": 0,
+    "import/no-extraneous-dependencies": 0,
+    "react/jsx-filename-extension": 0,
     "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-this-alias": 1,
