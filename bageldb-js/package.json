@@ -33,7 +33,9 @@
   "homepage": "https://docs.bageldb.com",
   "dependencies": {
     "@babel/polyfill": "^7.10.1",
+    "@types/eventsource": "^1.1.8",
     "axios": "^0.25.0",
+    "eventsource": "^2.0.0",
     "form-data": "^4.0.0",
     "lodash": "^4.17.21"
   },
@@ -51,6 +53,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "expose-loader": "^3.1.0",
     "html-webpack-plugin": "^5.5.0",
+    "node-polyfill-webpack-plugin": "^1.1.4",
     "prettier": "^2.5.1",
     "semver": "^7.3.5",
     "ts-loader": "^9.2.6",

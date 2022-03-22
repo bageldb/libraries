@@ -2,6 +2,7 @@ const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 // const HtmlWebpackPlugin = require("html-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 const generalConfig = {
   devtool: "inline-source-map",
@@ -40,6 +41,7 @@ const generalConfig = {
       cleanStaleWebpackAssets: false,
       cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
     }),
+    new NodePolyfillPlugin(),
     // new HtmlWebpackPlugin({
     //   title: "bageldb-js",
     // }),
