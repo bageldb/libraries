@@ -6,7 +6,10 @@ import {
   axios,
 } from "./common";
 
-
+if (!globalThis?.localStorage) {
+  let EventSource = require('eventsource')
+  globalThis.EventSource = EventSource;
+}
 export default class Bagel {
   [x: string]: any;
   isServer: boolean;
