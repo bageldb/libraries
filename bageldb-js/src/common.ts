@@ -1,10 +1,10 @@
-import axios, { AxiosInstance, AxiosPromise } from "axios";
-import BagelDBRequest from "./bagelDBRequest";
-import BagelMetaRequest from "./bagelMetaRequest";
-import BagelUsersRequest from "./users";
+import axios, { AxiosInstance, AxiosPromise } from 'axios';
+import BagelDBRequest from './bagelDBRequest';
+import BagelMetaRequest from './bagelMetaRequest';
+import BagelUsersRequest from './users';
 
-const baseEndpoint = "https://api.bagelstudio.co/api/public";
-const liveEndpoint = "https://live.bageldb.com/api/public";
+const baseEndpoint = 'https://api.bagelstudio.co/api/public';
+const liveEndpoint = 'https://live.bageldb.com/api/public';
 
 export {
   BagelUsersRequest,
@@ -16,5 +16,5 @@ export {
   axios,
   baseEndpoint,
   liveEndpoint,
-  AxiosPromise
+  AxiosPromise,
 };

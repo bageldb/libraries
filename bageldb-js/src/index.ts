@@ -1,43 +1,52 @@
-import { AxiosInstance, AxiosRequestHeaders } from "axios";
+import { AxiosInstance, AxiosRequestHeaders } from 'axios';
 import {
   BagelDBRequest,
   BagelMetaRequest,
   BagelUsersRequest,
   axios,
-} from "./common";
+} from './common';
 
-
+if (!globalThis?.EventSource) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const EventSource = require('eventsource');
+  globalThis.EventSource = EventSource;
+}
 export default class Bagel {
   [x: string]: any;
+
   isServer: boolean;
+
   customStorage:  Storage | undefined;
+
   apiToken: string;
+
   axiosInstance: AxiosInstance;
-  constructor(apiToken: string, options: {isServer?: boolean; customStorage?: Storage | undefined; } = { isServer: false, customStorage: undefined }) {
+
+  constructor(apiToken: string, options: { isServer?: boolean; customStorage?: Storage | undefined; } = { isServer: false, customStorage: undefined }) {
     this.isServer = !!options.isServer;
     this.customStorage = options.customStorage;
     this.apiToken = apiToken;
     this.axiosInstance = axios.create();
     this.axiosInstance.interceptors.request.use(
       async (config) => {
-        (config.headers as AxiosRequestHeaders)["Accept-Version"] = "v1";
+        (config.headers as AxiosRequestHeaders)['Accept-Version'] = 'v1';
         if (
           await new BagelUsersRequest({ instance: this })._bagelUserActive() &&
-          !config.url?.includes("user/token")
+          !config.url?.includes('user/token')
         ) {
           const bagelUserReq = new BagelUsersRequest({
             instance: this,
-          })
+          });
           const accessToken = await bagelUserReq._getAccessToken();
-          (config.headers as AxiosRequestHeaders).Authorization = "Bearer " + accessToken;
+          (config.headers as AxiosRequestHeaders).Authorization = 'Bearer ' + accessToken;
         } else {
-          (config.headers as AxiosRequestHeaders).Authorization = "Bearer " + apiToken;
+          (config.headers as AxiosRequestHeaders).Authorization = 'Bearer ' + apiToken;
         }
         return config;
       },
       (error) => {
         return Promise.reject(error);
-      }
+      },
     );
 
     this.axiosInstance.interceptors.response.use(
@@ -49,14 +58,14 @@ export default class Bagel {
           await new BagelUsersRequest({ instance: this })._bagelUserActive() &&
           error.response &&
           error.response.status == 401 &&
-          !error.config.url.includes("user/token")
+          !error.config.url.includes('user/token')
         ) {
           return new BagelUsersRequest({ instance: this })
             .refresh()
             .then(async () => {
               const config = error.config;
-              config.headers["Authorization"] = `Bearer ${await new BagelUsersRequest(
-                { instance: this }
+              config.headers.Authorization = `Bearer ${await new BagelUsersRequest(
+                { instance: this },
               )._getAccessToken()}`;
               return new Promise((resolve, reject) => {
                 axios
@@ -64,8 +73,8 @@ export default class Bagel {
                   .then((response) => {
                     resolve(response);
                   })
-                  .catch((error) => {
-                    reject(error);
+                  .catch((err) => {
+                    reject(err);
                   });
               });
             })
@@ -74,7 +83,7 @@ export default class Bagel {
             });
         }
         return Promise.reject(error);
-      }
+      },
     );
   }
 
@@ -91,31 +100,31 @@ export default class Bagel {
   }
 
   static get ASC() {
-    return "ASC";
+    return 'ASC';
   }
 
   static get DESC() {
-    return "DESC";
+    return 'DESC';
   }
 
   static get EQUAL() {
-    return "=";
+    return '=';
   }
 
   static get NOT_EQUAL() {
-    return "!=";
+    return '!=';
   }
 
   static get GREATER_THAN() {
-    return ">";
+    return '>';
   }
 
   static get LESS_THAN() {
-    return "<";
+    return '<';
   }
 
   static get WITHIN() {
-    return "within";
+    return 'within';
   }
 
   static GeoPointQuery(lat: number, lng: number, distance: number) {
