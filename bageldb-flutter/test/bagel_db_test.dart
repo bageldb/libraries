@@ -1,13 +1,32 @@
 import 'dart:async';
+import 'package:test/expect.dart';
+import 'package:test/scaffolding.dart';
 import 'package:universal_io/io.dart';
-
-import 'package:flutter_test/flutter_test.dart';
 
 import '../lib/bagel_db.dart';
 
 import '../.testToken.dart';
 
-BagelDB db = BagelDB(testToken);
+BagelDB db = BagelDB(testToken, dbPath: Directory.systemTemp.path);
+
+final String docId = DateTime.now().millisecondsSinceEpoch.toString();
+
+createUserTest() {
+  group("auth test", () {
+    test('create user test', () async {
+      final user = await db.bagelUsersRequest.create(
+        'a@a.com',
+        '123456',
+      );
+      expect(user?.userID, isNotNull);
+    });
+
+    test('get token test', () async {
+      final token = await db.bagelUsersRequest.getAccessToken();
+      expect(token, isNotNull);
+    });
+  });
+}
 
 listenItemTest() {
   group("stream test", () async {
@@ -100,7 +119,7 @@ getItemsTest() {
       // then
       expect(response.statusCode, equals(200));
       expect(data[0]["name"], contains("Nati"));
-      expect(response.itemCount, 2);
+      expect(response.itemCount, greaterThan(2));
     });
 
     test('sort test', () async {
@@ -172,7 +191,7 @@ getItemsTest() {
 postItemTest() {
   group('post item test', () {
     // given
-    BagelDB db = BagelDB(testToken);
+    BagelDB db = BagelDB(testToken, dbPath: Directory.systemTemp.path);
 
     test('simple post test', () async {
       BagelResponse response = await db.collection('testItems').post({
@@ -246,7 +265,7 @@ putItemTest() {
     test('set item', () async {
       // when
       BagelResponse response =
-          await db.collection('testItems').item('123').set({
+          await db.collection('testItems').item(docId).set({
         'name': 'Renana',
         'age': 34,
         'position': 'Product Manager',
@@ -260,7 +279,7 @@ putItemTest() {
 
       BagelResponse response = await db
           .collection('testItems')
-          .item('5ee773795539f58b09d54447')
+          .item(docId)
           .append("seniority", "5ee2451c0a6090a13e2f7782");
       // then
       expect(response.statusCode, lessThan(300));
@@ -269,7 +288,7 @@ putItemTest() {
       // when
       BagelResponse response = await db
           .collection('testItems')
-          .item('5ee773795539f58b09d54447')
+          .item(docId)
           .unset("seniority", "5ee2451c0a6090a13e2f7782");
       // then
       expect(response.statusCode, lessThan(300));
@@ -295,6 +314,7 @@ deleteItemTest() {
 }
 
 void main() {
+  createUserTest();
   getItemsTest();
   postItemTest();
   putItemTest();
