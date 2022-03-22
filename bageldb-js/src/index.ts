@@ -6,7 +6,7 @@ import {
   axios,
 } from "./common";
 
-if (!globalThis?.localStorage) {
+if (!globalThis?.EventSource) {
   let EventSource = require('eventsource')
   globalThis.EventSource = EventSource;
 }
