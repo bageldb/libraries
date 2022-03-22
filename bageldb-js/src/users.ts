@@ -1,10 +1,8 @@
+import { AxiosInstance, AxiosPromise } from './common';
+import { bagelType, BagelUser } from './interfaces';
+import FallbackStorage from './fbStorage';
 
-import { AxiosInstance, AxiosPromise } from "./common";
-import { bagelType, BagelUser } from "./interfaces";
-import FallbackStorage  from './fbStorage';
-
-
-const AUTH_ENDPOINT = "https://auth.bageldb.com/api/public";
+const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 
 if (!globalThis?.localStorage) {
   globalThis.localStorage = new FallbackStorage({});
@@ -12,30 +10,35 @@ if (!globalThis?.localStorage) {
 
 export default class BagelUsersRequest {
   instance: bagelType;
+
   axios: AxiosInstance;
+
   bagelStorage: Storage;
+
   [x: string]: any;
 
-  constructor({ instance }: { instance: bagelType}) {
+  constructor({ instance }: { instance: bagelType }) {
     this.instance = instance;
     this.axios = this.instance.axiosInstance;
     this.bagelStorage = this.instance?.customStorage || globalThis?.localStorage;
   }
 
   _isBrowser(): boolean {
-    const isNode = new Function(
-      "try {return this===global;}catch(e){return false;}"
-      );
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+    const isNode = new Function('try {return this===global;}catch(e){return false;}');
 
-      return !isNode();
+    return !isNode();
   }
 
   async _bagelUserActive(): Promise<boolean> {
-    const isBrowser =  this._isBrowser();
-   const bagelUserID = await this.getBagelUserID();
-    return (
-      isBrowser && bagelUserID !== null && bagelUserID.length > 0
-    );
+    const isBrowser = this._isBrowser();
+    try {
+      const bagelUserID = await this.getBagelUserID();
+      return isBrowser && bagelUserID !== null && bagelUserID.length > 0;
+    } catch (error) {
+
+      throw new Error(error as any);
+    }
   }
 
   create(email: string, password: string): AxiosPromise<any> {
@@ -73,22 +76,21 @@ export default class BagelUsersRequest {
     try {
       const res = await this.axios.post(url, body);
       await this._storeTokens(res.data);
-      return res.data["user_id"];
+      return res.data.user_id;
     } catch (err) {
-      throw "wrong authorization code";
+      throw new Error('wrong authorization code ' + err);
     }
   }
 
   async _getOtpRequestNonce() {
-    const otpRequest = await this.bagelStorage.getItem("bagel-nonce");
-    const expires = +(await this.bagelStorage.getItem("bagel-expires") || "");
+    const otpRequest = await this.bagelStorage.getItem('bagel-nonce');
+    const expires = +((await this.bagelStorage.getItem('bagel-expires')) || '');
     if (otpRequest && expires) {
       const date = new Date();
-      if (expires <= date.setSeconds(date.getSeconds()))
-        throw "OTP request has expired, try again";
+      if (expires <= date.setSeconds(date.getSeconds())) throw new Error('OTP request has expired, try again');
       return otpRequest;
     } else {
-      throw "Request an OTP first";
+      throw new Error('Request an OTP first');
     }
   }
 
@@ -99,25 +101,17 @@ export default class BagelUsersRequest {
     try {
       const res = await this.axios.post(url, body);
       await this._storeOtpRequestNonce(res.data);
-      return res.data["nonce"];
+      return res.data.nonce;
     } catch (error) {
       return error;
     }
   }
 
-  async _storeOtpRequestNonce({
-    nonce,
-    expires_in,
-  }: {
-    nonce: string;
-    expires_in: number;
-  }) {
+  async _storeOtpRequestNonce({ nonce, expires_in }: { nonce: string; expires_in: number }) {
     const expires = new Date();
-    const storedExpire = `${expires.setSeconds(
-      expires.getSeconds() + expires_in
-    )}`;
-   await this.bagelStorage.setItem("bagel-nonce", nonce);
-   await this.bagelStorage.setItem("bagel-expires", storedExpire);
+    const storedExpire = `${expires.setSeconds(expires.getSeconds() + expires_in)}`;
+    await this.bagelStorage.setItem('bagel-nonce', nonce);
+    await this.bagelStorage.setItem('bagel-expires', storedExpire);
   }
 
   validate(email: string, password: string): AxiosPromise<any> {
@@ -144,11 +138,11 @@ export default class BagelUsersRequest {
   }
 
   getUser(): AxiosPromise<BagelUser> {
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
-      if (!(await this._bagelUserActive())) {
-        reject(
-          new Error("a Bagel User must be logged in to get Bagel User info"+(await this._bagelUserActive()))
-        );
+      const userIsActive = await this._bagelUserActive();
+      if (!userIsActive) {
+        reject(new Error('a Bagel User must be logged in to get Bagel User info ' + userIsActive));
         return;
       }
       const url = `${AUTH_ENDPOINT}/user`;
@@ -191,11 +185,7 @@ export default class BagelUsersRequest {
     email = email.toLowerCase().trim();
     return new Promise((resolve, reject) => {
       if (this._isBrowser()) {
-        reject(
-          new Error(
-            "Update Password feature is only available when using NodeJS"
-          )
-        );
+        reject(new Error('Update Password feature is only available when using NodeJS'));
         return;
       }
       const url = `${AUTH_ENDPOINT}/user/updatePassword`;
@@ -216,42 +206,44 @@ export default class BagelUsersRequest {
   }
 
   async _storeBagelUser(userID: string): Promise<void> {
-   await this.bagelStorage.setItem("bagel-user", userID);
+    await this.bagelStorage.setItem('bagel-user', userID);
   }
 
   async _storeTokens(data: Record<string, any>): Promise<void> {
-   await this.bagelStorage.setItem("bagel-access", data.access_token);
+    await this.bagelStorage.setItem('bagel-access', data.access_token);
     const expires: any = new Date();
     expires.setSeconds(expires.getSeconds() + data.expires_in);
-   await this.bagelStorage.setItem("bagel-expires", expires);
-   await this.bagelStorage.setItem("bagel-refresh", data.refresh_token);
+    await this.bagelStorage.setItem('bagel-expires', expires);
+    await this.bagelStorage.setItem('bagel-refresh', data.refresh_token);
+    await this._storeBagelUser(data?.user_id || '');
   }
 
-  async getBagelUserID(){
-    return await this.bagelStorage.getItem("bagel-user") as string;
+  async getBagelUserID() {
+    return this.bagelStorage.getItem('bagel-user') as string;
   }
 
   async _getRefreshToken(): Promise<string | null> {
-    return await this.bagelStorage.getItem("bagel-refresh");
+    return this.bagelStorage.getItem('bagel-refresh');
   }
 
   async _getAccessToken(): Promise<string | null | AxiosPromise<string>> {
-    const e = await this.bagelStorage.getItem("bagel-expires") || "";
+    const e = (await this.bagelStorage.getItem('bagel-expires')) || '';
     const expires = new Date(e);
     if (expires <= new Date()) return this.refresh();
-    else return await this.bagelStorage.getItem("bagel-access");
+    else return this.bagelStorage.getItem('bagel-access');
   }
 
   async logout(): Promise<void> {
-   await this.bagelStorage.removeItem("bagel-user");
-   await this.bagelStorage.removeItem("bagel-access");
-   await this.bagelStorage.removeItem("bagel-refresh");
+    await this.bagelStorage.removeItem('bagel-user');
+    await this.bagelStorage.removeItem('bagel-access');
+    await this.bagelStorage.removeItem('bagel-refresh');
   }
 
   refresh(): AxiosPromise<string> {
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
       if (!(await this._getRefreshToken())) {
-        reject(new Error("No Bagel User is logged in"));
+        reject(new Error('No Bagel User is logged in'));
         return;
       }
       const url = `${AUTH_ENDPOINT}/user/token`;
