@@ -44,7 +44,7 @@
     "node_modules",
     "dist",
     ".eslintrc.js",
-    "webpack.config.js",
+    // "webpack.config.ts",
     "tsconfig.json"
   ]
 }

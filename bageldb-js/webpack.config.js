@@ -36,12 +36,13 @@ const generalConfig = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
   },
+  externals: [nodeExternals()],
   plugins: [
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
       cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
     }),
-    new NodePolyfillPlugin(),
+    // new NodePolyfillPlugin(),
     // new HtmlWebpackPlugin({
     //   title: "bageldb-js",
     // }),

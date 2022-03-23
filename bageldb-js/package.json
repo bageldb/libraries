@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.24",
+  "version": "0.3.25-alpha.0.1",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "scripts": {
     "expose:cmd": "node unwrap.js",
@@ -14,7 +14,7 @@
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "clean": "rm index.js.LICENSE.txt bageldb.js.LICENSE.txt es-bagel.js shared.js spread.d.ts spread.js index.html bageldb.js index.js common.d.ts interfaces.d.ts users.d.ts index.d.ts bagelDBRequest.d.ts bagelMetaRequest.d.ts fbStorage.d.ts index.cjs spread.cjs",
-    "publish:prod": "npm publish --access public",
+    "publish:prod": "npm publish --access public --tag alpha",
     "publish:dev": "npm run clean & npm publish --access public --dry-run --tag alpha"
   },
   "repository": {
@@ -34,11 +34,11 @@
   "dependencies": {
     "@babel/polyfill": "^7.10.1",
     "axios": "^0.26.1",
-    "eslint-config-prettier": "^8.5.0",
     "eventsource": "^2.0.0",
     "form-data": "^4.0.0",
     "lodash": "^4.17.21"
   },
+  "optionalDependencies": {},
   "devDependencies": {
     "@types/eslint": "^8.4.1",
     "@types/eventsource": "^1.1.8",
@@ -50,6 +50,7 @@
     "clean-webpack-plugin": "^4.0.0",
     "eslint": "^8.11.0",
     "eslint-config-airbnb-typescript": "^16.1.4",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "expose-loader": "^3.1.0",
     "html-webpack-plugin": "^5.5.0",
