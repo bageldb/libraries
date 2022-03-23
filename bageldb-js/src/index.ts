@@ -8,14 +8,19 @@ import {
 
 if (typeof document !== 'undefined') {
   console.log('bagelDB is running in a browser');
-} else if (typeof global?.navigator !== 'undefined' && global?.navigator?.product === 'ReactNative') {
+} else if (typeof globalThis?.navigator !== 'undefined' && globalThis?.navigator?.product === 'ReactNative') {
   // I'm in react-native
 } else {
   // I'm in node js
   if (!globalThis?.EventSource) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const EventSource = require('eventsource');
-    globalThis.EventSource = EventSource;
+    try {
+
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const EventSource = require('eventsource');
+      globalThis.EventSource = EventSource;
+    } catch (error) {
+      console.warn('if you are running bagelDB in nodejs environment you might need the `eventsource` npm package for live data to function');
+    }
   }
 }
 export default class Bagel {
