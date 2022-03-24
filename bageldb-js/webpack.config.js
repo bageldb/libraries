@@ -36,7 +36,7 @@ const generalConfig = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
   },
-  // externals: [nodeExternals()],
+  externals: [nodeExternals()],
   plugins: [
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
@@ -75,14 +75,14 @@ const nodeConfig = {
     },
   },
   target: "node",
-  externals: [nodeExternals()],
-  plugins: [
-    new CleanWebpackPlugin({
-      cleanStaleWebpackAssets: false,
-      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
-    }),
+  // externals: [nodeExternals()],
+  // plugins: [
+  //   new CleanWebpackPlugin({
+  //     cleanStaleWebpackAssets: false,
+  //     cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
+  //   }),
     // new NodePolyfillPlugin(),
-  ],
+  // ],
   output: {
     globalObject: "this",
     path: path.join(__dirname, "./dist"),
@@ -92,31 +92,6 @@ const nodeConfig = {
 
 const browserConfig = {
   resolve: {
-    fallback: {
-      assert: false,
-      buffer: false,
-      console: false,
-      constants: false,
-      crypto: false,
-      domain: false,
-      events: false,
-      http: false,
-      https: false,
-      os: false,
-      path: false,
-      punycode: false,
-      process: false,
-      querystring: false,
-      stream: false,
-      string_decoder: false,
-      sys: false,
-      timers: false,
-      tty: false,
-      url: false,
-      util: false,
-      vm: false,
-      zlib: false,
-    },
   },
   entry: "./src/index.ts",
   target: "web",
