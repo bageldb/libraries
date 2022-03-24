@@ -2,6 +2,11 @@ import { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
 import { axios } from './common';
 import { baseEndpoint, liveEndpoint } from './common';
 import { bagelType, fileUploadArgs, structArgs } from './interfaces';
+
+// eslint-disable-next-line @typescript-eslint/no-implied-eval
+const isNode = new Function('try {return this===global;}catch(e){return false;}');
+// eslint-disable-next-line @typescript-eslint/no-implied-eval
+// const setIt = new Function('try {return require("eventsource");}catch(e){return false;}');
 export default class BagelDBRequest {
   instance: bagelType;
 
@@ -121,8 +126,6 @@ export default class BagelDBRequest {
   // Either of imageLink or selectedImage must be used
   // selectedImage expects a file stream i.e fs.createReadStream(filename)
   uploadImage(imageSlug: string, { selectedImage, imageLink, altText, fileName }: fileUploadArgs): AxiosPromise {
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval
-    const isNode = new Function('try {return this===global;}catch(e){return false;}');
     let form;
     if (isNode()) {
       const FormData = require('form-data');
@@ -407,6 +410,7 @@ export default class BagelDBRequest {
     if (!onmessage) {
       throw new Error('onMessage callback must be defined');
     }
+    // const EventSource = isNode() ? setIt() : globalThis.EventSource;
 
     let token: string | null | AxiosResponse<string, any>;
     if (await this.instance.users()._bagelUserActive()) token = await this.instance.users()._getAccessToken();

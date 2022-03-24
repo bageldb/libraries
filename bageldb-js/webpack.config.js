@@ -36,13 +36,12 @@ const generalConfig = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
   },
-  externals: [nodeExternals()],
-  plugins: [
+   plugins: [
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
       cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
     }),
-    new NodePolyfillPlugin(),
+    // new NodePolyfillPlugin(),
     // new HtmlWebpackPlugin({
     //   title: "bageldb-js",
     // }),
@@ -75,14 +74,15 @@ const nodeConfig = {
     },
   },
   target: "node",
-  // externals: [nodeExternals()],
-  // plugins: [
-  //   new CleanWebpackPlugin({
-  //     cleanStaleWebpackAssets: false,
-  //     cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
-  //   }),
-    // new NodePolyfillPlugin(),
-  // ],
+  externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
+  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
+   plugins: [
+    new CleanWebpackPlugin({
+      cleanStaleWebpackAssets: false,
+      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
+    }),
+    new NodePolyfillPlugin(),
+  ],
   output: {
     globalObject: "this",
     path: path.join(__dirname, "./dist"),
@@ -95,6 +95,8 @@ const browserConfig = {
   },
   entry: "./src/index.ts",
   target: "web",
+  externalsPresets: { web: true },
+  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   output: {
     // publicPath: '/',
     path: path.resolve(__dirname, "./dist"),
