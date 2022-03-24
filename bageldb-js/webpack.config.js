@@ -36,7 +36,7 @@ const generalConfig = {
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
   },
-  externals: [nodeExternals()],
+  // externals: [nodeExternals()],
   plugins: [
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
