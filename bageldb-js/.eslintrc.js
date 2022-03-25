@@ -30,6 +30,7 @@ module.exports =  process?.env?.LOCAL_LINK ? {} : {
     "src/**/*.spec.ts",
     ".eslintrc.js",
     "unwrap.js",
+    "unwrap.cjs",
     "node.js",
     "src/**/*.d.ts",
     "webpack.config.js",

@@ -3,7 +3,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 // const HtmlWebpackPlugin = require("html-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
-const webpack  = require("webpack");
+// const webpack  = require("webpack");
 
 const generalConfig = {
   devtool: "inline-source-map",
@@ -140,7 +140,7 @@ const browserConfig = {
   externalsPresets: { node: true },
   // externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   output: {
-    // publicPath: '/',
+    publicPath: '/',
     path: path.resolve(__dirname, "./dist"),
     filename: "bageldb.js",
     globalObject: "this",
