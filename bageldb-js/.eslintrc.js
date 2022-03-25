@@ -32,7 +32,8 @@ module.exports =  process?.env?.LOCAL_LINK ? {} : {
     "unwrap.js",
     "node.js",
     "src/**/*.d.ts",
-    "webpack.config.js"
+    "webpack.config.js",
+    "webpack.config.cjs"
   ],
   rules: {
     "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",

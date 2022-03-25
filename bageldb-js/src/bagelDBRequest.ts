@@ -411,6 +411,7 @@ export default class BagelDBRequest {
       throw new Error('onMessage callback must be defined');
     }
     // const EventSource = isNode() ? setIt() : globalThis.EventSource;
+    const eventSrc = globalThis.EventSource;
 
     let token: string | null | AxiosResponse<string, any>;
     if (await this.instance.users()._bagelUserActive()) token = await this.instance.users()._getAccessToken();
@@ -421,18 +422,18 @@ export default class BagelDBRequest {
     const url =
       liveEndpoint +
       `/collection/${this.collectionID}/live?authorization=${token}&nestedID=${nestedID}&itemID=${this._item}`;
-    this.client = new EventSource(url);
+    this.client = new eventSrc(url);
     const that = this;
 
     const errorHandler = async (event) => {
-      if (that.client.readyState === EventSource.CLOSED) {
+      if (that.client.readyState === eventSrc.CLOSED) {
         if (await that.instance.users()._bagelUserActive()) {
           await that.instance.users().refresh();
           token = await that.instance.users()._getAccessToken();
           const liveUrl =
             liveEndpoint +
             `/collection/${that.collectionID}/live?authorization=${token}&requestID=${that.requestID}&nestedID=${nestedID}&itemID=${that._item}`;
-          that.client = new EventSource(liveUrl);
+          that.client = new eventSrc(liveUrl);
           return;
         }
       }

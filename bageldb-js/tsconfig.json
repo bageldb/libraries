@@ -7,7 +7,7 @@
     "lib": [
       "ES2015",
       "DOM",
-      "ESNext"
+      "ESNext",
     ],
     "module": "esnext",
     "target": "ES5",
