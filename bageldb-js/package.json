@@ -33,7 +33,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "clean": "rm index.cjs spread.cjs index.js.LICENSE.txt bageldb.js.LICENSE.txt es-bagel.js shared.js spread.d.ts spread.js index.html bageldb.js index.js common.d.ts interfaces.d.ts users.d.ts index.d.ts bagelDBRequest.d.ts bagelMetaRequest.d.ts fbStorage.d.ts index.cjs spread.cjs checks.d.ts *.bageldb.js [0-9]*.js",
     "build:types": "yarn run tsc --emitDeclarationOnly",
-    "publish:prod": "npm publish --access public --tag beta",
+    "publish:prod": "npm publish --access public --tag alpha",
     "publish:dev": "npm run clean & npm publish --access public --dry-run --tag alpha"
   },
   "repository": {
