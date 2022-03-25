@@ -3,6 +3,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 // const HtmlWebpackPlugin = require("html-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+const webpack  = require("webpack");
 
 const generalConfig = {
   devtool: "inline-source-map",
@@ -12,14 +13,21 @@ const generalConfig = {
   },
   module: {
     rules: [
-      {
-        test: /\.tsx?$/,
-        use: [
-          {
-            loader: 'ts-loader',
-            options: {
-              transpileOnly: false
-            }
+              {
+                test: /\.tsx?$/,
+                use: [
+                  {
+                    loader: 'ts-loader',
+                    // loader: 'esbuild-loader',
+
+                    options: {
+                        transpileOnly: false,
+
+                      // loader: 'ts',  // Or 'ts' if you don't need tsx
+                      // target: 'es2015',
+                      // sourcemap: true
+                      // tsconfigRaw: require('./tsconfig.json')
+                    }
           }
         ],
         exclude: /node_modules/,
@@ -41,13 +49,41 @@ const generalConfig = {
       cleanStaleWebpackAssets: false,
       cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
     }),
-    // new NodePolyfillPlugin(),
+
+      // new NodePolyfillPlugin(),
     // new HtmlWebpackPlugin({
     //   title: "bageldb-js",
     // }),
   ],
 };
 
+const esmConfig = {
+  entry: {
+    index: {
+      import: "./src/server/index.ts",
+      library: {
+        umdNamedDefine: true,
+        type: "umd",
+        export: "default",
+      },
+    },
+  },
+  target: "node",
+  externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
+  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
+   plugins: [
+    new CleanWebpackPlugin({
+      cleanStaleWebpackAssets: false,
+      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
+    }),
+    new NodePolyfillPlugin(),
+  ],
+  output: {
+    globalObject: "this",
+    path: path.join(__dirname, "./dist"),
+    filename: "[name].cjs",
+  },
+};
 const nodeConfig = {
   // optimization: {
   //   splitChunks: {
@@ -74,6 +110,12 @@ const nodeConfig = {
     },
   },
   target: "node",
+  // resolve: {
+  //   extensions: ['', '.js','.ts'],
+  //   alias: {
+  //     'utils': './src/checks'  // <-- When you build or restart dev-server, you'll get an error if the path to your utils.js file is incorrect.
+  //   }
+  // },
   externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
   externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
    plugins: [
@@ -95,8 +137,8 @@ const browserConfig = {
   },
   entry: "./src/index.ts",
   target: "web",
-  externalsPresets: { web: true },
-  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
+  externalsPresets: { node: true },
+  // externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   output: {
     // publicPath: '/',
     path: path.resolve(__dirname, "./dist"),
@@ -107,7 +149,7 @@ const browserConfig = {
       umdNamedDefine: true,
       name: "Bagel",
       type: "umd",
-      // export: "default",
+      export: "default",
     },
   },
 };
@@ -123,6 +165,11 @@ module.exports = (env, argv) => {
 
   Object.assign(browserConfig, generalConfig);
   Object.assign(nodeConfig, generalConfig);
+  Object.assign(esmConfig, generalConfig);
 
-  return [browserConfig, nodeConfig];
+  return [
+    browserConfig,
+    nodeConfig,
+     esmConfig
+    ];
 };

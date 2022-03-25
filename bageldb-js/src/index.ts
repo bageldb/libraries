@@ -13,19 +13,19 @@ if (typeof document !== 'undefined') {
   // I'm in node js
   if (!globalThis?.EventSource) {
     try {
-      (async ()=> {
+      // (async ()=> {
 
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        // const EventSource = require('eventsource');
-        const EventSource = await import('eventsource');
-        globalThis.EventSource = EventSource.default as any;
-      })();
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      // const EventSource = require('eventsource');
+      // const EventSource = await import('eventsource');
+      // globalThis.EventSource = EventSource.default as any;
+      // })();
 
       // eslint-disable-next-line @typescript-eslint/no-implied-eval
     //   const setIt = new Function('try {return globalThis.EventSource = require("eventsource");}catch(e){return false;}');
     //   setIt();
     } catch (error) {
-    //   console.warn('if you are running bagelDB in nodejs environment you might need the `eventsource` npm package for live data to function');
+      console.warn('if you are running bagelDB in nodejs environment you might need the `eventsource` npm package for live data to function');
     }
   }
 }
