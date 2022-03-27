@@ -29,9 +29,9 @@ export default class BagelUsersRequest {
 
   _isBrowser(): boolean {
     // eslint-disable-next-line @typescript-eslint/no-implied-eval
-    const isNode = new Function('try {return this===global;}catch(e){return false;}');
-
-    return !isNode();
+    // const isNode = new Function('try {return this===global;}catch(e){return false;}');
+    // return !isNode();
+    return typeof document !== 'undefined';
   }
 
   async _bagelUserActive(): Promise<boolean> {
@@ -40,7 +40,6 @@ export default class BagelUsersRequest {
       const bagelUserID = await this.getBagelUserID();
       return isBrowser && bagelUserID !== null && bagelUserID.length > 0;
     } catch (error) {
-
       throw new Error(error as any);
     }
   }

@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.27-dev.1.0",
+  "version": "0.3.27-dev.1.1",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -9,7 +9,6 @@
   "browser": "./dist/bageldb.js",
   "exports": {
     "spread": "./dist/spread.js",
-    "package.json": "./package.json",
     "node": {
       "script": "./dist/bageldb.js",
       "module": "./dist/index.js",
