@@ -20,4 +20,3 @@ export {
   BagelDB,
 };
 export default BagelDB;
-// module.exports = BagelDB;
