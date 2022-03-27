@@ -203,9 +203,8 @@ export default class BagelUsersRequest {
 
   async _storeTokens(data: Record<string, any>): Promise<void> {
     await this.bagelStorage.setItem('bagel-access', data.access_token);
-    const expires: any = new Date();
-    expires.setSeconds(expires.getSeconds() + data.expires_in);
-    await this.bagelStorage.setItem('bagel-expires', expires);
+    const expires = new Date().setSeconds(new Date().getSeconds() + data.expires_in);;
+    await this.bagelStorage.setItem('bagel-expires', `${expires}`);
     await this.bagelStorage.setItem('bagel-refresh', data.refresh_token);
     // await this._storeBagelUser(data?.user_id || '');
   }
@@ -246,7 +245,8 @@ export default class BagelUsersRequest {
           if (res.status === 200) {
             const { data } = res;
             await this._storeTokens(data);
-            return (data.access_token);
+            await this._storeBagelUser(data.user_id);
+            return data.access_token;
           }
 
     } catch (error: any) {
