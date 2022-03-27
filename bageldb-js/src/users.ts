@@ -245,7 +245,6 @@ export default class BagelUsersRequest {
           if (res.status === 200) {
             const { data } = res;
             await this._storeTokens(data);
-            await this._storeBagelUser(data.user_id);
             return data.access_token;
           }
 
