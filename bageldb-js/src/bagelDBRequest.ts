@@ -5,8 +5,6 @@ import { bagelType, fileUploadArgs, structArgs } from './interfaces';
 
 // eslint-disable-next-line @typescript-eslint/no-implied-eval
 const isNode = new Function('try {return this===global;}catch(e){return false;}');
-// eslint-disable-next-line @typescript-eslint/no-implied-eval
-// const setIt = new Function('try {return require("eventsource");}catch(e){return false;}');
 export default class BagelDBRequest {
   instance: bagelType;
 
@@ -410,7 +408,7 @@ export default class BagelDBRequest {
     if (!onmessage) {
       throw new Error('onMessage callback must be defined');
     }
-    // const EventSource = isNode() ? setIt() : globalThis.EventSource;
+
     const eventSrc = globalThis.EventSource;
 
     let token: string | null | AxiosResponse<string, any>;
