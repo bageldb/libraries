@@ -28,7 +28,7 @@
     "noImplicitAny": false,
     "useDefineForClassFields": true,
     "downlevelIteration": true,
-    "importHelpers": true,
+    // "importHelpers": true,
     "jsx": "react",
     "checkJs": false,
     "experimentalDecorators": true,
