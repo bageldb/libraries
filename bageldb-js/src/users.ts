@@ -202,11 +202,10 @@ export default class BagelUsersRequest {
   }
 
   async _storeTokens(data: Record<string, any>): Promise<void> {
-    await this.bagelStorage.setItem('bagel-access', data.access_token);
-    const expires = new Date().setSeconds(new Date().getSeconds() + data.expires_in);;
-    await this.bagelStorage.setItem('bagel-expires', `${expires}`);
-    await this.bagelStorage.setItem('bagel-refresh', data.refresh_token);
-    // await this._storeBagelUser(data?.user_id || '');
+    data?.access_token && await this.bagelStorage.setItem('bagel-access', data.access_token);
+    const expires = new Date().setSeconds(new Date().getSeconds() + data?.expires_in);;
+    data?.expires_in && await this.bagelStorage.setItem('bagel-expires', `${expires}`);
+    data?.refresh_token && await this.bagelStorage.setItem('bagel-refresh', data.refresh_token);
   }
 
   async getBagelUserID() {
