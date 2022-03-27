@@ -1,4 +1,5 @@
 import { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
+import FormData from 'form-data';
 import { axios } from './common';
 import { baseEndpoint, liveEndpoint } from './common';
 import { bagelType, fileUploadArgs, structArgs } from './interfaces';
@@ -124,13 +125,7 @@ export default class BagelDBRequest {
   // Either of imageLink or selectedImage must be used
   // selectedImage expects a file stream i.e fs.createReadStream(filename)
   uploadImage(imageSlug: string, { selectedImage, imageLink, altText, fileName }: fileUploadArgs): AxiosPromise {
-    let form;
-    if (isNode()) {
-      const FormData = require('form-data');
-      form = new FormData();
-    } else {
-      form = new FormData();
-    }
+    const form = new FormData();
     const nestedID = this.nestedCollectionsIDs.join('.');
     if (altText) {
       form.append('altText', altText);
@@ -140,9 +135,9 @@ export default class BagelDBRequest {
     } else {
       form.append('imageFile', selectedImage, fileName);
     }
-    let formHeaders;
+    let formHeaders: FormData.Headers | undefined;
     if (isNode()) {
-      formHeaders = form.getHeaders();
+      formHeaders = (form as FormData).getHeaders();
     }
     return new Promise((resolve, reject) => {
       const url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;

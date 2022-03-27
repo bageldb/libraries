@@ -219,7 +219,8 @@ export default class BagelUsersRequest {
   }
 
   async _getAccessToken(): Promise<string | null | AxiosPromise<string>> {
-    const e = (await this.bagelStorage.getItem('bagel-expires')) || '';
+    const e = (await this.bagelStorage.getItem('bagel-expires'));
+    if (!e) return this.refresh();
     const expires = new Date(e);
     if (expires <= new Date()) return this.refresh();
     else return this.bagelStorage.getItem('bagel-access');
