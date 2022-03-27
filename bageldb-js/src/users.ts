@@ -31,6 +31,9 @@ export default class BagelUsersRequest {
     // eslint-disable-next-line @typescript-eslint/no-implied-eval
     // const isNode = new Function('try {return this===global;}catch(e){return false;}');
     // return !isNode();
+console.log(
+  "typeof document !== 'undefined' || typeof navigator !== 'undefined' && navigator?.product === 'ReactNative' :>> ", typeof document !== 'undefined' , typeof navigator !== 'undefined' && navigator?.product === 'ReactNative');
+
     return typeof document !== 'undefined' || typeof navigator !== 'undefined' && navigator?.product === 'ReactNative';
   }
 
