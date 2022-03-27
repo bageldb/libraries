@@ -126,3 +126,10 @@ export default class Bagel {
     return `${lat},${lng},${distance}`;
   }
 }
+
+export {
+  BagelUsersRequest,
+  BagelDBRequest,
+  BagelMetaRequest,
+   Bagel as BagelDB,
+  };
