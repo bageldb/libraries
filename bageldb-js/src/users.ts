@@ -8,7 +8,9 @@ if (typeof document !== 'undefined') {
 } else if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
   // I'm in react-native
   if (!globalThis?.localStorage) {
-    globalThis.localStorage = new FallbackStorage({});
+    Object.assign(localStorage,
+      new FallbackStorage({})
+      )
   }
 } else {
   // I'm in node js
