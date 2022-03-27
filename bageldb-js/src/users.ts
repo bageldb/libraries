@@ -142,30 +142,31 @@ export default class BagelUsersRequest {
     });
   }
 
-  async getUser(): Promise<AxiosPromise<BagelUser>> {
+  async getUser() {
     try {
       const userIsActive = await this._bagelUserActive();
-      return new Promise( (resolve, reject) => {
+      // return new Promise( (resolve, reject) => {
         if (!userIsActive) {
-          reject(new Error('a Bagel User must be logged in to get Bagel User info ' + userIsActive));
-          return;
+          throw (new Error('a Bagel User must be logged in to get Bagel User info ' + userIsActive));
+          // reject(new Error('a Bagel User must be logged in to get Bagel User info ' + userIsActive));
+          // return;
         }
         const url = `${AUTH_ENDPOINT}/user`;
-        this.axios
-        .get(url)
-        .then((res) => {
-          if (res.status == 200) {
-            resolve(res);
-          } else {
-            reject();
-            throw new Error(res as any);
-          }
-        })
-        .catch((err) => {
-          reject(err);
-          throw new Error(err);
-        });
-      });
+        const res =  await this.axios.get<BagelUser>(url)
+        // .then((res) => {
+        //   if (res.status == 200) {
+        //     resolve(res);
+        //   } else {
+        //     reject();
+        //     throw new Error(res as any);
+        //   }
+        // })
+        // .catch((err) => {
+        //   reject(err);
+        //   throw new Error(err);
+        // });
+      // });
+      return res
     } catch (error: any) {
       throw new Error(error);
     }
@@ -251,29 +252,37 @@ export default class BagelUsersRequest {
     await this.bagelStorage.removeItem('bagel-refresh');
   }
 
-  async refresh(): Promise<AxiosPromise<string>> {
-const refreshToken = await this._getRefreshToken();
-    return new Promise((resolve, reject) => {
-      if (!(refreshToken)) {
-        reject(new Error('No Bagel User is logged in'));
-        return;
-      }
-      const url = `${AUTH_ENDPOINT}/user/token`;
-      const body = `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=project-client`;
-      this.axios
-        .post(url, body)
-        .then(async (res) => {
+  async refresh() {
+    try {
+
+      const refreshToken = await this._getRefreshToken();
+      // return new Promise((resolve, reject) => {
+        if (!(refreshToken)) {
+          throw new Error('No Bagel User is logged in');
+          // reject(new Error('No Bagel User is logged in'));
+          // return;
+        }
+        const url = `${AUTH_ENDPOINT}/user/token`;
+        const body = `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=project-client`;
+        const res = await this.axios.post(url, body)
+        // .then(async (res) => {
           if (res.status === 200) {
             const { data } = res;
             await this._storeTokens(data);
-            resolve(data.access_token);
-          } else {
-            reject(res);
+            return (data.access_token);
           }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+            // resolve(data.access_token);
+          // } else {
+          //   reject(res);
+          // }
+          // })
+          // .catch((err) => {
+            //   reject(err);
+            // });
+          // });
+
+    } catch (error: any) {
+      throw new Error(error);
+    }
   }
 }
