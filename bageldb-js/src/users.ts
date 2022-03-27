@@ -81,6 +81,8 @@ export default class BagelUsersRequest {
     try {
       const res = await this.axios.post(url, body);
       await this._storeTokens(res.data);
+      await this._storeBagelUser(res.data.user_id);
+
       return res.data.user_id;
     } catch (err) {
       throw new Error('wrong authorization code ' + err);
@@ -226,7 +228,7 @@ export default class BagelUsersRequest {
     expires.setSeconds(expires.getSeconds() + data.expires_in);
     await this.bagelStorage.setItem('bagel-expires', expires);
     await this.bagelStorage.setItem('bagel-refresh', data.refresh_token);
-    await this._storeBagelUser(data?.user_id || '');
+    // await this._storeBagelUser(data?.user_id || '');
   }
 
   async getBagelUserID() {
