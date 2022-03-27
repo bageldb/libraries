@@ -31,8 +31,6 @@ export default class BagelUsersRequest {
     // eslint-disable-next-line @typescript-eslint/no-implied-eval
     // const isNode = new Function('try {return this===global;}catch(e){return false;}');
     // return !isNode();
-console.log(
-  "typeof document !== 'undefined' || typeof navigator !== 'undefined' && navigator?.product === 'ReactNative' :>> ", typeof document !== 'undefined' , typeof navigator !== 'undefined' && navigator?.product === 'ReactNative');
 
     return typeof document !== 'undefined' || typeof navigator !== 'undefined' && navigator?.product === 'ReactNative';
   }
@@ -41,6 +39,7 @@ console.log(
     const isBrowser = this._isBrowser();
     try {
       const bagelUserID = await this.getBagelUserID();
+      console.log({isBrowser,bagelUserID});
       return isBrowser && bagelUserID !== null && bagelUserID.length > 0;
     } catch (error) {
       throw new Error(error as any);
@@ -229,7 +228,8 @@ console.log(
   }
 
   async getBagelUserID() {
-    return this.bagelStorage.getItem('bagel-user') as string;
+ const bagelUser = await this.bagelStorage.getItem('bagel-user') as string;
+ return bagelUser;
   }
 
   async _getRefreshToken(): Promise<string | null> {
