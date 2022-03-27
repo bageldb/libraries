@@ -8,6 +8,7 @@ import FallbackStorage from '../fbStorage';
 if (!globalThis?.localStorage) {
   globalThis.localStorage = new FallbackStorage({});
 }
+
 export {
   BagelUsersRequest,
   BagelDBRequest,
