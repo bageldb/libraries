@@ -28,10 +28,6 @@ export default class BagelUsersRequest {
   }
 
   _isBrowser(): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval
-    // const isNode = new Function('try {return this===global;}catch(e){return false;}');
-    // return !isNode();
-
     return typeof document !== 'undefined' || typeof navigator !== 'undefined' && navigator?.product === 'ReactNative';
   }
 
@@ -39,7 +35,6 @@ export default class BagelUsersRequest {
     const isBrowser = this._isBrowser();
     try {
       const bagelUserID = await this.getBagelUserID();
-      console.log({bagelUserID});
       return isBrowser && bagelUserID !== null && bagelUserID.length > 0;
     } catch (error) {
       throw new Error(error as any);
@@ -147,27 +142,11 @@ export default class BagelUsersRequest {
   async getUser() {
     try {
       const userIsActive = await this._bagelUserActive();
-      // return new Promise( (resolve, reject) => {
         if (!userIsActive) {
           throw (new Error('a Bagel User must be logged in to get Bagel User info ' + userIsActive));
-          // reject(new Error('a Bagel User must be logged in to get Bagel User info ' + userIsActive));
-          // return;
         }
         const url = `${AUTH_ENDPOINT}/user`;
         const res =  await this.axios.get<BagelUser>(url)
-        // .then((res) => {
-        //   if (res.status == 200) {
-        //     resolve(res);
-        //   } else {
-        //     reject();
-        //     throw new Error(res as any);
-        //   }
-        // })
-        // .catch((err) => {
-        //   reject(err);
-        //   throw new Error(err);
-        // });
-      // });
       return res
     } catch (error: any) {
       throw new Error(error);
@@ -258,30 +237,17 @@ export default class BagelUsersRequest {
     try {
 
       const refreshToken = await this._getRefreshToken();
-      // return new Promise((resolve, reject) => {
         if (!(refreshToken)) {
           throw new Error('No Bagel User is logged in');
-          // reject(new Error('No Bagel User is logged in'));
-          // return;
         }
         const url = `${AUTH_ENDPOINT}/user/token`;
         const body = `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=project-client`;
         const res = await this.axios.post(url, body)
-        // .then(async (res) => {
           if (res.status === 200) {
             const { data } = res;
             await this._storeTokens(data);
             return (data.access_token);
           }
-            // resolve(data.access_token);
-          // } else {
-          //   reject(res);
-          // }
-          // })
-          // .catch((err) => {
-            //   reject(err);
-            // });
-          // });
 
     } catch (error: any) {
       throw new Error(error);
