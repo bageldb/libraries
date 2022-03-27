@@ -141,16 +141,16 @@ export default class BagelUsersRequest {
     });
   }
 
-  getUser(): AxiosPromise<BagelUser> {
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async (resolve, reject) => {
+  async getUser(): Promise<AxiosPromise<BagelUser>> {
+    try {
       const userIsActive = await this._bagelUserActive();
-      if (!userIsActive) {
-        reject(new Error('a Bagel User must be logged in to get Bagel User info ' + userIsActive));
-        return;
-      }
-      const url = `${AUTH_ENDPOINT}/user`;
-      this.axios
+      return new Promise( (resolve, reject) => {
+        if (!userIsActive) {
+          reject(new Error('a Bagel User must be logged in to get Bagel User info ' + userIsActive));
+          return;
+        }
+        const url = `${AUTH_ENDPOINT}/user`;
+        this.axios
         .get(url)
         .then((res) => {
           if (res.status == 200) {
@@ -162,7 +162,11 @@ export default class BagelUsersRequest {
         .catch((err) => {
           reject(err);
         });
-    });
+      });
+    } catch (error: any) {
+      throw new Error(error);
+
+    }
   }
 
   requestPasswordReset(email: string): AxiosPromise<unknown> {
