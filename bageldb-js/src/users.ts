@@ -234,7 +234,8 @@ export default class BagelUsersRequest {
   }
 
   async _getRefreshToken(): Promise<string | null> {
-    return this.bagelStorage.getItem('bagel-refresh');
+    const refreshToken = await this.bagelStorage.getItem('bagel-refresh');
+    return refreshToken
   }
 
   async _getAccessToken(): Promise<string | null | AxiosPromise<string>> {
