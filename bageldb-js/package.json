@@ -8,6 +8,8 @@
   "module": "./dist/index.js",
   "browser": "./dist/bageldb.js",
   "exports": {
+    "./spread": "./dist/spread.js",
+    "./package.json": "./package.json",
     "node": {
       "script": "./dist/bageldb.js",
       "module": "./dist/index.js",
@@ -17,9 +19,7 @@
     },
     "script": "./dist/bageldb.js",
     "react-native": "./dist/index.js",
-    "spread": "./dist/spread.js",
     "default": "./dist/bageldb.js",
-    "package.json": "./package.json"
   },
   "scripts": {
     "expose:cmd": "node unwrap.cjs",
