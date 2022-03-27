@@ -73,7 +73,7 @@ export default class BagelUsersRequest {
   }
 
   /// Validate the user's received One Time Password
-  async validateOtp(otp: Record<string, any>) {
+  async validateOtp(otp: string) {
     const nonce = await this._getOtpRequestNonce();
     const url = `${AUTH_ENDPOINT}/user/otp/verify/${nonce}`;
     const body = { otp };
