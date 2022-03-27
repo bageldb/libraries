@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.27-dev.1.2",
+  "version": "0.3.27-dev.1.4",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -9,6 +9,8 @@
   "browser": "./dist/bageldb.js",
   "react-native": "./dist/index.js",
   "exports": {
+    "module": "./dist/index.js",
+    "browser": "./dist/bageldb.js",
     "spread": "./dist/spread.js",
     "node": {
       "script": "./dist/bageldb.js",
@@ -18,6 +20,7 @@
       "default": "./dist/index.cjs"
     },
     "script": "./dist/bageldb.js",
+    "react-native": "./dist/index.js",
     "default": "./dist/bageldb.js"
   },
   "scripts": {
