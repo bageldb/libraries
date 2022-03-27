@@ -157,16 +157,19 @@ export default class BagelUsersRequest {
           if (res.status == 200) {
             resolve(res);
           } else {
-            reject(res);
+            reject();
+      throw new Error(res as any);
+
           }
         })
         .catch((err) => {
           reject(err);
+      throw new Error(err);
+
         });
       });
     } catch (error: any) {
       throw new Error(error);
-
     }
   }
 
