@@ -39,7 +39,7 @@ export default class BagelUsersRequest {
     const isBrowser = this._isBrowser();
     try {
       const bagelUserID = await this.getBagelUserID();
-      console.log({isBrowser,bagelUserID});
+      console.log({bagelUserID});
       return isBrowser && bagelUserID !== null && bagelUserID.length > 0;
     } catch (error) {
       throw new Error(error as any);
