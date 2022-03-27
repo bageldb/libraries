@@ -158,14 +158,12 @@ export default class BagelUsersRequest {
             resolve(res);
           } else {
             reject();
-      throw new Error(res as any);
-
+            throw new Error(res as any);
           }
         })
         .catch((err) => {
           reject(err);
-      throw new Error(err);
-
+          throw new Error(err);
         });
       });
     } catch (error: any) {
@@ -252,15 +250,15 @@ export default class BagelUsersRequest {
     await this.bagelStorage.removeItem('bagel-refresh');
   }
 
-  refresh(): AxiosPromise<string> {
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async (resolve, reject) => {
-      if (!(await this._getRefreshToken())) {
+  async refresh(): Promise<AxiosPromise<string>> {
+const refreshToken = await this._getRefreshToken();
+    return new Promise((resolve, reject) => {
+      if (!(refreshToken)) {
         reject(new Error('No Bagel User is logged in'));
         return;
       }
       const url = `${AUTH_ENDPOINT}/user/token`;
-      const body = `grant_type=refresh_token&refresh_token=${await this._getRefreshToken()}&client_id=project-client`;
+      const body = `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=project-client`;
       this.axios
         .post(url, body)
         .then(async (res) => {
