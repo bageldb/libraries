@@ -3,7 +3,7 @@ import BagelDBRequest from './bagelDBRequest';
 import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
 
-const baseEndpoint = 'https://api.bagelstudio.co/api/public';
+const baseEndpoint = 'https://api.bageldb.com';
 const liveEndpoint = 'https://live.bageldb.com/api/public';
 
 export {
