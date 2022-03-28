@@ -11,9 +11,9 @@ export default class BagelDBRequest {
 
   collectionID: string;
 
-  _pageNumber: number;
+  _pageNumber: number | string;
 
-  itemsPerPage: number;
+  itemsPerPage: number | string;
 
   callEverything: boolean;
 
@@ -33,9 +33,9 @@ export default class BagelDBRequest {
 
   client!: EventSource;
 
-  _item: any;
+  _item: string | undefined;
 
-  _field: any;
+  _field: string | undefined;
 
   sortField: string;
 
@@ -59,20 +59,18 @@ export default class BagelDBRequest {
     this.sortField = '';
     this.sortOrder = '';
     // this.client;
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     this._item;
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     this._field;
   }
 
   // Pagination
-  pageNumber(pageNumber) {
-    this._pageNumber = pageNumber;
+  pageNumber(pageNumber: number | string) {
+    this._pageNumber = `${pageNumber}`;
     return this;
   }
 
   perPage(perPage: number | string) {
-    this.itemsPerPage = +perPage;
+    this.itemsPerPage = `${perPage}`;
     return this;
   }
 
@@ -86,16 +84,23 @@ export default class BagelDBRequest {
     return this;
   }
 
-  item(_id) {
-    if (!_id) throw new Error('item cant be ' + _id);
-    if (this._item) {
-      if (this.nestedCollectionsIDs.length % 2 === 0)
-        throw new Error('a nested item can only be placed after a nested collection');
-      this.nestedCollectionsIDs.push(_id);
-    } else {
-      this._item = _id;
-    }
-    return this;
+  item(_id: string) {
+    // try {
+      if (!_id) throw new Error(`
+      item id must be defined as a non-empty string value.
+      The item you provided is currently set to: '${_id}', with type: '${typeof _id}'
+       `);
+      if (this._item) {
+        if (this.nestedCollectionsIDs.length % 2 === 0)
+          throw new Error('a nested item can only be placed after a nested collection');
+        this.nestedCollectionsIDs.push(_id);
+      } else {
+        this._item = _id;
+      }
+      return this;
+    // } catch (error: any) {
+    //   return new Error(error);
+    // }
   }
 
   query(key, operator, value) {
@@ -304,15 +309,15 @@ export default class BagelDBRequest {
       const params = new URLSearchParams();
       const nestedID = this.nestedCollectionsIDs.join('.');
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      this._pageNumber && params.append('pageNumber', String(this._pageNumber));
+      this._pageNumber && params.append('pageNumber', `${this._pageNumber}`);
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       this.sortField && params.append('sort', this.sortField);
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       this.sortOrder && params.append('order', this.sortOrder);
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      this.itemsPerPage && params.append('perPage', String(this.itemsPerPage));
+      this.itemsPerPage && params.append('perPage', `${this.itemsPerPage}`);
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      this.callEverything && params.append('everything', String(this.callEverything));
+      this.callEverything && params.append('everything', `${this.callEverything}`);
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       this._projectOff != '' && params.append('projectOff', this._projectOff);
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
