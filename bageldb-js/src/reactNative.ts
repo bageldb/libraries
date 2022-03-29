@@ -1,7 +1,7 @@
 import BagelDB from './index';
 import { BagelDBRequest, BagelMetaRequest, BagelUsersRequest } from './common';
 import FallbackStorage from './fbStorage';
-import formData from 'form-data';
+const formData = require('form-data');
 
 if (!globalThis?.localStorage)  globalThis.localStorage = new FallbackStorage({});
 
