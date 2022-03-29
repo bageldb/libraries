@@ -134,21 +134,63 @@ export default class BagelDBRequest {
     imageSlug: string,
     { selectedImage, imageLink, altText, fileName }: fileUploadArgs,
   ): AxiosPromise {
-    const form = globalThis?.BagelFormData ? new  globalThis.BagelFormData() :  new globalThis.FormData();
+    const form = new FormData();
     const nestedID = this.nestedCollectionsIDs.join('.');
 
     if (altText) form.append('altText', altText);
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     imageLink ?
       form.append('imageLink', imageLink) :
-      form.append('imageFile', selectedImage, fileName);
+      form.append('imageFile', selectedImage, isReactNative ? undefined : fileName);
 
     let formHeaders: FormData.Headers | undefined;
 
-    if (isNode() || isReactNative) formHeaders = (form as unknown as FormData)?.getHeaders?.();
+    if (isNode()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
 
     return new Promise((resolve, reject) => {
       const url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
+      if (
+        isReactNative
+      ) {
+      //   //? react-native
+      //   //   const config = {
+      //   //     headers: {
+      //   //     ...formHeaders,
+      //   // 'Content-Type': 'multipart/form-data',
+      //   //     // if backend supports u can use gzip request encoding
+      //   //     'Content-Encoding': 'gzip',
+      //   //   },
+      //   //   transformRequest: (_data, _headers) => {
+      //   //     // !!! override data to return formData
+      //   //     // since axios converts that to string
+      //   //     return form;
+      //   //   },
+      //   //   // onUploadProgress: (progressEvent) => {
+      //   //   // use upload data, since it's an upload progress
+      //   //   // iOS: {"isTrusted": false, "lengthComputable": true, "loaded": 123, "total": 98902}
+      //   //   // },
+      //   //   data: form,
+      //   // };
+        const body = Object.fromEntries((form as any)._parts);
+        console.log(body);
+
+        this.instance.axiosInstance
+          .put(
+            url,
+            body,
+            {
+              headers: {
+                ...formHeaders,
+                'Content-Type': 'multipart/form-data',
+              },
+            },
+          )
+          .then((imgResponse) => {
+            resolve(imgResponse);
+          })
+          .catch((err) => reject(err));
+        return;
+      }
 
       this.instance.axiosInstance
         .put(url, form, { headers: formHeaders })
