@@ -11,13 +11,19 @@ export default class Bagel {
 
   isServer: boolean;
 
-  customStorage:  Storage | undefined;
+  customStorage: Storage | undefined;
 
   apiToken: string;
 
   axiosInstance: AxiosInstance;
 
-  constructor(apiToken: string, options: { isServer?: boolean; customStorage?: Storage | undefined; } = { isServer: false, customStorage: undefined }) {
+  constructor(
+    apiToken: string,
+    options: { isServer?: boolean; customStorage?: Storage | undefined } = {
+      isServer: false,
+      customStorage: undefined,
+    },
+  ) {
     this.isServer = !!options.isServer;
     this.customStorage = options.customStorage;
     this.apiToken = apiToken;
@@ -26,16 +32,20 @@ export default class Bagel {
       async (config) => {
         (config.headers as AxiosRequestHeaders)['Accept-Version'] = 'v1';
         if (
-          await new BagelUsersRequest({ instance: this })._bagelUserActive() &&
+          (await new BagelUsersRequest({
+            instance: this,
+          })._bagelUserActive()) &&
           !config.url?.includes('user/token')
         ) {
           const bagelUserReq = new BagelUsersRequest({
             instance: this,
           });
           const accessToken = await bagelUserReq._getAccessToken();
-          (config.headers as AxiosRequestHeaders).Authorization = 'Bearer ' + accessToken;
+          (config.headers as AxiosRequestHeaders).Authorization =
+            'Bearer ' + accessToken;
         } else {
-          (config.headers as AxiosRequestHeaders).Authorization = 'Bearer ' + apiToken;
+          (config.headers as AxiosRequestHeaders).Authorization =
+            'Bearer ' + apiToken;
         }
         return config;
       },
@@ -50,7 +60,9 @@ export default class Bagel {
       },
       async (error) => {
         if (
-          await new BagelUsersRequest({ instance: this })._bagelUserActive() &&
+          (await new BagelUsersRequest({
+            instance: this,
+          })._bagelUserActive()) &&
           error.response &&
           error.response.status == 401 &&
           !error.config.url.includes('user/token')
@@ -131,5 +143,5 @@ export {
   BagelUsersRequest,
   BagelDBRequest,
   BagelMetaRequest,
-   Bagel as BagelDB,
-  };
+  Bagel as BagelDB,
+};

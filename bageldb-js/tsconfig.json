@@ -43,7 +43,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    ".eslintrc.js",
+    ".eslintrc.cjs",
     // "webpack.config.ts",
     "tsconfig.json"
   ]

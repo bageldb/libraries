@@ -4,8 +4,11 @@ import { bagelType, BagelUser } from './interfaces';
 
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 if (typeof document !== 'undefined') {
-// I'm on the web!
-} else if (typeof navigator !== 'undefined' && navigator?.product === 'ReactNative') {
+  // I'm on the web!
+} else if (
+  typeof navigator !== 'undefined' &&
+  navigator?.product === 'ReactNative'
+) {
   // I'm in react-native
   globalThis.localStorage = new FallbackStorage({});
 } else {
@@ -24,11 +27,15 @@ export default class BagelUsersRequest {
   constructor({ instance }: { instance: bagelType }) {
     this.instance = instance;
     this.axios = this.instance.axiosInstance;
-    this.bagelStorage = this.instance?.customStorage || globalThis?.localStorage;
+    this.bagelStorage =
+      this.instance?.customStorage || globalThis?.localStorage;
   }
 
   _isBrowser(): boolean {
-    return typeof document !== 'undefined' || typeof navigator !== 'undefined' && navigator?.product === 'ReactNative';
+    return (
+      typeof document !== 'undefined' ||
+      (typeof navigator !== 'undefined' && navigator?.product === 'ReactNative')
+    );
   }
 
   async _bagelUserActive(): Promise<boolean> {
@@ -89,7 +96,8 @@ export default class BagelUsersRequest {
     const expires = +((await this.bagelStorage.getItem('bagel-expires')) || '');
     if (otpRequest && expires) {
       const date = new Date();
-      if (expires <= date.setSeconds(date.getSeconds())) throw new Error('OTP request has expired, try again');
+      if (expires <= date.setSeconds(date.getSeconds()))
+        throw new Error('OTP request has expired, try again');
       return otpRequest;
     } else {
       throw new Error('Request an OTP first');
@@ -109,9 +117,17 @@ export default class BagelUsersRequest {
     }
   }
 
-  async _storeOtpRequestNonce({ nonce, expires_in }: { nonce: string; expires_in: number }) {
+  async _storeOtpRequestNonce({
+    nonce,
+    expires_in,
+  }: {
+    nonce: string;
+    expires_in: number;
+  }) {
     const expires = new Date();
-    const storedExpire = `${expires.setSeconds(expires.getSeconds() + expires_in)}`;
+    const storedExpire = `${expires.setSeconds(
+      expires.getSeconds() + expires_in,
+    )}`;
     await this.bagelStorage.setItem('bagel-nonce', nonce);
     await this.bagelStorage.setItem('bagel-expires', storedExpire);
   }
@@ -142,12 +158,15 @@ export default class BagelUsersRequest {
   async getUser(): Promise<AxiosResponse<BagelUser, any>> {
     try {
       const userIsActive = await this._bagelUserActive();
-        if (!userIsActive) {
-          throw (new Error('a Bagel User must be logged in to get Bagel User info ' + userIsActive));
-        }
-        const url = `${AUTH_ENDPOINT}/user`;
-        const res =  await this.axios.get<BagelUser>(url)
-      return res
+      if (!userIsActive) {
+        throw new Error(
+          'a Bagel User must be logged in to get Bagel User info ' +
+            userIsActive,
+        );
+      }
+      const url = `${AUTH_ENDPOINT}/user`;
+      const res = await this.axios.get<BagelUser>(url);
+      return res;
     } catch (error: any) {
       throw new Error(error);
     }
@@ -173,11 +192,18 @@ export default class BagelUsersRequest {
     });
   }
 
-  updatePassword(email: string, updatedPassword: string): AxiosPromise<unknown> {
+  updatePassword(
+    email: string,
+    updatedPassword: string,
+  ): AxiosPromise<unknown> {
     email = email.toLowerCase().trim();
     return new Promise((resolve, reject) => {
       if (this._isBrowser()) {
-        reject(new Error('Update Password feature is only available when using NodeJS'));
+        reject(
+          new Error(
+            'Update Password feature is only available when using NodeJS',
+          ),
+        );
         return;
       }
       const url = `${AUTH_ENDPOINT}/user/updatePassword`;
@@ -202,24 +228,32 @@ export default class BagelUsersRequest {
   }
 
   async _storeTokens(data: Record<string, any>): Promise<void> {
-    data?.access_token && await this.bagelStorage.setItem('bagel-access', data.access_token);
-    const expires = new Date().setSeconds(new Date().getSeconds() + data?.expires_in);;
-    data?.expires_in && await this.bagelStorage.setItem('bagel-expires', `${expires}`);
-    data?.refresh_token && await this.bagelStorage.setItem('bagel-refresh', data.refresh_token);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    data?.access_token &&
+      (await this.bagelStorage.setItem('bagel-access', data.access_token));
+    const expires = new Date().setSeconds(
+      new Date().getSeconds() + data?.expires_in,
+    );
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    data?.expires_in &&
+      (await this.bagelStorage.setItem('bagel-expires', `${expires}`));
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    data?.refresh_token &&
+      (await this.bagelStorage.setItem('bagel-refresh', data.refresh_token));
   }
 
   async getBagelUserID() {
- const bagelUser = await this.bagelStorage.getItem('bagel-user') as string;
- return bagelUser;
+    const bagelUser = (await this.bagelStorage.getItem('bagel-user')) as string;
+    return bagelUser;
   }
 
   async _getRefreshToken(): Promise<string | null> {
     const refreshToken = await this.bagelStorage.getItem('bagel-refresh');
-    return refreshToken
+    return refreshToken;
   }
 
   async _getAccessToken(): Promise<string | null | AxiosPromise<string>> {
-    const e = (await this.bagelStorage.getItem('bagel-expires'));
+    const e = await this.bagelStorage.getItem('bagel-expires');
     if (!e) return this.refresh();
     const expires = new Date(e);
     if (expires <= new Date()) return this.refresh();
@@ -234,20 +268,18 @@ export default class BagelUsersRequest {
 
   async refresh() {
     try {
-
       const refreshToken = await this._getRefreshToken();
-        if (!(refreshToken)) {
-          throw new Error('No Bagel User is logged in');
-        }
-        const url = `${AUTH_ENDPOINT}/user/token`;
-        const body = `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=project-client`;
-        const res = await this.axios.post(url, body)
-          if (res.status === 200) {
-            const { data } = res;
-            await this._storeTokens(data);
-            return data.access_token;
-          }
-
+      if (!refreshToken) {
+        throw new Error('No Bagel User is logged in');
+      }
+      const url = `${AUTH_ENDPOINT}/user/token`;
+      const body = `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=project-client`;
+      const res = await this.axios.post(url, body);
+      if (res.status === 200) {
+        const { data } = res;
+        await this._storeTokens(data);
+        return data.access_token;
+      }
     } catch (error: any) {
       throw new Error(error);
     }

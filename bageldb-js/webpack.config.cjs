@@ -57,7 +57,7 @@ const generalConfig = {
   ],
 };
 
-const esmConfig = {
+const nodeConfig = {
   entry: {
     index: {
       import: "./src/server/index.ts",
@@ -84,7 +84,34 @@ const esmConfig = {
     filename: "[name].cjs",
   },
 };
-const nodeConfig = {
+const reactNativeConfig = {
+  entry: {
+    index: {
+      import: "./src/react-native/index.ts",
+      library: {
+        umdNamedDefine: true,
+        type: "umd",
+        export: "default",
+      },
+    },
+  },
+  target: "node",
+  externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
+  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
+   plugins: [
+    new CleanWebpackPlugin({
+      cleanStaleWebpackAssets: false,
+      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
+    }),
+    new NodePolyfillPlugin(),
+  ],
+  output: {
+    globalObject: "this",
+    path: path.join(__dirname, "./dist"),
+    filename: "reactNative.cjs",
+  },
+};
+const esmConfig = {
   // optimization: {
   //   splitChunks: {
   //     // include all types of chunks
@@ -166,10 +193,12 @@ module.exports = (env, argv) => {
   Object.assign(browserConfig, generalConfig);
   Object.assign(nodeConfig, generalConfig);
   Object.assign(esmConfig, generalConfig);
+  Object.assign(reactNativeConfig, generalConfig);
 
   return [
     browserConfig,
     nodeConfig,
-     esmConfig
+     esmConfig,
+     reactNativeConfig
     ];
 };
