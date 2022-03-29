@@ -5,7 +5,7 @@ import formData from 'form-data';
 
 if (!globalThis?.localStorage)  globalThis.localStorage = new FallbackStorage({});
 
-if (!globalThis?.FormData)  (globalThis as any).FormData = formData;
+globalThis.BagelFormData = formData;
 
 export { BagelUsersRequest, BagelDBRequest, BagelMetaRequest, BagelDB };
 export default BagelDB;
