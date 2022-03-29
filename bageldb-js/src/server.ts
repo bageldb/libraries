@@ -1,10 +1,10 @@
-import BagelDB from '../index';
-import { BagelDBRequest, BagelMetaRequest, BagelUsersRequest } from '../common';
+import BagelDB from './index';
+import { BagelDBRequest, BagelMetaRequest, BagelUsersRequest } from './common';
 // globalThis.EventSource = require('eventsource');
 import EventSource from 'eventsource';
 globalThis.EventSource =
   EventSource as unknown as typeof globalThis.EventSource;
-import FallbackStorage from '../fbStorage';
+import FallbackStorage from './fbStorage';
 import FormData from 'form-data';
 
 if (!globalThis?.localStorage) {

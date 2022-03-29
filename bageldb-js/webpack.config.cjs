@@ -60,7 +60,7 @@ const generalConfig = {
 const nodeConfig = {
   entry: {
     index: {
-      import: "./src/server/index.ts",
+      import: "./src/server.ts",
       library: {
         umdNamedDefine: true,
         type: "umd",
@@ -87,7 +87,7 @@ const nodeConfig = {
 const reactNativeConfig = {
   entry: {
     index: {
-      import: "./src/react-native/reactNative.ts",
+      import: "./src/reactNative.ts",
       library: {
         umdNamedDefine: true,
         type: "umd",
@@ -108,7 +108,7 @@ const reactNativeConfig = {
   output: {
     globalObject: "this",
     path: path.join(__dirname, "./dist"),
-    filename: "reactNative.cjs",
+    filename: "reactNative.js",
   },
 };
 const esmConfig = {

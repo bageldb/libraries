@@ -1,6 +1,6 @@
-import BagelDB from '../index';
-import { BagelDBRequest, BagelMetaRequest, BagelUsersRequest } from '../common';
-import FallbackStorage from '../fbStorage';
+import BagelDB from './index';
+import { BagelDBRequest, BagelMetaRequest, BagelUsersRequest } from './common';
+import FallbackStorage from './fbStorage';
 import FormData from 'form-data';
 
 if (!globalThis?.localStorage) {
