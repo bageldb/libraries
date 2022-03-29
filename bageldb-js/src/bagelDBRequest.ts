@@ -146,6 +146,34 @@ export default class BagelDBRequest {
     }
     return new Promise((resolve, reject) => {
       const url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
+      if (typeof navigator !== 'undefined' && navigator?.product === 'ReactNative') { //? react-native
+        const config = {
+          headers: {
+          ...formHeaders,
+          'Content-Type': 'multipart/form-data',
+          // if backend supports u can use gzip request encoding
+          'Content-Encoding': 'gzip',
+        },
+        transformRequest: (_data, _headers) => {
+          // !!! override data to return formData
+          // since axios converts that to string
+          return form;
+        },
+        // onUploadProgress: (progressEvent) => {
+        // use upload data, since it's an upload progress
+        // iOS: {"isTrusted": false, "lengthComputable": true, "loaded": 123, "total": 98902}
+        // },
+        data: form,
+      };
+       this.instance.axiosInstance
+          .put(url, form, config)
+          .then((imgResponse) => {
+            resolve(imgResponse);
+          })
+          .catch((err) => reject(err));
+          return;
+      }
+
       this.instance.axiosInstance
         .put(url, form, { headers: formHeaders })
         .then((imgResponse) => {
