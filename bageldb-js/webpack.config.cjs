@@ -87,7 +87,7 @@ const nodeConfig = {
 const reactNativeConfig = {
   entry: {
     index: {
-      import: "./src/react-native/index.ts",
+      import: "./src/react-native/reactNative.ts",
       library: {
         umdNamedDefine: true,
         type: "umd",

@@ -7,9 +7,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "browser": "./dist/bageldb.js",
-  "react-native": "./dist/reactNative.cjs",
+  "react-native": "./dist/reactNative.js",
   "exports": {
-    "react-native": "./dist/reactNative.cjs",
+    "react-native": "./dist/reactNative.js",
     "module": "./dist/index.js",
     "browser": "./dist/bageldb.js",
     "spread": "./dist/spread.js",
