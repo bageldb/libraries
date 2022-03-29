@@ -5,7 +5,9 @@ import { baseEndpoint, liveEndpoint } from './common';
 import { bagelType, fileUploadArgs, structArgs } from './interfaces';
 
 // eslint-disable-next-line @typescript-eslint/no-implied-eval
-const isNode = new Function('try {return this===global;}catch(e){return false;}');
+const isNode = new Function(
+  'try {return this===global;}catch(e){return false;}',
+);
 export default class BagelDBRequest {
   instance: bagelType;
 
@@ -59,8 +61,8 @@ export default class BagelDBRequest {
     this.sortField = '';
     this.sortOrder = '';
     // this.client;
-    this._item;
-    this._field;
+    this._item = undefined;
+    this._field = undefined;
   }
 
   // Pagination
@@ -86,18 +88,21 @@ export default class BagelDBRequest {
 
   item(_id: string) {
     // try {
-      if (!_id) throw new Error(`
+    if (!_id)
+      throw new Error(`
       item id must be defined as a non-empty string value.
       The item you provided is currently set to: '${_id}', with type: '${typeof _id}'
        `);
-      if (this._item) {
-        if (this.nestedCollectionsIDs.length % 2 === 0)
-          throw new Error('a nested item can only be placed after a nested collection');
-        this.nestedCollectionsIDs.push(_id);
-      } else {
-        this._item = _id;
-      }
-      return this;
+    if (this._item) {
+      if (this.nestedCollectionsIDs.length % 2 === 0)
+        throw new Error(
+          'a nested item can only be placed after a nested collection',
+        );
+      this.nestedCollectionsIDs.push(_id);
+    } else {
+      this._item = _id;
+    }
+    return this;
     // } catch (error: any) {
     //   return new Error(error);
     // }
@@ -129,49 +134,64 @@ export default class BagelDBRequest {
 
   // Either of imageLink or selectedImage must be used
   // selectedImage expects a file stream i.e fs.createReadStream(filename)
-  uploadImage(imageSlug: string, { selectedImage, imageLink, altText, fileName }: fileUploadArgs): AxiosPromise {
+  uploadImage(
+    imageSlug: string,
+    { selectedImage, imageLink, altText, fileName }: fileUploadArgs,
+  ): AxiosPromise {
     const form = new FormData();
     const nestedID = this.nestedCollectionsIDs.join('.');
-    if (altText) {
-      form.append('altText', altText);
-    }
-    if (imageLink) {
-      form.append('imageLink', imageLink);
-    } else {
+
+    if (altText) form.append('altText', altText);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    imageLink ?
+      form.append('imageLink', imageLink) :
       form.append('imageFile', selectedImage, fileName);
-    }
+
     let formHeaders: FormData.Headers | undefined;
-    if (isNode()) {
-      formHeaders = (form as FormData).getHeaders();
-    }
+
+    if (isNode()) formHeaders = (form as FormData)?.getHeaders?.();
+
     return new Promise((resolve, reject) => {
       const url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
-      if (typeof navigator !== 'undefined' && navigator?.product === 'ReactNative') { //? react-native
-      //   const config = {
-      //     headers: {
-      //     ...formHeaders,
-          // 'Content-Type': 'multipart/form-data',
-      //     // if backend supports u can use gzip request encoding
-      //     'Content-Encoding': 'gzip',
-      //   },
-      //   transformRequest: (_data, _headers) => {
-      //     // !!! override data to return formData
-      //     // since axios converts that to string
-      //     return form;
-      //   },
-      //   // onUploadProgress: (progressEvent) => {
-      //   // use upload data, since it's an upload progress
-      //   // iOS: {"isTrusted": false, "lengthComputable": true, "loaded": 123, "total": 98902}
-      //   // },
-      //   data: form,
-      // };
-      const body = Object.fromEntries((form as any)._parts)
-      this.instance.axiosInstance
-        .put(url, body, { headers: {...formHeaders, 'Content-Type': 'multipart/form-data'} })
-        .then((imgResponse) => {
-          resolve(imgResponse);
-        })
-        .catch((err) => reject(err));
+      if (
+        typeof navigator !== 'undefined' &&
+        navigator?.product === 'ReactNative'
+      ) {
+        //? react-native
+        //   const config = {
+        //     headers: {
+        //     ...formHeaders,
+        // 'Content-Type': 'multipart/form-data',
+        //     // if backend supports u can use gzip request encoding
+        //     'Content-Encoding': 'gzip',
+        //   },
+        //   transformRequest: (_data, _headers) => {
+        //     // !!! override data to return formData
+        //     // since axios converts that to string
+        //     return form;
+        //   },
+        //   // onUploadProgress: (progressEvent) => {
+        //   // use upload data, since it's an upload progress
+        //   // iOS: {"isTrusted": false, "lengthComputable": true, "loaded": 123, "total": 98902}
+        //   // },
+        //   data: form,
+        // };
+        const body = Object.fromEntries((form as any)._parts);
+        this.instance.axiosInstance
+          .put(
+            url,
+            body,
+            {
+              headers: {
+                ...formHeaders,
+                'Content-Type': 'multipart/form-data',
+              },
+            },
+          )
+          .then((imgResponse) => {
+            resolve(imgResponse);
+          })
+          .catch((err) => reject(err));
         return;
       }
 
@@ -257,14 +277,17 @@ export default class BagelDBRequest {
   }
 
   field(fieldSlug) {
-    if (!fieldSlug || fieldSlug.match(/\s/)) throw new Error('field slug cant be ' + fieldSlug);
+    if (!fieldSlug || fieldSlug.match(/\s/))
+      throw new Error('field slug cant be ' + fieldSlug);
     this._field = fieldSlug;
     return this;
   }
 
   increment(incrementValue): AxiosPromise {
-    if (!this._field) throw new Error('field must be set to use the increment method');
-    if (isNaN(parseFloat(incrementValue))) throw new Error('Increment value must be a number');
+    if (!this._field)
+      throw new Error('field must be set to use the increment method');
+    if (isNaN(parseFloat(incrementValue)))
+      throw new Error('Increment value must be a number');
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${this._field}?increment=${incrementValue}`;
@@ -281,9 +304,12 @@ export default class BagelDBRequest {
   }
 
   decrement(decrementValue): AxiosPromise {
-    if (!this._field) throw new Error('field must be set to use the decrement method');
-    if (typeof decrementValue == 'string') decrementValue = parseFloat(decrementValue);
-    if (isNaN(decrementValue)) throw new Error('Increment value must be a number');
+    if (!this._field)
+      throw new Error('field must be set to use the decrement method');
+    if (typeof decrementValue == 'string')
+      decrementValue = parseFloat(decrementValue);
+    if (isNaN(decrementValue))
+      throw new Error('Increment value must be a number');
     if (decrementValue > 0) decrementValue = decrementValue * -1;
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
@@ -302,7 +328,8 @@ export default class BagelDBRequest {
 
   unset(fieldSlug, value): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
-    if (nestedID) throw new Error('Unset is not yet supported in nested collections');
+    if (nestedID)
+      throw new Error('Unset is not yet supported in nested collections');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
@@ -346,7 +373,8 @@ export default class BagelDBRequest {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       this.itemsPerPage && params.append('perPage', `${this.itemsPerPage}`);
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      this.callEverything && params.append('everything', `${this.callEverything}`);
+      this.callEverything &&
+        params.append('everything', `${this.callEverything}`);
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       this._projectOff != '' && params.append('projectOff', this._projectOff);
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -354,8 +382,11 @@ export default class BagelDBRequest {
 
       const itemID = this._item ? '/' + this._item : '';
 
-      let url = `${baseEndpoint}/collection/${this.collectionID}/items${itemID}?${params.toString()}`;
-      if (this._query.length > 0) url = url + '&query=' + this._query.join('%2B');
+      let url = `${baseEndpoint}/collection/${
+        this.collectionID
+      }/items${itemID}?${params.toString()}`;
+      if (this._query.length > 0)
+        url = url + '&query=' + this._query.join('%2B');
       if (nestedID) url = url + `&nestedID=${nestedID}`;
 
       this.instance.axiosInstance
@@ -433,7 +464,10 @@ export default class BagelDBRequest {
   // Client is returned. It must be closed when it is no longer required using client.close()
   // onmessage and onerror are callback functions to process the data
   // see https://developer.mozilla.org/en-US/docs/Web/API/EventSource for more info on Server Side Events (SSE)
-  async listen(onmessage: (...args: any) => unknown, onerror: (...args: any) => unknown) {
+  async listen(
+    onmessage: (...args: any) => unknown,
+    onerror: (...args: any) => unknown,
+  ) {
     if (!onmessage) {
       throw new Error('onMessage callback must be defined');
     }
@@ -441,7 +475,8 @@ export default class BagelDBRequest {
     const eventSrc = globalThis.EventSource;
 
     let token: string | null | AxiosResponse<string, any>;
-    if (await this.instance.users()._bagelUserActive()) token = await this.instance.users()._getAccessToken();
+    if (await this.instance.users()._bagelUserActive())
+      token = await this.instance.users()._getAccessToken();
     else token = await this.apiToken;
 
     const nestedID = this.nestedCollectionsIDs.join('.');
@@ -469,12 +504,16 @@ export default class BagelDBRequest {
       }
     };
 
-    this.client.addEventListener('start', function (e: Event & Record<string, any>) {
-      that.requestID = e.data;
-    });
+    this.client.addEventListener(
+      'start',
+      function (e: Event & Record<string, any>) {
+        that.requestID = e.data;
+      },
+    );
 
     this.client.addEventListener('stop', async () => {
-      if (await that.instance.users()._bagelUserActive()) token = await that.instance.users()._getAccessToken();
+      if (await that.instance.users()._bagelUserActive())
+        token = await that.instance.users()._getAccessToken();
       else token = await that.apiToken;
 
       that.client.close();

@@ -1,4 +1,4 @@
-import { isUndefined, without, keys, size, includes } from 'lodash';
+import { isUndefined, without, keys, size, includes } from "lodash";
 
 export default class FallbackStorage {
   key: (index: any) => any;
@@ -13,10 +13,9 @@ export default class FallbackStorage {
 
   length: number;
 
-  __protected: () => { data: any; };
+  __protected: () => { data: any };
 
   constructor(data) {
-
     const storage = this;
 
     if (!data) data = {};
@@ -34,39 +33,36 @@ export default class FallbackStorage {
 
     this.setItem = function (key, value) {
       if (!includes(keylist, key)) keylist.push(key);
-      data[ key ] = value;
-      storage.length = size( data );
+      data[key] = value;
+      storage.length = size(data);
     };
 
     this.getItem = function (key) {
-      const value = data[ key ];
+      const value = data[key];
       return nullOrValue(value);
     };
 
     this.removeItem = function (key) {
-      delete data [ key ];
-      keylist = without( keylist, key );
-      storage.length = size( data );
+      delete data[key];
+      keylist = without(keylist, key);
+      storage.length = size(data);
     };
 
     this.clear = function () {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      const _keys = keys( data );
+      const _keys = keys(data);
       const remove = this.removeItem;
       _keys.forEach(function (key) {
         remove(key);
       });
     };
 
-    this.length = size( data );
+    this.length = size(data);
 
     this.__protected = function () {
       return {
         data,
       };
     };
-
   }
 }
-
-
