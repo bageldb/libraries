@@ -149,9 +149,9 @@ export default class BagelDBRequest {
 
     return new Promise((resolve, reject) => {
       const url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
-      if (
-        isReactNative
-      ) {
+      // if (
+      //   isReactNative
+      // ) {
       //   //? react-native
       //   //   const config = {
       //   //     headers: {
@@ -171,26 +171,27 @@ export default class BagelDBRequest {
       //   //   // },
       //   //   data: form,
       //   // };
-        const body = Object.fromEntries((form as any)._parts);
-        console.log(body);
+      // const body = Object.fromEntries((form as any)._parts);
+      // console.log(body);
 
-        this.instance.axiosInstance
-          .put(
-            url,
-            body,
-            {
-              headers: {
-                ...formHeaders,
-                'Content-Type': 'multipart/form-data',
-              },
-            },
-          )
-          .then((imgResponse) => {
-            resolve(imgResponse);
-          })
-          .catch((err) => reject(err));
-        return;
-      }
+      // this.instance.axiosInstance
+      //   .put(
+      //     url,
+      //     body,
+      //     {
+      //       headers: {
+      //         ...formHeaders,
+      //         'Content-Type': 'multipart/form-data',
+      //       },
+      //     },
+      //   )
+      //   .then((imgResponse) => {
+      //     resolve(imgResponse);
+      //   })
+      //   .catch((err) => reject(err));
+      // return;
+      // }
+      console.log(form);
 
       this.instance.axiosInstance
         .put(url, form, { headers: formHeaders })
