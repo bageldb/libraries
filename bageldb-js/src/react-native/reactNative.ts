@@ -9,6 +9,7 @@ if (!globalThis?.localStorage) {
 if (!globalThis?.FormData) {
   (globalThis as any).FormData = FormData;
 }
+console.log('running in react native!!');
 
 export { BagelUsersRequest, BagelDBRequest, BagelMetaRequest, BagelDB };
 export default BagelDB;
