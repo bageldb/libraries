@@ -1,4 +1,4 @@
-import { AxiosInstance, AxiosPromise } from './common';
+import { AxiosInstance, AxiosPromise, AxiosResponse } from './common';
 import FallbackStorage from './fbStorage';
 import { bagelType, BagelUser } from './interfaces';
 
@@ -139,7 +139,7 @@ export default class BagelUsersRequest {
     });
   }
 
-  async getUser() {
+  async getUser(): Promise<AxiosResponse<BagelUser, any>> {
     try {
       const userIsActive = await this._bagelUserActive();
         if (!userIsActive) {

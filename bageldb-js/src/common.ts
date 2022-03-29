@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosPromise } from 'axios';
+import axios, { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
 import BagelDBRequest from './bagelDBRequest';
 import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
@@ -17,4 +17,5 @@ export {
   baseEndpoint,
   liveEndpoint,
   AxiosPromise,
+  AxiosResponse
 };
