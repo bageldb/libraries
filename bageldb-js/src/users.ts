@@ -1,19 +1,7 @@
 import { AxiosInstance, AxiosPromise, AxiosResponse } from './common';
-import FallbackStorage from './fbStorage';
 import { bagelType, BagelUser } from './interfaces';
 
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
-if (typeof document !== 'undefined') {
-  // I'm on the web!
-} else if (
-  typeof navigator !== 'undefined' &&
-  navigator?.product === 'ReactNative'
-) {
-  // I'm in react-native
-  globalThis.localStorage = new FallbackStorage({});
-} else {
-  // I'm in node js
-}
 
 export default class BagelUsersRequest {
   instance: bagelType;

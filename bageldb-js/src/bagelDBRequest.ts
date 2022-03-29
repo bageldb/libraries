@@ -1,13 +1,9 @@
 import { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
 import FormData from 'form-data';
 import { axios } from './common';
-import { baseEndpoint, liveEndpoint } from './common';
+import { baseEndpoint, liveEndpoint, isNode, isReactNative } from './common';
 import { bagelType, fileUploadArgs, structArgs } from './interfaces';
 
-// eslint-disable-next-line @typescript-eslint/no-implied-eval
-const isNode = new Function(
-  'try {return this===global;}catch(e){return false;}',
-);
 export default class BagelDBRequest {
   instance: bagelType;
 
@@ -138,7 +134,7 @@ export default class BagelDBRequest {
     imageSlug: string,
     { selectedImage, imageLink, altText, fileName }: fileUploadArgs,
   ): AxiosPromise {
-    const form = new FormData();
+    const form = new globalThis.FormData();
     const nestedID = this.nestedCollectionsIDs.join('.');
 
     if (altText) form.append('altText', altText);
@@ -149,7 +145,7 @@ export default class BagelDBRequest {
 
     let formHeaders: FormData.Headers | undefined;
 
-    if (isNode()) formHeaders = (form as FormData)?.getHeaders?.();
+    if (isNode() || isReactNative) formHeaders = (form as unknown as FormData)?.getHeaders?.();
 
     return new Promise((resolve, reject) => {
       const url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
