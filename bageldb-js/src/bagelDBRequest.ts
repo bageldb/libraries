@@ -150,7 +150,7 @@ export default class BagelDBRequest {
       //   const config = {
       //     headers: {
       //     ...formHeaders,
-      //     'Content-Type': 'multipart/form-data',
+          // 'Content-Type': 'multipart/form-data',
       //     // if backend supports u can use gzip request encoding
       //     'Content-Encoding': 'gzip',
       //   },
@@ -165,16 +165,9 @@ export default class BagelDBRequest {
       //   // },
       //   data: form,
       // };
-      //  this.instance.axiosInstance
-      //     .put(url, form, config)
-      //     .then((imgResponse) => {
-      //       resolve(imgResponse);
-      //     })
-      //     .catch((err) => reject(err));
-      //     return;
       const body = Object.fromEntries((form as any)._parts)
       this.instance.axiosInstance
-        .put(url, body, { headers: formHeaders })
+        .put(url, body, { headers: {...formHeaders, 'Content-Type': 'multipart/form-data'} })
         .then((imgResponse) => {
           resolve(imgResponse);
         })
