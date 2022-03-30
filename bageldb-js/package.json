@@ -1,13 +1,13 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.29-dev.3.2",
+  "version": "0.3.29-dev.3.4",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "types": "lib/typescript/src/index.d.ts",
   "type": "module",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
   "browser": "./lib/module/index.js",
-  "react-native": "./src/reactNative.ts",
+  "react-native": "./lib/typescript/reactNative.ts",
   "scripts": {
     "expose:cmd": "node unwrap.cjs",
     "build": "webpack --mode=production",
