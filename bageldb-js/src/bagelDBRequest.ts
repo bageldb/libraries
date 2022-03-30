@@ -183,7 +183,7 @@ export default class BagelDBRequest {
                 ...formHeaders,
                 'Content-Type': 'multipart/form-data',
               },
-              transformRequest: (data) => data,
+              transformRequest: () => form,
             },
           )
           .then((imgResponse) => {
