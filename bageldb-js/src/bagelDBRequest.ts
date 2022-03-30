@@ -174,23 +174,26 @@ export default class BagelDBRequest {
         // const body = Object.fromEntries((form as any)._parts);
         // console.log(body);
 
-        this.axiosInstance
-          .put(
-            url,
-            form,
-            {
-              headers: {
-                // ...formHeaders,
-                'Content-Type': 'multipart/form-data',
-              },
-              transformRequest: () => form,
-            },
-          )
-          .then((imgResponse) => {
-            resolve(imgResponse);
-          })
-          .catch((err) => reject(err));
-        return;
+        // this.axiosInstance
+        //   .put(
+        //     url,
+        //     form,
+        //     {
+        //       headers: {
+        //         // ...formHeaders,
+        //         'Content-Type': 'multipart/form-data',
+        //       },
+        //       transformRequest: () => form,
+        //     },
+        //   )
+        //   .then((imgResponse) => {
+        //     resolve(imgResponse);
+        //   })
+        //   .catch((err) => reject(err));
+        // return;
+        formHeaders = {
+          'Content-Type': 'multipart/form-data',
+        };
       }
 
       this.instance.axiosInstance
