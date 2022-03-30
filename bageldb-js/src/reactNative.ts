@@ -1,5 +1,8 @@
 import BagelDB from './index';
-import { BagelDBRequest, BagelMetaRequest, BagelUsersRequest } from './common';
+
+import BagelDBRequest from './bagelDBRequest';
+import BagelMetaRequest from './bagelMetaRequest';
+import BagelUsersRequest from './users';
 import FallbackStorage from './fbStorage';
 
 if (!globalThis?.localStorage)  globalThis.localStorage = new FallbackStorage({});

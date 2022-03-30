@@ -1,8 +1,9 @@
 import { AxiosInstance, AxiosRequestHeaders } from 'axios';
+
+import BagelDBRequest from './bagelDBRequest';
+import BagelMetaRequest from './bagelMetaRequest';
+import BagelUsersRequest from './users';
 import {
-  BagelDBRequest,
-  BagelMetaRequest,
-  BagelUsersRequest,
   axios,
 } from './common';
 

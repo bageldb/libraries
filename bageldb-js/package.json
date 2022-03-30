@@ -7,7 +7,7 @@
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
   "browser": "./lib/module/index.js",
-  "react-native": "./lib/typescript/reactNative.ts",
+  "react-native": "./src/reactNative.ts",
   "scripts": {
     "expose:cmd": "node unwrap.cjs",
     "build": "webpack --mode=production",
