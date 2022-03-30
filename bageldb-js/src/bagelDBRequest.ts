@@ -153,44 +153,27 @@ export default class BagelDBRequest {
         isReactNative
       ) {
       //   //? react-native
-      //   //   const config = {
-      //   //     headers: {
-      //   //     ...formHeaders,
-      //   // 'Content-Type': 'multipart/form-data',
-      //   //     // if backend supports u can use gzip request encoding
-      //   //     'Content-Encoding': 'gzip',
-      //   //   },
-      //   //   transformRequest: (_data, _headers) => {
-      //   //     // !!! override data to return formData
-      //   //     // since axios converts that to string
-      //   //     return form;
-      //   //   },
-      //   //   // onUploadProgress: (progressEvent) => {
-      //   //   // use upload data, since it's an upload progress
-      //   //   // iOS: {"isTrusted": false, "lengthComputable": true, "loaded": 123, "total": 98902}
-      //   //   // },
-      //   //   data: form,
-      //   // };
-        // const body = Object.fromEntries((form as any)._parts);
-        // console.log(body);
-
-        this.axiosInstance
-          .put(
-            url,
-            form,
-            {
-              headers: {
-                // ...formHeaders,
-                'Content-Type': 'multipart/form-data',
-              },
-              transformRequest: () => form,
-            },
-          )
-          .then((imgResponse) => {
-            resolve(imgResponse);
-          })
-          .catch((err) => reject(err));
-        return;
+        // this.instance.axiosInstance
+        //   .put(
+        //     url,
+        //     form,
+        //     {
+        //       headers: {
+        //         // ...formHeaders,
+        //         'Content-Type': 'multipart/form-data',
+        //       },
+        //       transformRequest: () => form,
+        //     },
+        //   )
+        //   .then((imgResponse) => {
+        //     resolve(imgResponse);
+        //   })
+        //   .catch((err) => reject(err));
+        // return;
+        formHeaders = {
+          // ...formHeaders,
+          'Content-Type': 'multipart/form-data',
+        };
       }
 
       this.instance.axiosInstance
