@@ -6,23 +6,8 @@
   "type": "module",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
-  "browser": "./dist/bageldb.js",
+  "browser": "./lib/module/index.js",
   "react-native": "./src/reactNative.ts",
-  "exports": {
-    "react-native": "./src/reactNative.ts",
-    "module": "./dist/index.js",
-    "browser": "./dist/bageldb.js",
-    "spread": "./dist/spread.js",
-    "node": {
-      "script": "./dist/bageldb.js",
-      "module": "./dist/index.js",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "default": "./dist/index.cjs"
-    },
-    "script": "./dist/bageldb.js",
-    "default": "./dist/bageldb.js"
-  },
   "scripts": {
     "expose:cmd": "node unwrap.cjs",
     "build": "webpack --mode=production",
