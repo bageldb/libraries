@@ -180,10 +180,10 @@ export default class BagelDBRequest {
             form,
             {
               headers: {
-                ...formHeaders,
+                // ...formHeaders,
                 'Content-Type': 'multipart/form-data',
               },
-              transformRequest: () => form,
+              // transformRequest: () => form,
             },
           )
           .then((imgResponse) => {
