@@ -1,11 +1,13 @@
 import { AxiosInstance, AxiosRequestHeaders } from 'axios';
-
 import BagelDBRequest from './bagelDBRequest';
 import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
 import {
   axios,
 } from './common';
+import FallbackStorage from './fbStorage';
+
+if (!globalThis?.localStorage)  globalThis.localStorage = new FallbackStorage({});
 
 export default class Bagel {
   [x: string]: any;

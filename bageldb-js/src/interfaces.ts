@@ -3,7 +3,10 @@ import type bagelMetaRequestType from './bagelMetaRequest';
 import type bagelUsersRequestType from './users';
 import type bagelType from '.';
 import Bagel from '.';
-import { BagelDBRequest, BagelMetaRequest, BagelUsersRequest } from './common';
+
+import BagelDBRequest from './bagelDBRequest';
+import BagelMetaRequest from './bagelMetaRequest';
+import BagelUsersRequest from './users';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 type fileUploadArgs = {
   selectedImage?: any;

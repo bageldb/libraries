@@ -1,7 +1,7 @@
-import { AxiosPromise } from "axios";
-import { baseEndpoint } from "./common";
-import { BagelDBRequest } from "./common";
-import { structArgs } from "./interfaces";
+import { AxiosPromise } from 'axios';
+import { baseEndpoint } from './common';
+import BagelDBRequest  from './bagelDBRequest';
+import { structArgs } from './interfaces';
 export default class BagelMetaRequest extends BagelDBRequest {
   constructor({ instance, collectionID }: structArgs) {
     super({ instance, collectionID });
