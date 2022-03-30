@@ -171,19 +171,19 @@ export default class BagelDBRequest {
       //   //   // },
       //   //   data: form,
       //   // };
-        const body = Object.fromEntries((form as any)._parts);
+        // const body = Object.fromEntries((form as any)._parts);
         // console.log(body);
 
         this.instance.axiosInstance
           .put(
             url,
-            body,
+            form,
             {
               headers: {
                 ...formHeaders,
                 'Content-Type': 'multipart/form-data',
               },
-              transformRequest: () => body,
+              transformRequest: () => form,
             },
           )
           .then((imgResponse) => {
