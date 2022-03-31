@@ -1,3 +1,6 @@
 import BagelDB from '.';
-import { BagelDBRequest, BagelMetaRequest, BagelUsersRequest } from './common';
+
+import BagelDBRequest from './bagelDBRequest';
+import BagelMetaRequest from './bagelMetaRequest';
+import BagelUsersRequest from './users';
 export { BagelUsersRequest, BagelDBRequest, BagelMetaRequest, BagelDB };
