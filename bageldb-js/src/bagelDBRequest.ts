@@ -196,7 +196,7 @@ export default class BagelDBRequest {
         };
       }
 
-      this.instance.axiosInstance
+      this.axiosInstance
         .put(url, form, { headers: formHeaders })
         .then((imgResponse) => {
           resolve(imgResponse);
