@@ -130,10 +130,10 @@ export default class BagelDBRequest {
 
   // Either of imageLink or selectedImage must be used
   // selectedImage expects a file stream i.e fs.createReadStream(filename)
-  uploadImage(
+  async uploadImage(
     imageSlug: string,
     { selectedImage, imageLink, altText, fileName }: fileUploadArgs,
-  ): AxiosPromise {
+  ):Promise<AxiosResponse<any, any>> {
     const form = new globalThis.FormData();
     const nestedID = this.nestedCollectionsIDs.join('.');
 
@@ -143,67 +143,34 @@ export default class BagelDBRequest {
       form.append('imageLink', imageLink) :
       form.append('imageFile', selectedImage, isReactNative ? undefined : fileName);
 
+
+
+    const url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
+    if (
+      isReactNative
+    ) {
+      //   //? react-native
+
+      const res = await this.instance.axiosInstance
+        .put(
+          url,
+          form,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+            transformRequest: () => form,
+          },
+        );
+      return res;
+    }
     let formHeaders: FormData.Headers | undefined;
 
+    if (isNode()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
 
-    return new Promise((resolve, reject) => {
-      const url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
-      if (
-        isReactNative
-      ) {
-      //   //? react-native
-      //   //   const config = {
-      //   //     headers: {
-      //   //     ...formHeaders,
-      //   // 'Content-Type': 'multipart/form-data',
-      //   //     // if backend supports u can use gzip request encoding
-      //   //     'Content-Encoding': 'gzip',
-      //   //   },
-      //   //   transformRequest: (_data, _headers) => {
-      //   //     // !!! override data to return formData
-      //   //     // since axios converts that to string
-      //   //     return form;
-      //   //   },
-      //   //   // onUploadProgress: (progressEvent) => {
-      //   //   // use upload data, since it's an upload progress
-      //   //   // iOS: {"isTrusted": false, "lengthComputable": true, "loaded": 123, "total": 98902}
-      //   //   // },
-      //   //   data: form,
-      //   // };
-        // const body = Object.fromEntries((form as any)._parts);
-        // console.log(body);
-
-        // this.axiosInstance
-        //   .put(
-        //     url,
-        //     form,
-        //     {
-        //       headers: {
-        //         // ...formHeaders,
-        //         'Content-Type': 'multipart/form-data',
-        //       },
-        //       transformRequest: () => form,
-        //     },
-        //   )
-        //   .then((imgResponse) => {
-        //     resolve(imgResponse);
-        //   })
-        //   .catch((err) => reject(err));
-        // return;
-        formHeaders = {
-          ...formHeaders,
-          'Content-Type': 'multipart/form-data',
-        };
-      }
-      if (isNode()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
-
-      this.instance.axiosInstance
-        .put(url, form, { headers: formHeaders })
-        .then((imgResponse) => {
-          resolve(imgResponse);
-        })
-        .catch((err) => reject(err));
-    });
+    const res = await this.instance.axiosInstance
+      .put(url, form, { headers: formHeaders });
+    return res;
   }
 
   delete() {
