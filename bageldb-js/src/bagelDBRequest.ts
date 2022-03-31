@@ -141,7 +141,7 @@ export default class BagelDBRequest {
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     imageLink ?
       form.append('imageLink', imageLink) :
-      form.append('imageFile', selectedImage, isReactNative ? undefined : fileName);
+      form.append('imageFile', selectedImage, fileName);
 
 
 
@@ -150,7 +150,6 @@ export default class BagelDBRequest {
       isReactNative
     ) {
       //   //? react-native
-
       const res = await this.instance.axiosInstance
         .put(
           url,
