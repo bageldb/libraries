@@ -145,7 +145,6 @@ export default class BagelDBRequest {
 
     let formHeaders: FormData.Headers | undefined;
 
-    if (isNode()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
 
     return new Promise((resolve, reject) => {
       const url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
@@ -192,11 +191,13 @@ export default class BagelDBRequest {
         //   .catch((err) => reject(err));
         // return;
         formHeaders = {
+          ...formHeaders,
           'Content-Type': 'multipart/form-data',
         };
       }
+      if (isNode()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
 
-      this.axiosInstance
+      this.instance.axiosInstance
         .put(url, form, { headers: formHeaders })
         .then((imgResponse) => {
           resolve(imgResponse);
