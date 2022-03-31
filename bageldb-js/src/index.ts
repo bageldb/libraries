@@ -3,9 +3,7 @@ import { AxiosInstance, AxiosRequestHeaders } from 'axios';
 import BagelDBRequest from './bagelDBRequest';
 import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
-import {
-  axios,
-} from './common';
+import { axios } from './common';
 
 export default class Bagel {
   [x: string]: any;
