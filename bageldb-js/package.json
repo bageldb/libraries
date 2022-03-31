@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.29-dev.3.1",
+  "version": "0.3.29-dev.3.8",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -88,5 +88,13 @@
     "webpack": "^5.70.0",
     "webpack-cli": "^4.9.2",
     "webpack-node-externals": "^3.0.0"
-  }
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "eslintIgnore": [
+    "node_modules/",
+    "dist/"
+  ]
 }

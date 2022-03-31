@@ -1,5 +1,5 @@
 import { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
-import FormData from 'form-data';
+import type FormData from 'form-data';
 import { axios } from './common';
 import { baseEndpoint, liveEndpoint, isNode, isReactNative } from './common';
 import { bagelType, fileUploadArgs, structArgs } from './interfaces';
@@ -134,7 +134,7 @@ export default class BagelDBRequest {
     imageSlug: string,
     { selectedImage, imageLink, altText, fileName }: fileUploadArgs,
   ): AxiosPromise {
-    const form = new FormData();
+    const form = new globalThis.FormData();
     const nestedID = this.nestedCollectionsIDs.join('.');
 
     if (altText) form.append('altText', altText);
