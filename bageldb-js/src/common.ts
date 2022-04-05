@@ -9,13 +9,15 @@ const isReactNative = typeof navigator !== 'undefined' && navigator?.product ===
 const isNode = new Function(
   'try {return this===global;}catch(e){return false;}',
 );
-export {
+export type {
   AxiosInstance,
+  AxiosPromise,
+  AxiosResponse,
+};
+export {
   axios,
   baseEndpoint,
   liveEndpoint,
-  AxiosPromise,
-  AxiosResponse,
   isReactNative,
   isNode,
 };
