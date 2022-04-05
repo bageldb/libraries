@@ -1,6 +1,6 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-// const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 // const webpack  = require("webpack");
@@ -164,7 +164,7 @@ const browserConfig = {
   externalsPresets: { node: true },
   // externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   output: {
-    publicPath: '/bageldb.js',
+    // publicPath: '/',
     path: path.resolve(__dirname, "./dist"),
     filename: "bageldb.js",
     globalObject: "this",
@@ -176,6 +176,17 @@ const browserConfig = {
       export: "default",
     },
   },
+  // plugins: [
+  //   new CleanWebpackPlugin({
+  //     cleanStaleWebpackAssets: false,
+  //     cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
+  //   }),
+
+  //     // new NodePolyfillPlugin(),
+  //   new HtmlWebpackPlugin({
+  //     title: "bageldb-js",
+  //   }),
+  // ],
 };
 
 module.exports = (env, argv) => {
@@ -193,9 +204,9 @@ module.exports = (env, argv) => {
   Object.assign(reactNativeConfig, generalConfig);
 
   return [
-    browserConfig,
     nodeConfig,
-     esmConfig,
-     reactNativeConfig
+    esmConfig,
+    reactNativeConfig,
+    browserConfig,
     ];
 };
