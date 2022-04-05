@@ -164,7 +164,7 @@ const browserConfig = {
   externalsPresets: { node: true },
   // externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   output: {
-    publicPath: '/',
+    publicPath: '/bageldb.js',
     path: path.resolve(__dirname, "./dist"),
     filename: "bageldb.js",
     globalObject: "this",
