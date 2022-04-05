@@ -1,10 +1,11 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.31-dev.2.1",
+  "version": "0.3.31-dev.2.2",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "types": "./dist/index.d.ts",
   "type": "module",
   "unpkg": "./dist/bageldb.js",
+  "react-native": "./src/reactNative.ts",
   "exports": {
     "react-native": "./src/reactNative.ts",
     "node": {
@@ -17,7 +18,6 @@
   },
   "script": "./dist/bageldb.js",
   "module": "./dist/index.mjs",
-  "react-native": "./src/reactNative.ts",
   "scripts": {
     "expose:cmd": "node unwrap.cjs",
     "build": "webpack --mode=production",
