@@ -168,7 +168,7 @@ const browserConfig = {
     path: path.resolve(__dirname, "./dist"),
     filename: "bageldb.js",
     globalObject: "this",
-    scriptType: "module",
+    // scriptType: "module",
     library: {
       umdNamedDefine: true,
       name: "Bagel",
