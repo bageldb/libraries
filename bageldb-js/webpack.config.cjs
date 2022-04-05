@@ -204,7 +204,7 @@ module.exports = (env, argv) => {
   }
 
   Object.assign(browserConfig, generalConfig);
-  Object.assign(nodeConfig, generalConfig);
+  Object.assign(nodeConfig, generalConfig,nodeConfig);
   Object.assign(esmConfig, generalConfig);
   // Object.assign(reactNativeConfig, generalConfig);
 
