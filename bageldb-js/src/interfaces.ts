@@ -36,7 +36,7 @@ interface structArgs {
   instance: bagelType;
   collectionID: string;
 }
-export {
+export type {
   fileUploadArgs,
   BagelUser,
   UserGroups,
