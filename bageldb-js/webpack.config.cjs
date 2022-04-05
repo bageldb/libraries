@@ -144,9 +144,9 @@ const esmConfig = {
       spread: path.resolve(__dirname, 'dist/spread.js'),
     },
   },
-  // target: "node",
-  // externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
-  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
+  // target: "web",
+  externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
+  // externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   //  plugins: [
   //   new CleanWebpackPlugin({
   //     cleanStaleWebpackAssets: false,
