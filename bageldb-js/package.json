@@ -13,8 +13,7 @@
         "import": "./dist/index.mjs",
         "require": "./dist/index.cjs"
       },
-      "default": "./dist/index.mjs",
-      "spread": "./dist/spread.mjs"
+      "default": "./dist/index.mjs"
     },
     "./package.json": "./package.json"
   },

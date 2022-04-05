@@ -131,18 +131,6 @@ const esmConfig = {
         // export: "default",
       },
     },
-    spread: {
-      import: "./src/spread.ts",
-      library: {
-        umdNamedDefine: true,
-        type: "module",
-      },
-    },
-  },
-  resolve: {
-    alias: {
-      spread: path.resolve(__dirname, 'dist/spread.js'),
-    },
   },
   // target: "web",
   externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
@@ -167,13 +155,10 @@ const browserConfig = {
   entry: "./src/index.ts",
   target: "web",
   externalsPresets: { node: true },
-  // externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   output: {
-    // publicPath: '/',
     path: path.resolve(__dirname, "./dist"),
     filename: "bageldb.js",
     globalObject: "this",
-    // scriptType: "module",
     library: {
       umdNamedDefine: true,
       name: "Bagel",
@@ -181,17 +166,6 @@ const browserConfig = {
       export: "default",
     },
   },
-  // plugins: [
-  //   new CleanWebpackPlugin({
-  //     cleanStaleWebpackAssets: false,
-  //     cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
-  //   }),
-
-  //     // new NodePolyfillPlugin(),
-  //   new HtmlWebpackPlugin({
-  //     title: "bageldb-js",
-  //   }),
-  // ],
 };
 
 module.exports = (env, argv) => {
