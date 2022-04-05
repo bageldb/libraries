@@ -5,7 +5,7 @@ import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
 import { axios } from './common';
 
-export default class Bagel {
+class Bagel {
   [x: string]: any;
 
   isServer: boolean;
@@ -138,6 +138,7 @@ export default class Bagel {
   }
 }
 
+export default Bagel;
 export {
   BagelUsersRequest,
   BagelDBRequest,
