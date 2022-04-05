@@ -119,43 +119,40 @@ const esmConfig = {
   //     name: "shared",
   //   },
   // },
+  experiments: {
+    outputModule: true,
+  },
   entry: {
     index: {
       import: "./src/index.ts",
       library: {
         umdNamedDefine: true,
-        type: "umd",
-        export: "default",
+        type: "module",
+        // export: "default",
       },
     },
     spread: {
       import: "./src/spread.ts",
       library: {
-        // umdNamedDefine: true,
-        type: "umd",
+        umdNamedDefine: true,
+        type: "module",
       },
     },
   },
-  target: "node",
-  // resolve: {
-  //   extensions: ['', '.js','.ts'],
-  //   alias: {
-  //     'utils': './src/checks'  // <-- When you build or restart dev-server, you'll get an error if the path to your utils.js file is incorrect.
-  //   }
-  // },
-  externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
-  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
+  // target: "node",
+  // externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
+  // externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
    plugins: [
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
       cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
     }),
-    new NodePolyfillPlugin(),
+    // new NodePolyfillPlugin(),
   ],
   output: {
     globalObject: "this",
     path: path.join(__dirname, "./dist"),
-    filename: "[name].js",
+    filename: "[name].mjs",
   },
 };
 
