@@ -10,7 +10,7 @@
       "ESNext",
     ],
     "module": "esnext",
-    "target": "ES5",
+    "target": "ES2015",
     "rootDir": "src",
     "skipLibCheck": true,
     "typeRoots": [
