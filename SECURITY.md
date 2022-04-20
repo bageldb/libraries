@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability 🔐
 
-If you have found a potential security threat, vulnerability or exploit in Quasar
+If you have found a potential security threat, vulnerability or exploit in BagelDB
 or one of its upstream dependencies, please DON'T create a pull-request, DON'T
 file an issue on GitHub, DON'T mention it on Discord and DON'T create a forum thread.
 
