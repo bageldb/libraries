@@ -1,10 +1,12 @@
 {
   "name": "@bageldb/bageldb-nuxt",
-  "version": "0.2.02",
+  "version": "0.2.03-dev.1.2",
   "description": "A BagelDB module for Nuxt.js",
   "main": "lib/module.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish:prod": "npm publish --access public --tag dev",
+    "publish:dev": "npm publish --access public --dry-run --tag dev"
   },
   "keywords": [
     "SSR",
@@ -13,7 +15,7 @@
   "author": "BagelDB",
   "license": "ISC",
   "dependencies": {
-    "@bageldb/bagel-db": "^0.3.15",
+    "@bageldb/bagel-db": "^0.3.33",
     "axios": "^0.21.1",
     "cookie": "^0.4.1",
     "form-data": "^3.0.0"

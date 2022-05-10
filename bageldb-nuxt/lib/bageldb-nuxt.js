@@ -2,7 +2,7 @@
 
 import { create, request }  from "axios";
 import { parse, serialize } from "cookie";
-import { BagelDB, BagelUsersRequest } from "@bageldb/bagel-db/spread";
+import { BagelDB, BagelUsersRequest } from "@bageldb/bagel-db";
 
 const AUTH_ENDPOINT = "https://auth.bageldb.com/api/public"
 class BagelNuxtUser extends BagelUsersRequest {

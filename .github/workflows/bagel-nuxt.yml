@@ -20,6 +20,6 @@ jobs:
       - run: |
           cd ./bageldb-nuxt
           npm ci
-      - run: npm publish ./bageldb-nuxt --access public
+          npm run publish:prod
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_KEY}}
