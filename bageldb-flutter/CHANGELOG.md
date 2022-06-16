@@ -108,3 +108,11 @@
 - Better error handling
 - Instance consistancy for `users()`
 - `authStateChange` bug fixes - wont add events after closing, and propely re-instatiate when opening again
+
+# 0.1.23
+
+- Refactor code and cleanup
+- Add support to new methods in `users()` like:
+    - `resendOtp()` Resends the OTP message to the user, utilizing an independant provider, to ensure maximum reliablity.
+    - `requestPasswordReset(email)` will send a password reset email to the user
+- Replaced localstore to `SharedPreferences`, this will log users out. To import the locally stored users tokens to the with this [migration code](https://github.com/bageldb/migrate_stored_users)

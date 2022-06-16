@@ -1,15 +1,15 @@
 import 'dart:async';
-
-import 'package:bagel_db/src/bagel_db_localstore.dart';
+import '../bagel_db.dart';
 import 'package:dio/dio.dart';
-
 import 'bagel_db_functions.dart';
+import 'bage_db_shared_prefs.dart';
 
 String authEndpoint = "https://auth.bageldb.com/api/public";
 
 class Collections {
   static String user = "user";
   static String access = "access";
+  static String nonce = "nonce";
 }
 
 class BagelUser {
@@ -30,31 +30,24 @@ class AuthEvent {
 class BagelUsersRequest {
   BagelDB instance;
   late Dio dio;
-  final _db = LocalStore.instance;
+  late final SP _sp = SP();
   BagelUser? _user;
   BagelUser? get user => _user;
   BagelUsersRequest(this.instance) {
-    LocalStore.open(this.instance.dbPath);
     dio = Dio(BaseOptions(headers: {
-      'Authorization': 'Bearer ${this.instance.token}',
+      'Authorization': 'Bearer ${instance.token}',
       "Accept-Version": "v1"
     }));
     _getLocalUser();
   }
 
-  _getLocalUser() {
-    print('get local user');
-    _db
-        .collection(Collections.user)
-        .doc(Collections.user)
-        .get()
-        .then((element) {
-      _userHandler(element);
-    });
+  _getLocalUser() async {
+    await _sp.init();
+    Map usr = _sp.get(Collections.user);
+    _userHandler(usr);
   }
 
-  // ignore: close_sinks
-  StreamController<AuthEvent> _userStateController =
+  final StreamController<AuthEvent> _userStateController =
       StreamController<AuthEvent>.broadcast(
     sync: true,
   );
@@ -64,42 +57,39 @@ class BagelUsersRequest {
     return _userStateController.stream;
   }
 
-  /// use the getter [user] to get BagelUser or Null to determine if a user is logged in
-  @deprecated
+  @Deprecated(
+      'use the getter [user] to get BagelUser or Null to determine if a user is logged in')
   Future<bool> isLoggedIn() async {
     return _user != null;
   }
 
-  /// use the getter [user] instead to get the current user;
-  @deprecated
+  @Deprecated('use the getter [user] instead to get the current user')
   BagelUser? getUser() {
     return _user;
   }
 
-  /// use the getter [user] instead to get the currenly logged in BagelUser
-  @deprecated
+  @Deprecated(
+      "use the getter [user] instead to get the currenly logged in BagelUser")
   String? getUserID() {
     return _user?.userID;
   }
 
   void _userHandler(usr) async {
-    if (usr == null) {
+    if (usr.isEmpty) {
       // user has logged out
       _userStateController.add(AuthEvent(loggedin: false));
       return;
     }
-    Map<String, dynamic>? access =
-        await _db.collection(Collections.access).doc("access").get();
-    if (access == null) return _logout();
+    Map<String, dynamic>? access = _sp.get(Collections.access);
+    if (access.isEmpty) return _logout();
 
     try {
       DateTime now = DateTime.now();
       DateTime expiryTime = DateTime.parse(access["expires_in"]);
       if (now.isAfter(expiryTime)) await _refresh();
     } catch (err) {
-      throw (err);
+      rethrow;
     }
-
     await _setUser(usr["userID"], email: usr["email"], phone: usr["phone"]);
   }
 
@@ -114,15 +104,16 @@ class BagelUsersRequest {
     } catch (err) {
       if (err is DioError) throw (err.response.toString());
     }
+    return null;
   }
 
   Future<String> _getOtpRequestNonce() async {
-    Map<String, dynamic>? otpRequest =
-        await _db.collection(Collections.access).doc("nonce").get();
-    if (otpRequest != null) {
+    Map<String, dynamic>? otpRequest = _sp.get(Collections.nonce);
+    if (otpRequest.isNotEmpty) {
       DateTime expiryTime = DateTime.parse(otpRequest["expires_in"]);
-      if (new DateTime.now().isAfter(expiryTime))
+      if (DateTime.now().isAfter(expiryTime)) {
         throw ("OTP request has expired, try again");
+      }
       return otpRequest["nonce"];
     } else {
       return "";
@@ -131,11 +122,9 @@ class BagelUsersRequest {
 
   _storeOtpRequestNonce(Map otpRequest) {
     DateTime expires =
-        new DateTime.now().add(Duration(seconds: otpRequest["expires_in"]));
-    _db
-        .collection(Collections.access)
-        .doc("nonce")
-        .set({"nonce": otpRequest["nonce"], "expires_in": expires.toString()});
+        DateTime.now().add(Duration(seconds: otpRequest["expires_in"]));
+    _sp.set(Collections.nonce,
+        {"expires_in": expires.toString(), "nonce": otpRequest["nonce"]});
   }
 
   /// Request the user receive a One Time Password either via SMS or Email
@@ -160,6 +149,21 @@ class BagelUsersRequest {
     } catch (e) {
       if (e is DioError) throw (e.response.toString());
     }
+    return null;
+  }
+
+  /// Sends the OTP message again via a different provider when the user did not receive the message
+  Future<String?> resendOtp() async {
+    String nonce = await _getOtpRequestNonce();
+    try {
+      String url = '$authEndpoint/user/otp/resend/$nonce';
+      Response res = await dio.post(url);
+      _storeOtpRequestNonce(res.data);
+      return res.data["nonce"];
+    } catch (e) {
+      if (e is DioError) throw (e.response.toString());
+    }
+    return null;
   }
 
   /// Authenticate the user with an email and password
@@ -170,6 +174,17 @@ class BagelUsersRequest {
       Response res = await dio.post(url, data: body);
       _storeTokens(res.data);
       return await _setUser(res.data["user_id"], email: email);
+    } catch (e) {
+      if (e is DioError) throw (e.response.toString());
+    }
+    return null;
+  }
+
+  Future<void> requestPasswordReset(String email) async {
+    String url = '$authEndpoint/user/resetpassword';
+    Map body = {"email": email};
+    try {
+      await dio.post(url, data: body);
     } catch (e) {
       if (e is DioError) throw (e.response.toString());
     }
@@ -193,20 +208,19 @@ class BagelUsersRequest {
     } catch (err) {
       if (err is DioError) throw (err.response.toString());
     }
+    return null;
   }
 
   _storeBagelUser(BagelUser user) {
-    _db
-        .collection(Collections.user)
-        .doc(Collections.user)
-        .set({"userID": user.userID, "email": user.email, "phone": user.phone});
+    _sp.set(Collections.user,
+        {"userID": user.userID, "email": user.email, "phone": user.phone});
   }
 
   Future _storeTokens(data) async {
     String accessToken = data["access_token"],
         refreshToken = data["refresh_token"];
     int expires = data["expires_in"];
-    await _db.collection(Collections.access).doc("access").set({
+    _sp.set(Collections.access, {
       "expires_in": DateTime.now().add(Duration(seconds: expires)).toString(),
       "accessToken": accessToken,
       "refreshToken": refreshToken
@@ -214,15 +228,13 @@ class BagelUsersRequest {
   }
 
   Future<String?> _getRefreshToken() async {
-    Map<String, dynamic>? refreshToken =
-        await _db.collection(Collections.access).doc("access").get();
-    return refreshToken?["refreshToken"];
+    Map<String, dynamic>? refreshToken = _sp.get(Collections.access);
+    return refreshToken["refreshToken"];
   }
 
   Future<String?> getAccessToken() async {
-    Map<String, dynamic>? accessToken =
-        await _db.collection(Collections.access).doc("access").get();
-    return accessToken?["accessToken"];
+    Map<String, dynamic>? accessToken = _sp.get(Collections.access);
+    return accessToken["accessToken"];
   }
 
   _setUser(userID, {String? email, String? phone}) {
@@ -239,8 +251,8 @@ class BagelUsersRequest {
   void _logout() async {
     _user = null;
     _userStateController.add(AuthEvent());
-    await _db.collection(Collections.access).doc("access").delete();
-    await _db.collection(Collections.user).doc("user").delete();
+    await _sp.delete(Collections.access);
+    await _sp.delete(Collections.user);
   }
 
   /// Log the user out
@@ -259,7 +271,7 @@ class BagelUsersRequest {
     try {
       Options options = Options(headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer ${this.instance.token}',
+        'Authorization': 'Bearer ${instance.token}',
         // "Accept-Version": "v1"
       });
       Response res = await dio.post(url, data: body, options: options);
@@ -268,7 +280,7 @@ class BagelUsersRequest {
       }
       return res;
     } catch (err) {
-      throw (err);
+      rethrow;
     }
   }
 }
