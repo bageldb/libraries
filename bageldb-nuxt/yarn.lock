@@ -10,10 +10,10 @@
     core-js "^2.6.5"
     regenerator-runtime "^0.13.4"
 
-"@bageldb/bagel-db@^0.3.33":
-  version "0.3.33"
-  resolved "https://registry.yarnpkg.com/@bageldb/bagel-db/-/bagel-db-0.3.33.tgz#1e6af9bdcbf87f97f9949df92c726bdab0d0de07"
-  integrity sha512-KiBWP3apkpfir8HTzTqC+4kBjEJW5m/rr913O1VeOvo+UFgETmmgTE29Zt97efT0jjezOvzOvW298h4d2jxDOg==
+"@bageldb/bagel-db@^0.3.34-dev.2.1":
+  version "0.3.34-dev.2.1"
+  resolved "https://registry.yarnpkg.com/@bageldb/bagel-db/-/bagel-db-0.3.34-dev.2.1.tgz#df64322a635970f2a1c8fde47ae16f971b76180b"
+  integrity sha512-FZbxcy4wpynwMrTJsYIJeXR3dkVjoevXWTnsQt5yVuCQlFXFKbmqH0YJ0caWcfE5cDQm1TO1Dm/20vi4vG3pfA==
   dependencies:
     "@babel/polyfill" "^7.10.1"
     axios "^0.26.1"
