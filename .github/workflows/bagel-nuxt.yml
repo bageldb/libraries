@@ -19,7 +19,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: |
           cd ./bageldb-nuxt
-          npm ci
+          npm i
           npm run publish:prod
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_KEY}}
