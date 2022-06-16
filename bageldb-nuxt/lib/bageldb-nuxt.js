@@ -1,8 +1,8 @@
 'use-strict'
 
-import { create, request }  from "axios";
-import { parse, serialize } from "cookie";
-import { BagelDB, BagelUsersRequest } from "@bageldb/bagel-db";
+const { create, request } = require('axios');
+const { parse, serialize } = require('cookie');
+const { BagelUsersRequest,BagelDB }  = require('@bageldb/bagel-db/dist/spread.cjs');
 
 const AUTH_ENDPOINT = "https://auth.bageldb.com/api/public"
 class BagelNuxtUser extends BagelUsersRequest {
@@ -109,7 +109,8 @@ class BagelNuxtUser extends BagelUsersRequest {
 }
 
 
-export default class BagelNuxt extends BagelDB {
+// export default
+module.exports = class BagelNuxt extends BagelDB {
     constructor(apiToken, ctx) {
         super(apiToken)
         this.ctx = ctx;

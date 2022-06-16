@@ -67,7 +67,7 @@ export default {
       let userID = await this.$db
         .users()
         .create(email, password)
-        .catch((err) => console.log(err));
+        .catch(console.log);
       // create an item with the user's id to store more information about the user.
       await this.$db.collection("users").item(userID).set({ email, userName });
     },

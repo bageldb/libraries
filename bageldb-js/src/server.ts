@@ -5,8 +5,7 @@ import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
 // globalThis.EventSource = require('eventsource');
 import EventSource from 'eventsource';
-globalThis.EventSource =
-  EventSource as unknown as typeof globalThis.EventSource;
+globalThis.EventSource = globalThis?.EventSource || EventSource as unknown as typeof globalThis.EventSource;
 
 import FallbackStorage from './fbStorage';
 import FormData from 'form-data';
