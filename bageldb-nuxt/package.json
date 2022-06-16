@@ -3,6 +3,9 @@
   "version": "0.2.03-dev.1.2",
   "description": "A BagelDB module for Nuxt.js",
   "main": "lib/module.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "publish:prod": "npm publish --access public --tag dev",
@@ -16,8 +19,9 @@
   "license": "ISC",
   "dependencies": {
     "@bageldb/bagel-db": "^0.3.33",
-    "axios": "^0.21.1",
-    "cookie": "^0.4.1",
-    "form-data": "^3.0.0"
+    "axios": "^0.27.2",
+    "cookie": "^0.5.0",
+    "eventsource": "^2.0.2",
+    "form-data": "^4.0.0"
   }
 }
