@@ -8,8 +8,8 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "publish:prod": "npm publish --access public --tag dev",
-    "publish:dev": "npm publish --access public --dry-run --tag dev"
+    "publish:prod": "npm publish --access public --tag latest",
+    "publish:dev": "npm publish --access public --dry-run --tag latest"
   },
   "keywords": [
     "SSR",
