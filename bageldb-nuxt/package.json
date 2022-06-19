@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bageldb-nuxt",
-  "version": "0.2.03-dev.2.1",
+  "version": "0.2.04",
   "description": "A BagelDB module for Nuxt.js",
   "main": "lib/module.js",
   "files": [
@@ -18,7 +18,7 @@
   "author": "BagelDB",
   "license": "ISC",
   "dependencies": {
-    "@bageldb/bagel-db": "^0.3.34-dev.2.1",
+    "@bageldb/bagel-db": "^0.3.35",
     "axios": "^0.27.2",
     "cookie": "^0.5.0"
   }
