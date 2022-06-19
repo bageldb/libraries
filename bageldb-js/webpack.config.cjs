@@ -67,12 +67,12 @@ const nodeConfig = {
         export: "default",
       },
     },
-    spread: {
-      import: "./src/spread.ts",
+    serverSpread: {
+      import: "./src/serverSpread.ts",
       library: {
         umdNamedDefine: true,
         type: "umd",
-        // export: "default",
+        export: "default",
       },
     },
   },
