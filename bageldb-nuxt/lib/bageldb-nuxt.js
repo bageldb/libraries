@@ -2,7 +2,7 @@
 
 const { create, request } = require('axios');
 const { parse, serialize } = require('cookie');
-const { BagelUsersRequest,BagelDB }  = require('@bageldb/bagel-db/dist/spread.cjs');
+const { BagelUsersRequest,BagelDB }  = require('@bageldb/bagel-db/dist/serverSpread.cjs');
 
 const AUTH_ENDPOINT = "https://auth.bageldb.com/api/public"
 class BagelNuxtUser extends BagelUsersRequest {

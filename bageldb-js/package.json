@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.34-dev.2.1",
+  "version": "0.3.34",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "types": "./dist/index.d.ts",
   "type": "module",
@@ -8,7 +8,7 @@
   "react-native": "./src/reactNative.ts",
   "exports": {
     "./package.json": "./package.json",
-    "./dist/spread.cjs": "./dist/spread.cjs",
+    "./dist/serverSpread.cjs": "./dist/serverSpread.cjs",
     ".": {
       "node": {
         "module": "./dist/index.mjs",
@@ -33,8 +33,8 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "clean": "rm index.cjs spread.cjs index.js.LICENSE.txt bageldb.js.LICENSE.txt es-bagel.js shared.js spread.d.ts spread.js index.html bageldb.js index.js common.d.ts interfaces.d.ts users.d.ts index.d.ts bagelDBRequest.d.ts bagelMetaRequest.d.ts fbStorage.d.ts index.cjs spread.cjs checks.d.ts *.bageldb.js [0-9]*.js",
     "build:types": "yarn run tsc --emitDeclarationOnly",
-    "publish:prod": "npm publish --access public --tag dev",
-    "publish:dev": "npm run clean & npm publish --access public --dry-run --tag dev"
+    "publish:prod": "npm publish --access public --tag latest",
+    "publish:dev": "npm run clean & npm publish --access public --dry-run --tag latest"
   },
   "repository": {
     "type": "git",
