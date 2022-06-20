@@ -7,7 +7,7 @@ import '../lib/bagel_db.dart';
 
 import '../.testToken.dart';
 
-BagelDB db = BagelDB(testToken, dbPath: Directory.systemTemp.path);
+BagelDB db = BagelDB(testToken);
 
 final String docId = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -191,7 +191,7 @@ getItemsTest() {
 postItemTest() {
   group('post item test', () {
     // given
-    BagelDB db = BagelDB(testToken, dbPath: Directory.systemTemp.path);
+    BagelDB db = BagelDB(testToken);
 
     test('simple post test', () async {
       BagelResponse response = await db.collection('testItems').post({

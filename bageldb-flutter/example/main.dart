@@ -6,8 +6,7 @@ import 'dart:io';
 import '../lib/bagel_db.dart';
 
 // create an instance of BagelDB
-BagelDB bagelDB = BagelDB('BearerTestToken',
-    dbPath: Directory.systemTemp.path); // replace with your project id
+BagelDB bagelDB = BagelDB('BearerTestToken'); // replace with your project id
 
 // a var that will hold the response from BagelDB
 BagelResponse response = BagelResponse(data: {}, statusCode: 0);

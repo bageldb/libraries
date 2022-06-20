@@ -2,13 +2,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SP {
   late SharedPreferences instance;
-
+  bool hasInit = false;
   Future<SharedPreferences> init() async {
     instance = await SharedPreferences.getInstance();
+    hasInit = true;
     return instance;
   }
 
-  Map<String, dynamic> get(String key) {
+  Future<Map<String, dynamic>> get(String key) async {
+    if (!hasInit) await init();
     final res = <String, dynamic>{};
     String? str = instance.getString(key);
     if (str == null) return res;

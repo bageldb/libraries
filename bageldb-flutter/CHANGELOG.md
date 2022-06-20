@@ -116,3 +116,8 @@
     - `resendOtp()` Resends the OTP message to the user, utilizing an independant provider, to ensure maximum reliablity.
     - `requestPasswordReset(email)` will send a password reset email to the user
 - Replaced localstore to `SharedPreferences`, this will log users out. To import the locally stored users tokens to the with this [migration code](https://github.com/bageldb/migrate_stored_users)
+
+
+# 0.1.24
+
+- Fixed async issue with SharedPreferences
