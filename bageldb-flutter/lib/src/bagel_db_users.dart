@@ -43,7 +43,7 @@ class BagelUsersRequest {
 
   _getLocalUser() async {
     await _sp.init();
-    Map usr = _sp.get(Collections.user);
+    Map usr = await _sp.get(Collections.user);
     _userHandler(usr);
   }
 
@@ -80,7 +80,7 @@ class BagelUsersRequest {
       _userStateController.add(AuthEvent(loggedin: false));
       return;
     }
-    Map<String, dynamic>? access = _sp.get(Collections.access);
+    Map<String, dynamic>? access = await _sp.get(Collections.access);
     if (access.isEmpty) return _logout();
 
     try {
@@ -108,7 +108,7 @@ class BagelUsersRequest {
   }
 
   Future<String> _getOtpRequestNonce() async {
-    Map<String, dynamic>? otpRequest = _sp.get(Collections.nonce);
+    Map<String, dynamic>? otpRequest = await _sp.get(Collections.nonce);
     if (otpRequest.isNotEmpty) {
       DateTime expiryTime = DateTime.parse(otpRequest["expires_in"]);
       if (DateTime.now().isAfter(expiryTime)) {
@@ -228,12 +228,12 @@ class BagelUsersRequest {
   }
 
   Future<String?> _getRefreshToken() async {
-    Map<String, dynamic>? refreshToken = _sp.get(Collections.access);
+    Map<String, dynamic>? refreshToken = await _sp.get(Collections.access);
     return refreshToken["refreshToken"];
   }
 
   Future<String?> getAccessToken() async {
-    Map<String, dynamic>? accessToken = _sp.get(Collections.access);
+    Map<String, dynamic>? accessToken = await _sp.get(Collections.access);
     return accessToken["accessToken"];
   }
 
