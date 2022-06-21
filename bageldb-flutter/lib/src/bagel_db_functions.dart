@@ -405,17 +405,13 @@ class BagelDBRequest {
           _listen();
         } else if (event.type == "message") {
           dynamic response;
-          try {
-            response = json.decode(event.data);
-          } catch (err) {
-            response = {};
-            RegExp r = RegExp(r'"itemID":"(\w*)');
-            response["itemID"] = r.firstMatch(event.data)?.group(1);
-            _item = response["itemID"];
-            response["item"] = {};
-            RegExp trgr = RegExp(r'"trigger":"(\w*)');
-            response["trigger"] = trgr.firstMatch(event.data)?.group(1);
-          }
+          response = {};
+          RegExp r = RegExp(r'"itemID":"(\w*)');
+          response["itemID"] = r.firstMatch(event.data)?.group(1);
+          _item = response["itemID"];
+          response["item"] = {};
+          RegExp trgr = RegExp(r'"trigger":"(\w*)');
+          response["trigger"] = trgr.firstMatch(event.data)?.group(1);
           switch (response["trigger"]) {
             case "update":
               int i = data.indexWhere(
