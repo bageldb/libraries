@@ -382,7 +382,11 @@ class BagelDBRequest {
     Response<ResponseBody> rs;
     List<dynamic> data = [];
     BagelResponse res = await get();
-    data.add(res.data);
+    if (_item != null && nestedCollectionsIDs.length % 2 != 0) {
+      data.add(res.data);
+    } else {
+      data = res.data;
+    }
     StreamSubscription<Uint8List>? subscription;
 
     _listen() async {
@@ -405,6 +409,7 @@ class BagelDBRequest {
           _listen();
         } else if (event.type == "message") {
           dynamic response;
+
           response = {};
           RegExp r = RegExp(r'"itemID":"(\w*)');
           response["itemID"] = r.firstMatch(event.data)?.group(1);
@@ -414,19 +419,24 @@ class BagelDBRequest {
           response["trigger"] = trgr.firstMatch(event.data)?.group(1);
           switch (response["trigger"]) {
             case "update":
-              int i = data.indexWhere(
+              var i = data.indexWhere(
                   (element) => element["_id"] == response["itemID"]);
               if (i != -1) {
+                BagelResponse res = await get();
+                response["item"] = res.data;
                 data[i] = response["item"];
                 onData(BagelEvent.fromPayload(response, data));
               }
               break;
             case "delete":
-              data =
-                  data.map((element) => element != response["itemID"]).toList();
+              data = data
+                  .where((element) => element["_id"] != response["itemID"])
+                  .toList();
               onData(BagelEvent.fromPayload(response, data));
               break;
             case "create":
+              BagelResponse res = await get();
+              response["item"] = res.data;
               data.add(response["item"]);
               onData(BagelEvent.fromPayload(response, data));
               break;
