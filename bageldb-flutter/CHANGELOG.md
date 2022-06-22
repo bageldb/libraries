@@ -125,3 +125,7 @@
 # 0.1.25
 
 - `listen()` now fetches a new item on event listner for improved item parsing
+
+# 0.1.26
+
+- `listen()` Improvements and fixes on update delete and create
