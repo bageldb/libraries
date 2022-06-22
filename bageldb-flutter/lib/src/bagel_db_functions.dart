@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:universal_io/io.dart';
 import 'package:dio/dio.dart';
-import "dart:convert";
 import 'bagel_db_users.dart';
 
 ///## **BagelDB** is a content management system with rich API features. For more info, visit here bageldb.com
