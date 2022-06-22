@@ -93,10 +93,23 @@ class Bagel {
     );
   }
 
+  /**
+   * It returns a new instance of the `BagelMetaRequest` class, which is a class that
+   * extends the `BagelRequest` class
+   * @param {string} collectionID - The ID of the collection you want to get the
+   * schema for.
+   * @returns A new instance of the BagelMetaRequest class.
+   */
   schema(collectionID: string) {
     return new BagelMetaRequest({ instance: this, collectionID });
   }
 
+  /**
+   * It returns a new BagelDBRequest object with the instance and collectionID
+   * properties set
+   * @param {string} collectionID - The ID of the collection you want to access.
+   * @returns A new BagelDBRequest object.
+   */
   collection(collectionID: string) {
     return new BagelDBRequest({ instance: this, collectionID });
   }
@@ -133,6 +146,14 @@ class Bagel {
     return 'within';
   }
 
+  /**
+   * It takes a latitude, longitude, and distance and returns a string that can be
+   * used in a query to find all the points within that distance
+   * @param {number} lat - latitude of the point to search around
+   * @param {number} lng - longitude
+   * @param {number} distance - The distance in meters from the point.
+   * @returns A string with the lat, lng, and distance.
+   */
   static GeoPointQuery(lat: number, lng: number, distance: number) {
     return `${lat},${lng},${distance}`;
   }
