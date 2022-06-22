@@ -148,7 +148,6 @@ class BagelDBRequest {
   /// Build and execute a get request to bagelDB, for both full collection and item requests
   Future<BagelResponse> get() async {
     Map<String, dynamic> params = <String, dynamic>{};
-
     if (_pageNumber != 1) params["pageNumber"] = _pageNumber.toString();
     if (sortField != "") params["sort"] = sortField;
     if (sortOrder != "") params["order"] = sortOrder;
@@ -156,18 +155,16 @@ class BagelDBRequest {
     if (callEverything) params["everything"] = callEverything.toString();
     if (_projectOff != null) params["projectOff"] = _projectOff!;
     if (_projectOn != null) params["projectOn"] = _projectOn!;
-
+    if (_query.isNotEmpty) params["query"] = _query.join("%2B");
+    if (nestedCollectionsIDs.isNotEmpty) {
+      params["nestedID"] = nestedCollectionsIDs.join(".");
+    }
     String itemID = _item != null ? '/${_item!}' : '';
 
-    String url =
-        '$baseEndpoint/collection/$collectionID/items$itemID?${params.toString()}';
-    if (_query.isNotEmpty) url = "$url&query=${_query.join("%2B")}";
-    if (nestedCollectionsIDs.isNotEmpty) {
-      String nestedID = nestedCollectionsIDs.join(".");
-      url = '$url&nestedID=$nestedID';
-    }
     Dio dio = await _dio();
-    Response response = await dio.get(url, queryParameters: params);
+    Response response = await dio.get(
+        '$baseEndpoint/collection/$collectionID/items$itemID',
+        queryParameters: params);
     Headers headers = response.headers;
     BagelResponse res = BagelResponse(
       data: response.data,
@@ -264,8 +261,8 @@ class BagelDBRequest {
   /// sort data by [sortTerm] - a specific field, for example ```age```,
   /// and by [sortField] - ```desc``` for descending order, ```asc``` for ascending order.
   BagelDBRequest sort(String sortField, {String? sortOrder}) {
-    sortField = sortField;
-    if (sortOrder != null) sortOrder = sortOrder;
+    this.sortField = sortField;
+    if (sortOrder != null) this.sortOrder = sortOrder;
     return this;
   }
 
