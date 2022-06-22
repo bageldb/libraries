@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bageldb-nuxt",
-  "version": "0.2.22",
+  "version": "0.2.23-dev.1.1",
   "description": "A BagelDB module for Nuxt.js",
   "main": "lib/module.js",
   "files": [
@@ -8,8 +8,8 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "publish:prod": "npm publish --access public --tag latest",
-    "publish:dev": "npm publish --access public --dry-run --tag latest"
+    "publish:prod": "npm publish --access public --tag dev",
+    "publish:dev": "npm publish --access public --dry-run --tag dev"
   },
   "keywords": [
     "SSR",
