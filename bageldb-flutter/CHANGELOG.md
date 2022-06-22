@@ -121,3 +121,7 @@
 # 0.1.24
 
 - Fixed async issue with SharedPreferences
+
+# 0.1.25
+
+- `listen()` now fetches a new item on event listner for improved item parsing
