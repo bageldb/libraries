@@ -148,6 +148,7 @@ class BagelDBRequest {
   /// Build and execute a get request to bagelDB, for both full collection and item requests
   Future<BagelResponse> get() async {
     Map<String, dynamic> params = <String, dynamic>{};
+    if (_query.isNotEmpty) params["query"] = _query.join("+");
     if (_pageNumber != 1) params["pageNumber"] = _pageNumber.toString();
     if (sortField != "") params["sort"] = sortField;
     if (sortOrder != "") params["order"] = sortOrder;
@@ -155,7 +156,6 @@ class BagelDBRequest {
     if (callEverything) params["everything"] = callEverything.toString();
     if (_projectOff != null) params["projectOff"] = _projectOff!;
     if (_projectOn != null) params["projectOn"] = _projectOn!;
-    if (_query.isNotEmpty) params["query"] = _query.join("%2B");
     if (nestedCollectionsIDs.isNotEmpty) {
       params["nestedID"] = nestedCollectionsIDs.join(".");
     }
@@ -254,7 +254,7 @@ class BagelDBRequest {
   /// For example: ```query('age', '=', '32')``` or for an itemRef query ```query('position.itemRefID', '=', '[432EWDWE]')```
   BagelDBRequest query(String key, String queryOperator, dynamic value) {
     String query = "$key:$queryOperator:$value";
-    _query.add(Uri.encodeQueryComponent(query));
+    _query.add(query);
     return this;
   }
 

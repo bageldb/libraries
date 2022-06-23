@@ -129,3 +129,11 @@
 # 0.1.26
 
 - `listen()` Improvements and fixes on update delete and create
+
+# 0.1.27
+
+- `get()` params bug fix
+
+# 0.1.28
+
+- Fix query double encoding
