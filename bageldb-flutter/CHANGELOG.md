@@ -133,3 +133,7 @@
 # 0.1.27
 
 - `get()` params bug fix
+
+# 0.1.28
+
+- Fix query double encoding

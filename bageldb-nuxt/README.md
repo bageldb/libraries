@@ -1,6 +1,6 @@
 # BagelDB Client for NuxtJS
 
-BagelDB is a content management system with flexible database with user login, felx
+BagelDB is a content management system with flexible database with user login
 
 ## Setup
 
