@@ -26,7 +26,10 @@ class Bagel {
     this.isServer = !!options.isServer;
     this.customStorage = options.customStorage;
     this.apiToken = apiToken;
-    this.axiosInstance = axios.create();
+    this.axiosInstance = axios.create({
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
+    });
     this.axiosInstance.interceptors.request.use(
       async (config) => {
         (config.headers as AxiosRequestHeaders)['Accept-Version'] = 'v1';
