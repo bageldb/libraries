@@ -2,7 +2,12 @@ import { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
 import type FormData from 'form-data';
 import { axios } from './common';
 import { baseEndpoint, liveEndpoint, isNode, isReactNative } from './common';
-import { bagelType, fileUploadArgs, structArgs } from './interfaces';
+import {
+  bagelType,
+  fileUploadArgs,
+  BagelGeoPointQuery,
+  structArgs,
+} from './interfaces';
 
 export default class BagelDBRequest {
   instance: bagelType;
@@ -63,9 +68,12 @@ export default class BagelDBRequest {
 
   // Pagination
   /**
+   * @summary
+   * Use built in pagination, you can set the number of items {@link perPage|per page} and the page you would like to retreive.
    * It sets the page number to the value passed in.
-   * @param {number | string} pageNumber - The page number to retrieve.
-   * @returns The object itself.
+   * @param {number | string} pageNumber - The page number to retrieve. (@default value is 1)
+   * @returns Bagel class instance
+   * @see Docs {@link https://docs.bageldb.com/content-api/#pagination}
    */
   pageNumber(pageNumber: number | string) {
     this._pageNumber = `${pageNumber}`;
@@ -73,10 +81,14 @@ export default class BagelDBRequest {
   }
 
   /**
+   * @summary
+   * Use built in pagination, you can set the number of items per page and the page you would like to retreive using {@link pageNumber|pageNumber}.
+   *
    * It takes a number or a string, converts it to a string, and returns the
    * current instance of the class
-   * @param {number | string} perPage - The number of items to return per page.
-   * @returns The object itself.
+   * @param {number | string} perPage - The number of items to return per page (@default value is 100).
+   * @returns Bagel class instance
+   * @see Docs {@link https://docs.bageldb.com/content-api/#pagination}
    */
   perPage(perPage: number | string) {
     this.itemsPerPage = `${perPage}`;
@@ -85,7 +97,8 @@ export default class BagelDBRequest {
 
   /**
    * This function is used to retrieve all data from a collection.
-   * @returns The object itself.
+   * @returns Bagel class instance
+   * @todo Add to the documentation.
    */
   everything() {
     this.callEverything = true;
@@ -93,9 +106,13 @@ export default class BagelDBRequest {
   }
 
   /**
-   * This function is used to collection nested in a collection by chaining item(itemsID) and collection(collectionID).
+   * @summary
+   * Get a Collection
+   *
+   * For a nested collection, item(itemsID) and collection(collectionID) can be chained till the correct collection and item is reached
    * @param {string} collectionSlug - The slug of the collection you want to nest.
-   * @returns The object itself.
+   * @returns Bagel class instance
+   * @see Docs {@link https://docs.bageldb.com/content-api/#get-collection}
    */
   collection(collectionSlug: string) {
     this.nestedCollectionsIDs.push(collectionSlug);
@@ -103,10 +120,12 @@ export default class BagelDBRequest {
   }
 
   /**
-   * The function takes in an id as a string, and if the id is valid, it will add
+   * @summary
+   * The function takes in an item id/slug as a string, and if the id is valid, it will add
    * it to the query chain.
    * @param {string} _id - string
-   * @returns The current instance of the class.
+   * @returns Bagel class instance
+   * @see Docs {@link https://docs.bageldb.com/content-api/#get-a-single-item}
    */
   item(_id: string) {
     // try {
@@ -131,20 +150,21 @@ export default class BagelDBRequest {
   }
 
   /**
+   * @summary
    * "This function adds a query to the query array."
    *
    * The first thing we do is check if the key is empty. If it is, we return the
    * current instance of the class for chaining.
    * @param {string} key - The key to query on.
-   * @param {'=' | '!=' | '>' | '<' | 'regex' | 'within'} operator - '=' | '!=' |
-   * '>' | '<' | 'regex' | 'within'
-   * @param {string | string[]} value - string | string[]
-   * @returns The query string
+   * @param {'=' | '!=' | '>' | '<' | 'regex' | 'within'} operator  - '=' | '!=' |'>' | '<' | 'regex' | 'within'
+   * @param {string | string[] | BagelGeoPointQuery} value - string | string[] | BagelGeoPointQuery
+   * @returns Bagel class instance
+   * @see Docs {@link https://docs.bageldb.com/content-api/#querying}
    */
   query(
     key: string,
     operator: '=' | '!=' | '>' | '<' | 'regex' | 'within',
-    value: string | string[],
+    value: string | string[] | BagelGeoPointQuery,
   ) {
     if (!key) return this;
     if (Array.isArray(value)) value = value.join(',');
@@ -157,7 +177,8 @@ export default class BagelDBRequest {
    * Sort the data by the given field and order, and return the query object.
    * @param {string} field - The field to sort by.
    * @param {'asc' | 'desc'} order - 'asc' | 'desc'
-   * @returns The query object itself.
+   * @returns Bagel class instance
+   * @see Docs {@link https://docs.bageldb.com/content-api/rest/#query-params}
    */
   sort(field: string, order: 'asc' | 'desc') {
     this.sortField = field;
@@ -166,11 +187,17 @@ export default class BagelDBRequest {
   }
 
   /**
-   * It sets the value of the private variable _projectOn to the value of the
-   * parameter slugs.
+   * @summary It is possible to project on and project off for all fields in an item, enabling you to retrieve only exactly what is required in the response body
+   *
+   * It is not possible to mix both {@link projectOn|projectOn} and {@link projectOff|projectOff}.
+   *
+   * Metadata field will always be retrieved unless explicitly projectedOff i.e _id, _lastUpdateDate and _createdDate
+   *
+   * (⚠️ Note that nested collection fields in a collection will only be returned if projected on)
    * @param {string} slugs - string - A comma separated list of slugs to project
    * on.
-   * @returns The query object itself.
+   * @returns Bagel class instance
+   * @see Docs {@link https://docs.bageldb.com/content-api/#projection}
    */
   projectOn(slugs: string) {
     this._projectOn = slugs;
@@ -178,25 +205,33 @@ export default class BagelDBRequest {
   }
 
   /**
-   * It sets the value of the private variable _projectOff to the value of the
-   * parameter slugs.
+   * @summary It is possible to project on and project off for all fields in an item, enabling you to retrieve only exactly what is required in the response body
+   *
+   * It is not possible to mix both {@link projectOn|projectOn} and {@link projectOff|projectOff}.
+   *
+   * Metadata field will always be retrieved unless explicitly projectedOff i.e _id, _lastUpdateDate and _createdDate
+   *
+   * (⚠️ Note that nested collection fields in a collection will only be returned if projected on)
    * @param {string} slugs - A comma separated list of slugs you want to remove from the projection.
-   * @returns The object itself.
+   * @returns Bagel class instance
+   * @see Docs {@link https://docs.bageldb.com/content-api/#projection}
    */
   projectOff(slugs: string) {
     this._projectOff = slugs;
     return this;
   }
 
-  // Either of imageLink or selectedImage must be used
-  // selectedImage expects a file stream i.e fs.createReadStream(filename)
   /**
-   * It takes an image slug, and an object with the image file, image link, alt
-   * text, and file name, and returns a promise with the response from the server
+   * selectedImage expects a file stream i.e fs.createReadStream(filename) OR a blob
+   * imageLink can be a link to a file stored somewhere on the web
+   * The method checks if imageLink exists and if not will use selectedImage
+   * The request is sent via a FormData request.
    * @param {string} imageSlug - The field's slug of the image you want to upload.
-   * @param {fileUploadArgs}  - `imageSlug` - the slug of the image you want to
-   * upload.
+   * @param {fileUploadArgs} Object - { selectedImage, imageLink, altText, fileName }
+   * **⚠️ _Note: Either imageLink or imageFile must be included but not both_**
+   *
    * @returns The response from the server.
+   * @see Docs {@link https://docs.bageldb.com/content-api/#uploading-asset}
    */
   async uploadImage(
     imageSlug: string,
@@ -238,7 +273,9 @@ export default class BagelDBRequest {
 
   /**
    * It deletes an item from a collection
+   * **⚠️ _Note: this action is irreversible_**
    * @returns A promise that resolves to the response from the server.
+   * @see Docs {@link https://docs.bageldb.com/content-api/#delete-item}
    */
   delete() {
     const nestedID = this.nestedCollectionsIDs.join('.');
@@ -252,6 +289,18 @@ export default class BagelDBRequest {
     });
   }
 
+  /**
+   * @summary
+   * When creating an item the _id will be set for you by the server.
+   *
+   * If you require to set the _id of the item, use the set method.
+   * @example
+   * data = { name: 'John' }
+   * db.collection('COLLECTION_SLUG').item('YOUR_CUSTOM_ITEM_ID').set(data);
+   * @param {object} data - The data you want to set when creating the item.
+   * @returns A promise that resolves to the response from the server.
+   * @see Docs {@link https://docs.bageldb.com/content-api/#set-item-id}
+   */
   set(data: Record<string, any>): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
     let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}?set=true`;
@@ -266,6 +315,16 @@ export default class BagelDBRequest {
     });
   }
 
+  /**
+   * @summary
+   * Takes a data object, and updates the item with the new data.
+   * @example
+   * data = { name: 'Jane' }
+   * db.collection('COLLECTION_SLUG').item('ITEM_ID').put(data);
+   * @param {object} data - an object with the data you want to update
+   * @returns A promise that resolves to the response from the server.
+   * @see Docs {@link https://docs.bageldb.com/content-api/#update-item}
+   */
   put(data: Record<string, any>): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
     let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}`;
@@ -280,6 +339,16 @@ export default class BagelDBRequest {
     });
   }
 
+  /**
+   * @summary
+   * It takes a data object, creates an item with the data and adds it to the collection.
+   * @example
+   * data = { name: 'John' }
+   * db.collection('COLLECTION_SLUG').item('YOUR_CUSTOM_ITEM_ID').post(data);
+   * @param {object} data - an object with the data you want to add to the newly created item
+   * @returns A promise that resolves to the response from the API.
+   * @see Docs {@link https://docs.bageldb.com/content-api/#create-item}
+   */
   post(data: Record<string, any>): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
@@ -296,6 +365,15 @@ export default class BagelDBRequest {
     });
   }
 
+  /**
+   * @summary
+   * Appends an item to a field that is of type "Item Reference"
+   * @param {string} fieldSlug - The slug of the field you want to append to.
+   * @param {string} ItemRefID - The ID of the item you want to append to the
+   * field.
+   * @returns A promise that resolves to the response from the API.
+   * @see Docs {@link https://docs.bageldb.com/content-api/#update-reference-field}
+   */
   append(fieldSlug: string, ItemRefID: string): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
@@ -312,9 +390,33 @@ export default class BagelDBRequest {
     });
   }
 
+  /**
+   * Removes a reference from a field that is of type "Item Reference"
+   * @param {string} fieldSlug - The slug of the field you want to unset.
+   * @param {string} ItemRefID - The ID of the item you want to unset.
+   * @returns The promise is being returned.
+   */
+  unset(fieldSlug: string, ItemRefID: string): AxiosPromise {
+    const nestedID = this.nestedCollectionsIDs.join('.');
+    if (nestedID)
+      throw new Error('Unset is not yet supported in nested collections');
+    return new Promise((resolve, reject) => {
+      let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
+      if (nestedID) url = url + `?nestedID=${nestedID}`;
+      this.instance.axiosInstance
+        .delete(url, { data: { value: ItemRefID } })
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+
   field(fieldSlug: string) {
     if (!fieldSlug || fieldSlug.match(/\s/))
-      throw new Error('field slug cant be ' + fieldSlug);
+      throw new Error(`field slug can't be ${fieldSlug}`);
     this._field = fieldSlug;
     return this;
   }
@@ -353,24 +455,6 @@ export default class BagelDBRequest {
       if (nestedID) url = url + `&nestedID=${nestedID}`;
       this.instance.axiosInstance
         .put(url)
-        .then((res) => {
-          resolve(res);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
-  }
-
-  unset(fieldSlug: string, ItemRefID: string): AxiosPromise {
-    const nestedID = this.nestedCollectionsIDs.join('.');
-    if (nestedID)
-      throw new Error('Unset is not yet supported in nested collections');
-    return new Promise((resolve, reject) => {
-      let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
-      if (nestedID) url = url + `?nestedID=${nestedID}`;
-      this.instance.axiosInstance
-        .delete(url, { data: { value: ItemRefID } })
         .then((res) => {
           resolve(res);
         })
