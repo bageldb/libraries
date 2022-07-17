@@ -16,3 +16,4 @@ src/users.ts
 src/shared.ts
 tsconfig.json
 eslintrc
+test.ts

@@ -36,6 +36,9 @@ interface structArgs {
   instance: bagelType;
   collectionID: string;
 }
+
+type BagelGeoPointQuery = ReturnType<typeof Bagel.GeoPointQuery>;
+
 export type {
   fileUploadArgs,
   BagelUser,
@@ -45,6 +48,7 @@ export type {
   bagelUsersRequestType,
   bagelType,
   structArgs,
+  BagelGeoPointQuery,
 };
 
 export type { BagelUsersRequest, BagelDBRequest, BagelMetaRequest, Bagel };
