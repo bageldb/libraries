@@ -30,6 +30,7 @@ class Bagel {
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
     });
+    /* Intercepting the request and adding the Authorization header to the request. */
     this.axiosInstance.interceptors.request.use(
       async (config) => {
         (config.headers as AxiosRequestHeaders)['Accept-Version'] = 'v1';
@@ -56,6 +57,8 @@ class Bagel {
       },
     );
 
+    /* Intercepting the response and checking if the response is 401 and if it is,
+    it is refreshing the token and then retrying the request. */
     this.axiosInstance.interceptors.response.use(
       (response) => {
         return response;
@@ -97,65 +100,80 @@ class Bagel {
   }
 
   /**
-   * It returns a new instance of the `BagelMetaRequest` class, which is a class that
-   * extends the `BagelRequest` class
-   * @param {string} collectionID - The ID of the collection you want to get the
-   * schema for.
+   * @summary
+   * Retrieve the schema of a collection.
+   * This enables implementing things like dynamic forms or other dynamic pages, which rely on the schema to display different page components.
+   * Schema will be retrieved for the parent collection, and will contain the schema for all nested collections inside the parent collection.
+   * @example Request:
+   * const {data: schema} = await db.schema("chat").get();
+   * @param {string} collectionID - The ID of the collection you want to get the schema for.
    * @returns A new instance of the BagelMetaRequest class.
+   * @see {@link https://docs.bageldb.com/meta-api/#get-schema}
    */
   schema(collectionID: string) {
     return new BagelMetaRequest({ instance: this, collectionID });
   }
 
   /**
-   * It returns a new BagelDBRequest object with the instance and collectionID
-   * properties set
+   * @summary
+   * It returns a new BagelDBRequest object with the instance and collectionID properties set
    * @param {string} collectionID - The ID of the collection you want to access.
    * @returns A new BagelDBRequest object.
+   * @see {@link https://docs.bageldb.com/content-api/#content-api}
    */
   collection(collectionID: string) {
     return new BagelDBRequest({ instance: this, collectionID });
   }
 
+  /**
+   * @summary
+   * Bagel Auth with the JS library is designed to be used in a browser-like environment, except for the update password function which will only run using NodeJS.
+   * @returns A new instance of the BagelUsersRequest class.
+   * @see {@link https://docs.bageldb.com/bagelAuth-api/#bagel-auth-api-beta}
+   */
   users() {
     return new BagelUsersRequest({ instance: this });
   }
 
-  static get ASC() {
+  static get ASC(): 'ASC' {
     return 'ASC';
   }
 
-  static get DESC() {
+  static get DESC(): 'DESC' {
     return 'DESC';
   }
 
-  static get EQUAL() {
+  static get EQUAL(): '=' {
     return '=';
   }
 
-  static get NOT_EQUAL() {
+  static get NOT_EQUAL(): '!=' {
     return '!=';
   }
 
-  static get GREATER_THAN() {
+  static get GREATER_THAN(): '>' {
     return '>';
   }
 
-  static get LESS_THAN() {
+  static get LESS_THAN(): '<' {
     return '<';
   }
 
-  static get WITHIN() {
+  static get WITHIN(): 'within' {
     return 'within';
   }
 
   /**
+   * @summary
    * It takes a latitude, longitude, and distance and returns a string that can be
    * used in a query to find all the points within that distance
    * @param {number} lat - latitude of the point to search around
    * @param {number} lng - longitude
    * @param {number} distance - The distance in meters from the point.
    * @returns A string with the lat, lng, and distance.
+   * @see {@link https://docs.bageldb.com/concepts/#geopoint}
+   * @see {@link https://docs.bageldb.com/content-api/#querying}
+   * @todo add link to documentation
    */
   static GeoPointQuery(lat: number, lng: number, distance: number) {
     return `${lat},${lng},${distance}`;

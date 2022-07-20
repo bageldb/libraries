@@ -164,7 +164,7 @@ export default class BagelDBRequest {
   query(
     key: string,
     operator: '=' | '!=' | '>' | '<' | 'regex' | 'within',
-    value: string | string[] | BagelGeoPointQuery,
+    value: string | string[] | BagelGeoPointQuery | boolean,
   ) {
     if (!key) return this;
     if (Array.isArray(value)) value = value.join(',');
@@ -193,7 +193,7 @@ export default class BagelDBRequest {
    *
    * Metadata field will always be retrieved unless explicitly projectedOff i.e _id, _lastUpdateDate and _createdDate
    *
-   * (⚠️ Note that nested collection fields in a collection will only be returned if projected on)
+   * @NOTE ⚠️ **_that nested collection fields in a collection will only be returned if projected on_**
    * @param {string} slugs - string - A comma separated list of slugs to project
    * on.
    * @returns Bagel class instance
@@ -211,7 +211,7 @@ export default class BagelDBRequest {
    *
    * Metadata field will always be retrieved unless explicitly projectedOff i.e _id, _lastUpdateDate and _createdDate
    *
-   * (⚠️ Note that nested collection fields in a collection will only be returned if projected on)
+   * @NOTE ⚠️ **_nested collection fields in a collection will only be returned if projected on_**
    * @param {string} slugs - A comma separated list of slugs you want to remove from the projection.
    * @returns Bagel class instance
    * @see Docs {@link https://docs.bageldb.com/content-api/#projection}
@@ -228,7 +228,7 @@ export default class BagelDBRequest {
    * The request is sent via a FormData request.
    * @param {string} imageSlug - The field's slug of the image you want to upload.
    * @param {fileUploadArgs} Object - { selectedImage, imageLink, altText, fileName }
-   * **⚠️ _Note: Either imageLink or imageFile must be included but not both_**
+   * @NOTE ⚠️ **_Either imageLink or imageFile must be included but not both_**
    *
    * @returns The response from the server.
    * @see Docs {@link https://docs.bageldb.com/content-api/#uploading-asset}
@@ -273,7 +273,7 @@ export default class BagelDBRequest {
 
   /**
    * It deletes an item from a collection
-   * **⚠️ _Note: this action is irreversible_**
+   * @NOTE ⚠️ **_this action is irreversible_**
    * @returns A promise that resolves to the response from the server.
    * @see Docs {@link https://docs.bageldb.com/content-api/#delete-item}
    */
@@ -368,6 +368,8 @@ export default class BagelDBRequest {
   /**
    * @summary
    * Appends an item to a field that is of type "Item Reference"
+   * @example
+   * db.collection('COLLECTION_SLUG').item('ITEM_ID').append('FIELD_SLUG', 'ITEM_REF_ID');
    * @param {string} fieldSlug - The slug of the field you want to append to.
    * @param {string} ItemRefID - The ID of the item you want to append to the
    * field.
@@ -391,10 +393,14 @@ export default class BagelDBRequest {
   }
 
   /**
+   * @summary
    * Removes a reference from a field that is of type "Item Reference"
+   * @example
+   * db.collection('COLLECTION_SLUG').item('ITEM_ID').unset('FIELD_SLUG', 'ITEM_REF_ID');
    * @param {string} fieldSlug - The slug of the field you want to unset.
    * @param {string} ItemRefID - The ID of the item you want to unset.
    * @returns The promise is being returned.
+   * @see Docs {@link https://docs.bageldb.com/content-api/#update-reference-field}
    */
   unset(fieldSlug: string, ItemRefID: string): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
@@ -470,7 +476,7 @@ export default class BagelDBRequest {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
       this.instance.axiosInstance
-        .delete(url, { data: { value: value } })
+        .delete(url, { data: { value } })
         .then((res) => {
           resolve(res);
         })
@@ -480,6 +486,18 @@ export default class BagelDBRequest {
     });
   }
 
+  /**
+   * @summary
+   * Depending on how the {@link collection|collection()} and {@link item|item()} methods were chained together.
+   * Retrieves either the collection or a specific item from the collection.
+   * @example
+   * db.collection('COLLECTION_SLUG').get();
+   * @example
+   * db.collection('COLLECTION_SLUG').item('ITEM_ID').get();
+   * @returns A promise that resolves to an AxiosResponse object.
+   * @see Docs {@link https://docs.bageldb.com/content-api/#get-collection}
+   * @see Docs {@link https://docs.bageldb.com/content-api/#get-a-single-item}
+   */
   get(): AxiosPromise {
     return new Promise((resolve, reject) => {
       const params = new URLSearchParams();
@@ -524,6 +542,15 @@ export default class BagelDBRequest {
     });
   }
 
+  /**
+   * @summary
+   * View the bagelAuth users associated with an item.
+   * @example
+   * db.collection('COLLECTION_SLUG').item('ITEM_ID').users();
+   * @returns {AxiosPromise} An array of bagelAuth users.
+   * @example Response: [{ "userID": "213-3213c-123c123-1232133" }]
+   * @see Docs {@link https://docs.bageldb.com/content-api/#view-bagel-users}
+   */
   users(): AxiosPromise {
     if (!this._item) {
       throw new Error('Users can only be retrieved in relation to an item');
@@ -543,6 +570,16 @@ export default class BagelDBRequest {
     });
   }
 
+  /**
+   * @summary
+   * This function adds a user to the associated bagelUsers item's array
+   * @NOTE ⚠️ **_In order to add a Bagel user - the api token must have User Admin permissions, it is suggested to only use this token server side_**
+   * @example
+   * db.collection('COLLECTION_SLUG').item('ITEM_ID').addUser('USER_ID');
+   * @param {string} bagelUserID - The ID of the user you want to add to the item.
+   * @returns A promise that resolves to the response from the server.
+   * @see Docs {@link https://docs.bageldb.com/content-api/#add-a-bagel-user}
+   */
   addUser(bagelUserID: string): AxiosPromise {
     if (!this._item) {
       throw new Error('Users can only be added in relation to an item');
@@ -562,6 +599,16 @@ export default class BagelDBRequest {
     });
   }
 
+  /**
+   * @summary
+   * This function removes a user to the associated bagelUsers item's array
+   * @NOTE ⚠️ **_In order to remove a Bagel user - the api token must have User Admin permissions, it is suggested to only use this token server side_**
+   * @example
+   * db.collection('COLLECTION_SLUG').item('ITEM_ID').addUser('USER_ID');
+   * @param {string} bagelUserID - The ID of the user you want to remove from the item.
+   * @returns A promise that resolves to the response from the server.
+   * @see Docs {@link hhttps://docs.bageldb.com/content-api/#remove-a-bagel-user}
+   */
   removeUser(bagelUserID: string): AxiosPromise {
     if (!this._item) {
       throw new Error('Users can only be removed in relation to an item');
@@ -581,9 +628,17 @@ export default class BagelDBRequest {
     });
   }
 
-  // Client is returned. It must be closed when it is no longer required using client.close()
-  // onmessage and onerror are callback functions to process the data
-  // see https://developer.mozilla.org/en-US/docs/Web/API/EventSource for more info on Server Side Events (SSE)
+  /**
+   * @summary
+   * It creates a new EventSource object, which is a Web API that allows you to listen to server-sent events
+   * @param onmessage - A function that is called when a message is received.
+   * @param onerror - A function that is called when an error occurs.
+   * @returns {Promise<EventSource>} The client
+   * @NOTE
+   * Client is returned. It must be closed when it is no longer required using client.close()
+   * onmessage and onerror are callback functions to process the data
+   * see https://developer.mozilla.org/en-US/docs/Web/API/EventSource for more info on Server Side Events (SSE)
+   */
   async listen(
     onmessage: (...args: any) => unknown,
     onerror: (...args: any) => unknown,
@@ -607,6 +662,12 @@ export default class BagelDBRequest {
     this.client = new eventSrc(url);
     const that = this;
 
+    /**
+     * If the client is closed, and the user is active, refresh the user, get the
+     * access token, and create a new client
+     * @param event - The event object that was passed to the event handler.
+     * @returns The function errorHandler is being returned.
+     */
     const errorHandler = async (event) => {
       if (that.client.readyState === eventSrc.CLOSED) {
         if (await that.instance.users()._bagelUserActive()) {
