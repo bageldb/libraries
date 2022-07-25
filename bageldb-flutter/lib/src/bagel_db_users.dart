@@ -2,7 +2,6 @@ import 'dart:async';
 import '../bagel_db.dart';
 import 'package:dio/dio.dart';
 import 'bagel_db_functions.dart';
-import 'bage_db_shared_prefs.dart';
 
 String authEndpoint = "https://auth.bageldb.com/api/public";
 
@@ -30,7 +29,7 @@ class AuthEvent {
 class BagelUsersRequest {
   BagelDB instance;
   late Dio dio;
-  late final SP _sp = SP();
+
   BagelUser? _user;
   BagelUser? get user => _user;
   BagelUsersRequest(this.instance) {
@@ -42,8 +41,7 @@ class BagelUsersRequest {
   }
 
   _getLocalUser() async {
-    await _sp.init();
-    Map usr = await _sp.get(Collections.user);
+    Map usr = instance.sp.get(Collections.user);
     _userHandler(usr);
   }
 
@@ -80,7 +78,7 @@ class BagelUsersRequest {
       _userStateController.add(AuthEvent(loggedin: false));
       return;
     }
-    Map<String, dynamic>? access = await _sp.get(Collections.access);
+    Map<String, dynamic>? access = instance.sp.get(Collections.access);
     if (access.isEmpty) return _logout();
 
     try {
@@ -108,7 +106,7 @@ class BagelUsersRequest {
   }
 
   Future<String> _getOtpRequestNonce() async {
-    Map<String, dynamic>? otpRequest = await _sp.get(Collections.nonce);
+    Map<String, dynamic>? otpRequest = instance.sp.get(Collections.nonce);
     if (otpRequest.isNotEmpty) {
       DateTime expiryTime = DateTime.parse(otpRequest["expires_in"]);
       if (DateTime.now().isAfter(expiryTime)) {
@@ -123,7 +121,7 @@ class BagelUsersRequest {
   _storeOtpRequestNonce(Map otpRequest) {
     DateTime expires =
         DateTime.now().add(Duration(seconds: otpRequest["expires_in"]));
-    _sp.set(Collections.nonce,
+    instance.sp.set(Collections.nonce,
         {"expires_in": expires.toString(), "nonce": otpRequest["nonce"]});
   }
 
@@ -212,28 +210,28 @@ class BagelUsersRequest {
   }
 
   _storeBagelUser(BagelUser user) {
-    _sp.set(Collections.user,
+    instance.sp.set(Collections.user,
         {"userID": user.userID, "email": user.email, "phone": user.phone});
   }
 
-  Future _storeTokens(data) async {
+  void _storeTokens(data) {
     String accessToken = data["access_token"],
         refreshToken = data["refresh_token"];
     int expires = data["expires_in"];
-    _sp.set(Collections.access, {
+    instance.sp.set(Collections.access, {
       "expires_in": DateTime.now().add(Duration(seconds: expires)).toString(),
       "accessToken": accessToken,
       "refreshToken": refreshToken
     });
   }
 
-  Future<String?> _getRefreshToken() async {
-    Map<String, dynamic>? refreshToken = await _sp.get(Collections.access);
+  Future<String?> _getRefreshToken() {
+    Map<String, dynamic>? refreshToken = instance.sp.get(Collections.access);
     return refreshToken["refreshToken"];
   }
 
-  Future<String?> getAccessToken() async {
-    Map<String, dynamic>? accessToken = await _sp.get(Collections.access);
+  Future<String?> getAccessToken() {
+    Map<String, dynamic>? accessToken = instance.sp.get(Collections.access);
     return accessToken["accessToken"];
   }
 
@@ -251,8 +249,8 @@ class BagelUsersRequest {
   void _logout() async {
     _user = null;
     _userStateController.add(AuthEvent());
-    await _sp.delete(Collections.access);
-    await _sp.delete(Collections.user);
+    instance.sp.delete(Collections.access);
+    instance.sp.delete(Collections.user);
   }
 
   /// Log the user out
@@ -276,7 +274,7 @@ class BagelUsersRequest {
       });
       Response res = await dio.post(url, data: body, options: options);
       if (res.statusCode == 200) {
-        await _storeTokens(res.data);
+        _storeTokens(res.data);
       }
       return res;
     } catch (err) {

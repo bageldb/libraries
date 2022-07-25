@@ -9,8 +9,7 @@ class SP {
     return instance;
   }
 
-  Future<Map<String, dynamic>> get(String key) async {
-    if (!hasInit) await init();
+  Map<String, dynamic> get(String key) {
     final res = <String, dynamic>{};
     String? str = instance.getString(key);
     if (str == null) return res;
@@ -23,8 +22,8 @@ class SP {
     return res;
   }
 
-  delete(String key) async {
-    await instance.remove(key);
+  delete(String key) {
+    instance.remove(key);
   }
 
   set(String key, Map<String, dynamic> value) {

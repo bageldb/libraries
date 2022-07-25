@@ -2,16 +2,28 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:universal_io/io.dart';
 import 'package:dio/dio.dart';
+import 'bage_db_shared_prefs.dart';
 import 'bagel_db_users.dart';
+import 'dart:io';
 
 ///## **BagelDB** is a content management system with rich API features. For more info, visit here bageldb.com
 
 /// *BagelDB* class is the base class for any bagelDB request, it must be given the api [token] created at app.bageldb.com
 class BagelDB {
-  String token;
+  late String token;
+  late BagelUsersRequest bagelUsersRequest;
+  late SP sp = SP();
 
-  late BagelUsersRequest bagelUsersRequest = BagelUsersRequest(this);
-  BagelDB(this.token);
+  Future<BagelDB> _init({token}) async {
+    await sp.init();
+    this.token = token;
+    this.bagelUsersRequest = BagelUsersRequest(this);
+    return this;
+  }
+
+  static Future<BagelDB> init({required String token}) async {
+    return BagelDB()._init(token: token);
+  }
 
   /// return a *BagelDBRequest* object for a specific [collection]
   BagelDBRequest collection(String collection) {
@@ -145,6 +157,77 @@ class BagelDBRequest {
     this.callEverything = false,
   });
 
+  Future<Stream<BagelEvent>?> asStream() async {
+    String requestID = "", nestedID = "";
+    if (nestedCollectionsIDs.isNotEmpty)
+      nestedID = nestedCollectionsIDs.join(".");
+    List<dynamic> data = [];
+    BagelResponse res = await get();
+    if (_item != null && nestedCollectionsIDs.length % 2 != 0) {
+      data.add(res.data);
+    } else {
+      data = res.data;
+    }
+
+    Map<String, dynamic> params = {
+      "authorization":
+          await BagelUsersRequest(bagelDB).getAccessToken() ?? bagelDB.token,
+      "requestID": requestID,
+      "nestedID": nestedID,
+      "itemID": _item ?? "",
+      "everything": everything,
+    };
+    String uri = '$liveEndpoint/collection/$collectionID/live';
+    Dio dio = await _dio();
+    Response<ResponseBody> rs = await dio.get<ResponseBody>(uri,
+        queryParameters: params,
+        options: Options(
+          responseType: ResponseType.stream,
+          headers: {'Access-Control-Allow-Origin': true},
+        ));
+
+    return await rs.data?.stream.map((e) {
+      Event event = Event.fromUint8List(e);
+      Map<String, dynamic> response = {};
+      if (event.type == "start") {
+        requestID = event.data;
+      } else if (event.type == "stop") {
+        print("stopped");
+      } else if (event.type == "message") {
+        RegExp r = RegExp(r'"itemID":"(\w*)');
+        response["itemID"] = r.firstMatch(event.data)?.group(1);
+        _item = response["itemID"];
+        response["item"] = {};
+        RegExp trgr = RegExp(r'"trigger":"(\w*)');
+        response["trigger"] = trgr.firstMatch(event.data)?.group(1);
+        switch (response["trigger"]) {
+          case "update":
+            var i = data
+                .indexWhere((element) => element["_id"] == response["itemID"]);
+            if (i != -1) {
+              // BagelResponse res = await get();
+              response["item"] = res.data;
+              data[i] = response["item"];
+            }
+            break;
+          case "delete":
+            data = data
+                .where((element) => element["_id"] != response["itemID"])
+                .toList();
+            break;
+          case "create":
+            // BagelResponse res = await get();
+            response["item"] = res.data;
+            data.add(response["item"]);
+            break;
+        }
+      }
+      return BagelEvent.fromPayload(response, data);
+    });
+    // _listen();
+    // return _subscription;
+  }
+
   /// Build and execute a get request to bagelDB, for both full collection and item requests
   Future<BagelResponse> get() async {
     Map<String, dynamic> params = <String, dynamic>{};
@@ -166,14 +249,15 @@ class BagelDBRequest {
         '$baseEndpoint/collection/$collectionID/items$itemID',
         queryParameters: params);
     Headers headers = response.headers;
-    BagelResponse res = BagelResponse(
-      data: response.data,
-      statusCode: response.statusCode!,
-    );
+    BagelResponse _bagelResponse =
+        BagelResponse(data: response.data, statusCode: response.statusCode);
+
     if (_item == null) {
-      res.itemCount = int.tryParse((headers["item-count"]?.first ?? ""));
+      _bagelResponse.itemCount =
+          int.tryParse((headers["item-count"]?.first ?? ""));
     }
-    return res;
+    // return _myfuture.value(_bagelResponse)
+    return Future<BagelResponse>.value(_bagelResponse);
   }
 
   /// Build and execute a post request to bagelDB. [item] should follow the collection schema as defined at app.bageldb.com
