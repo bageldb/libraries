@@ -45,13 +45,13 @@ export default class BagelUsersRequest {
    * It creates a new user in the database and returns the user's id
    * @NOTE ⚠️ **_On user creation, the user will automatically logged-in and any further BagelDB call will be made with their permissions_**
    * @example
-   * const userID = await db.users().create(email, password).catch((err) => console.log(err))
+   * const userID = await db.users().create(email, password)
    * @param {string} email - string - The email address of the user
    * @param {string} password - string - The password of the user
    * @returns A promise that resolves to the user_id of the user that was created.
    * @see Docs {@link https://docs.bageldb.com/bagelAuth-api/#user-creation}
    */
-  create(email: string, password: string): AxiosPromise<any> {
+  create(email: string, password: string): Promise<string> {
     email = email.toLowerCase().trim();
     return new Promise((resolve, reject) => {
       const url = `${AUTH_ENDPOINT}/user`;
