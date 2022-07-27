@@ -90,11 +90,23 @@ class Bagel {
                   });
               });
             })
-            .catch(() => {
-              return Promise.reject(error);
+            .catch(async (refreshErr: any) => {
+              try {
+                await this.users().logout();
+                Promise.reject({
+                  Error: refreshErr,
+                  message: 'BagelAuth: Token expired. user logged out.',
+                });
+              } catch (logoutErr: any) {
+                Promise.reject({
+                  Error: logoutErr,
+                  message:
+                    'BagelAuth: Token expired. There was an error trying to log user out.',
+                });
+              }
             });
         }
-        return Promise.reject(error);
+        Promise.reject(error);
       },
     );
   }
