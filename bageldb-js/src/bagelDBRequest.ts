@@ -530,7 +530,7 @@ export default class BagelDBRequest {
       this.instance.axiosInstance
         .get(url)
         .then((res) => {
-          if (res.status >= 200 && res.status < 400) {
+          if (res?.status >= 200 && res?.status < 400) {
             resolve(res);
           } else {
             reject(res);

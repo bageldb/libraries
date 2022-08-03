@@ -59,7 +59,7 @@ export default class BagelUsersRequest {
       this.axios
         .post(url, body)
         .then(async (res) => {
-          if (res.status == 201) {
+          if (res?.status == 201) {
             const { data } = res;
             if (this.instance.isServer) {
               resolve(data.user_id);
@@ -183,7 +183,7 @@ export default class BagelUsersRequest {
       this.axios
         .post(url, body)
         .then(async (res) => {
-          if (res.status == 200) {
+          if (res?.status == 200) {
             const { data } = res;
             await this._storeTokens(data);
             await this._storeBagelUser(data.user_id);
@@ -240,7 +240,7 @@ export default class BagelUsersRequest {
       this.axios
         .post(url, body)
         .then((res) => {
-          if (res.status == 200) {
+          if (res?.status == 200) {
             resolve(res);
           } else {
             reject(res);
@@ -281,7 +281,7 @@ export default class BagelUsersRequest {
       this.axios
         .post(url, body)
         .then((res) => {
-          if (res.status == 200) {
+          if (res?.status == 200) {
             resolve(res);
           } else {
             reject(res);
@@ -390,7 +390,7 @@ export default class BagelUsersRequest {
       const url = `${AUTH_ENDPOINT}/user/token`;
       const body = `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=project-client`;
       const res = await this.axios.post(url, body);
-      if (res.status === 200) {
+      if (res?.status === 200) {
         const { data } = res;
         await this._storeTokens(data);
         return data.access_token;
