@@ -15,14 +15,14 @@ export default class FallbackStorage {
 
   __protected: () => { data: any };
 
-  constructor(data) {
-    const storage = this;
+  constructor(data: Record<string, any>) {
+    // const storage = this;
 
     if (!data) data = {};
 
     let keylist = keys(data);
 
-    const nullOrValue = function (value) {
+    const nullOrValue = function (value: unknown): null | unknown {
       return isUndefined(value) ? null : value;
     };
 
@@ -34,7 +34,7 @@ export default class FallbackStorage {
     this.setItem = function (key, value) {
       if (!includes(keylist, key)) keylist.push(key);
       data[key] = value;
-      storage.length = size(data);
+      this.length = size(data);
     };
 
     this.getItem = function (key) {
@@ -45,7 +45,7 @@ export default class FallbackStorage {
     this.removeItem = function (key) {
       delete data[key];
       keylist = without(keylist, key);
-      storage.length = size(data);
+      this.length = size(data);
     };
 
     this.clear = function () {
