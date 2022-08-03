@@ -180,7 +180,7 @@ export default class BagelUsersRequest {
     return new Promise((resolve, reject) => {
       const url = `${AUTH_ENDPOINT}/user/verify`;
       const body = { email, password };
-      this.axios
+      return this.axios
         .post(url, body)
         .then(async (res) => {
           if (res?.status == 200) {
