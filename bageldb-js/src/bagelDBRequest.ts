@@ -470,7 +470,7 @@ export default class BagelDBRequest {
     });
   }
 
-  value(fieldSlug: string, value): AxiosPromise {
+  value(fieldSlug: string, value: unknown): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
       let url = `${baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
@@ -660,7 +660,6 @@ export default class BagelDBRequest {
       liveEndpoint +
       `/collection/${this.collectionID}/live?authorization=${token}&nestedID=${nestedID}&itemID=${this._item}`;
     this.client = new eventSrc(url);
-    const that = this;
 
     /**
      * If the client is closed, and the user is active, refresh the user, get the
@@ -668,15 +667,15 @@ export default class BagelDBRequest {
      * @param event - The event object that was passed to the event handler.
      * @returns The function errorHandler is being returned.
      */
-    const errorHandler = async (event) => {
-      if (that.client.readyState === eventSrc.CLOSED) {
-        if (await that.instance.users()._bagelUserActive()) {
-          await that.instance.users().refresh();
-          token = await that.instance.users()._getAccessToken();
+    const errorHandler = async (event: Event) => {
+      if (this.client.readyState === eventSrc.CLOSED) {
+        if (await this.instance.users()._bagelUserActive()) {
+          await this.instance.users().refresh();
+          token = await this.instance.users()._getAccessToken();
           const liveUrl =
             liveEndpoint +
-            `/collection/${that.collectionID}/live?authorization=${token}&requestID=${that.requestID}&nestedID=${nestedID}&itemID=${that._item}`;
-          that.client = new eventSrc(liveUrl);
+            `/collection/${this.collectionID}/live?authorization=${token}&requestID=${this.requestID}&nestedID=${nestedID}&itemID=${this._item}`;
+          this.client = new eventSrc(liveUrl);
           return;
         }
       }
@@ -685,25 +684,22 @@ export default class BagelDBRequest {
       }
     };
 
-    this.client.addEventListener(
-      'start',
-      function (e: Event & Record<string, any>) {
-        that.requestID = e.data;
-      },
-    );
+    this.client.addEventListener('start', (e: Event & Record<string, any>) => {
+      this.requestID = e.data;
+    });
 
     this.client.addEventListener('stop', async () => {
-      if (await that.instance.users()._bagelUserActive())
-        token = await that.instance.users()._getAccessToken();
-      else token = await that.apiToken;
+      if (await this.instance.users()._bagelUserActive())
+        token = await this.instance.users()._getAccessToken();
+      else token = await this.apiToken;
 
-      that.client.close();
+      this.client.close();
       const liveUrl =
         liveEndpoint +
-        `/collection/${that.collectionID}/live?authorization=${token}&requestID=${that.requestID}&nestedID=${nestedID}&itemID=${that._item}`;
-      that.client = new EventSource(liveUrl);
-      that.client.onmessage = onmessage;
-      that.client.onerror = errorHandler;
+        `/collection/${this.collectionID}/live?authorization=${token}&requestID=${this.requestID}&nestedID=${nestedID}&itemID=${this._item}`;
+      this.client = new EventSource(liveUrl);
+      this.client.onmessage = onmessage;
+      this.client.onerror = errorHandler;
     });
 
     this.client.onmessage = onmessage;

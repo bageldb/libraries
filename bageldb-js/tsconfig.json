@@ -25,7 +25,7 @@
     "allowJs": true,
     "suppressImplicitAnyIndexErrors": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
+    // "noImplicitAny": false,
     "useDefineForClassFields": true,
     "downlevelIteration": true,
     // "importHelpers": true,
