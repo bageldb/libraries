@@ -1,4 +1,4 @@
-import { AxiosInstance, AxiosRequestHeaders } from 'axios';
+import { AxiosError, AxiosInstance, AxiosRequestHeaders } from 'axios';
 
 import BagelDBRequest from './bagelDBRequest';
 import BagelMetaRequest from './bagelMetaRequest';
@@ -63,22 +63,24 @@ class Bagel {
       (response) => {
         return response;
       },
-      async (error) => {
+      async (error: AxiosError) => {
         if (
           (await new BagelUsersRequest({
             instance: this,
           })._bagelUserActive()) &&
           error.response &&
-          error.response.status == 401 &&
-          !error.config.url.includes('user/token')
+          error.response?.status == 401 &&
+          !error?.config?.url?.includes?.('user/token')
         ) {
           return new BagelUsersRequest({ instance: this })
             .refresh()
             .then(async () => {
               const config = error.config;
-              config.headers.Authorization = `Bearer ${await new BagelUsersRequest(
-                { instance: this },
-              )._getAccessToken()}`;
+              (
+                config.headers as Record<string, string>
+              ).Authorization = `Bearer ${await new BagelUsersRequest({
+                instance: this,
+              })._getAccessToken()}`;
               return new Promise((resolve, reject) => {
                 axios
                   .request(config)
