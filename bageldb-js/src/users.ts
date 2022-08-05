@@ -347,9 +347,11 @@ export default class BagelUsersRequest {
    * @returns A promise that resolves to a string or null or an axios promise that resolves to a string.
    */
   async _getAccessToken(): Promise<string | null | AxiosPromise<string>> {
-    const e = await this.bagelStorage.getItem('bagel-expires');
-    if (!e) return this.refresh();
-    const expires = new Date(e);
+    const storedExp = await this.bagelStorage.getItem('bagel-expires');
+    if (!storedExp) return this.refresh();
+    const expires = new Date(storedExp);
+
+    // ? check if the access token is expired
     if (expires <= new Date()) return this.refresh();
     else return this.bagelStorage.getItem('bagel-access');
   }
