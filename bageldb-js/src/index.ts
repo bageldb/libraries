@@ -76,11 +76,13 @@ class Bagel {
             .refresh()
             .then(async () => {
               const config = error.config;
+              const token = await new BagelUsersRequest({
+                instance: this,
+              })._getAccessToken();
+
               (
                 config.headers as Record<string, string>
-              ).Authorization = `Bearer ${await new BagelUsersRequest({
-                instance: this,
-              })._getAccessToken()}`;
+              ).Authorization = `Bearer ${token}`;
               return new Promise((resolve, reject) => {
                 axios
                   .request(config)
