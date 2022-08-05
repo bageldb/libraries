@@ -1,5 +1,12 @@
-import { AxiosInstance, AxiosPromise, AxiosResponse } from './common';
-import { bagelType, BagelUser } from './interfaces';
+import {
+  AxiosInstance,
+  AxiosPromise,
+  AxiosResponse,
+  isNode,
+  isReactNative,
+} from './common';
+import type { bagelType, BagelUser } from './interfaces';
+import type FormData from 'form-data';
 
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 
@@ -374,8 +381,32 @@ export default class BagelUsersRequest {
       if (!refreshToken) {
         throw new Error('No Bagel User is logged in');
       }
-      const url = `${AUTH_ENDPOINT}/user/token?grant_type=refresh_token&refresh_token=${refreshToken}&client_id=project-client`;
-      const res = await this.axios.post(url);
+
+      const url = `${AUTH_ENDPOINT}/user/token`;
+      const form = new globalThis.FormData();
+
+      form.append('grant_type', 'refresh_token');
+      form.append('refresh_token', refreshToken);
+      form.append('client_id', 'project-client');
+
+      if (isReactNative) {
+        //   //? react-native
+        const res = await this.instance.axiosInstance.put(url, form, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          transformRequest: () => form,
+        });
+        return res;
+      }
+
+      let formHeaders: FormData.Headers | undefined;
+      if (isNode()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
+
+      const res = await this.axios.post(url, form, {
+        headers: formHeaders,
+      });
+
       if (res?.status === 200) {
         const { data } = res;
         await this._storeTokens(data);
