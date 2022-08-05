@@ -374,9 +374,8 @@ export default class BagelUsersRequest {
       if (!refreshToken) {
         throw new Error('No Bagel User is logged in');
       }
-      const url = `${AUTH_ENDPOINT}/user/token`;
-      const body = `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=project-client`;
-      const res = await this.axios.post(url, body);
+      const url = `${AUTH_ENDPOINT}/user/token?grant_type=refresh_token&refresh_token=${refreshToken}&client_id=project-client`;
+      const res = await this.axios.post(url);
       if (res?.status === 200) {
         const { data } = res;
         await this._storeTokens(data);
