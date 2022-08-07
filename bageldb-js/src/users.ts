@@ -399,7 +399,12 @@ export default class BagelUsersRequest {
           },
           transformRequest: () => form,
         });
-        return res;
+
+        if (res?.status === 200) {
+          const { data } = res;
+          await this._storeTokens(data);
+          return data.access_token;
+        }
       }
 
       let formHeaders: FormData.Headers | undefined;
