@@ -183,13 +183,18 @@ export default class BagelUsersRequest {
    * @returns A promise that resolves to the user_id of the user that was validated.
    */
   async validate(email: string, password: string): Promise<string> {
-    email = email.toLowerCase().trim();
-    const url = `${AUTH_ENDPOINT}/user/verify`;
-    const body = { email, password };
-    const { data } = await this.axios.post(url, body);
-    await this._storeTokens(data);
-    await this._storeBagelUser(data.user_id);
-    return data.user_id;
+    try {
+      email = email.toLowerCase().trim();
+      if (!email || !password) throw new Error('email or password is empty');
+      const url = `${AUTH_ENDPOINT}/user/verify`;
+      const body = { email, password };
+      const { data } = await this.axios.post(url, body);
+      await this._storeTokens(data);
+      await this._storeBagelUser(data.user_id);
+      return data.user_id;
+    } catch (error) {
+      throw new Error(JSON.stringify({ error }, null, 2));
+    }
   }
 
   /**
