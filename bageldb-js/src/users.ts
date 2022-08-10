@@ -101,10 +101,10 @@ export default class BagelUsersRequest {
     const body = { otp };
     try {
       const res = await this.axios.post(url, body);
-      await this._storeTokens(res.data);
-      await this._storeBagelUser(res.data.user_id);
+      await this._storeTokens(res?.data);
+      await this._storeBagelUser(res?.data.user_id);
 
-      return res.data.user_id;
+      return res?.data.user_id;
     } catch (err) {
       throw new Error('wrong authorization code ' + err);
     }
@@ -144,8 +144,8 @@ export default class BagelUsersRequest {
     const body = { emailOrPhone: emailOrPhone };
     try {
       const res = await this.axios.post(url, body);
-      await this._storeOtpRequestNonce(res.data);
-      return res.data.nonce;
+      await this._storeOtpRequestNonce(res?.data);
+      return res?.data.nonce;
     } catch (error) {
       return error;
     }
@@ -393,7 +393,7 @@ export default class BagelUsersRequest {
 
       if (isReactNative) {
         //   //? react-native
-        const res = await this.instance.axiosInstance.put(url, form, {
+        const res = await this.instance.axiosInstance.post(url, form, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
