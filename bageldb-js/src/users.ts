@@ -151,7 +151,7 @@ export default class BagelUsersRequest {
       await this._storeOtpRequestNonce(res?.data);
       return res?.data.nonce;
     } catch (error) {
-      throw new Error(error as any);
+      throw new Error(JSON.stringify(error));
     }
   }
 
@@ -338,11 +338,9 @@ export default class BagelUsersRequest {
    * db.users().getBagelUserID()
    * @returns The bagelUserID
    */
-  async getBagelUserID(): Promise<string> {
+  async getBagelUserID(): Promise<string | null> {
     try {
       const bagelUser = await this.bagelStorage.getItem('bagel-user');
-      if (!bagelUser)
-        throw new Error('A Bagel User must be logged in to get Bagel User ID');
       return bagelUser;
     } catch (error) {
       throw new Error(JSON.stringify({ error }));
