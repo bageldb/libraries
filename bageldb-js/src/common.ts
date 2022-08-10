@@ -11,9 +11,9 @@ const isNode = new Function(
   'try {return this===global;}catch(e){return false;}',
 );
 
-const getExpires = (expires_in: number): string => {
-  const expires = new Date(expires_in);
-  return `${expires.setSeconds(expires.getSeconds() + expires_in)}`;
+const getExpires = (expires_in: number): number => {
+  const expires = new Date();
+  return expires.setSeconds(expires.getSeconds() + expires_in);
 };
 
 /**
