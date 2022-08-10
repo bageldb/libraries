@@ -140,7 +140,9 @@ export default class BagelUsersRequest {
    * @param {string} emailOrPhone - The email or phone number of the user.
    * @returns The nonce is being returned.
    */
-  async requestOtp(emailOrPhone: string) {
+  async requestOtp(emailOrPhone: string): Promise<string> {
+    if (!emailOrPhone)
+      throw new Error('email or phone must not be empty or undefined');
     emailOrPhone = emailOrPhone.toLowerCase().trim();
     const url = `${AUTH_ENDPOINT}/user/otp`;
     const body = { emailOrPhone: emailOrPhone };
