@@ -120,11 +120,14 @@ export default class BagelUsersRequest {
    */
   async _getOtpRequestNonce() {
     const otpRequest = await this.bagelStorage.getItem('bagel-nonce');
-    const expires = +((await this.bagelStorage.getItem('bagel-expires')) || '');
+    const expires = Number(
+      (await this.bagelStorage.getItem('bagel-expires')) || 0,
+    );
     if (otpRequest && expires) {
       const date = new Date();
-      if (expires <= date.setSeconds(date.getSeconds()))
-        throw new Error('OTP request has expired, try again');
+
+      if (date.setSeconds(date.getSeconds()) > expires)
+        throw new Error('OTP request has expired, try requesting a renewed');
       return otpRequest;
     } else {
       throw new Error('Request an OTP first');
@@ -168,9 +171,11 @@ export default class BagelUsersRequest {
     nonce: string;
     expires_in: number;
   }) {
-    const expires = getExpires(expires_in);
     await this.bagelStorage.setItem('bagel-nonce', nonce);
-    await this.bagelStorage.setItem('bagel-expires', expires);
+    await this.bagelStorage.setItem(
+      'bagel-expires',
+      `${getExpires(expires_in)}`,
+    );
   }
 
   /**
@@ -322,10 +327,11 @@ export default class BagelUsersRequest {
       }
     }
 
-    const expires = getExpires(data?.expires_in);
-
     if (data?.expires_in)
-      await this.bagelStorage.setItem('bagel-expires', expires);
+      await this.bagelStorage.setItem(
+        'bagel-expires',
+        `${getExpires(data.expires_in)}`,
+      );
 
     if (data?.refresh_token)
       await this.bagelStorage.setItem('bagel-refresh', data.refresh_token);
@@ -365,12 +371,14 @@ export default class BagelUsersRequest {
    * @returns A promise that resolves to a string or null or an axios promise that resolves to a string.
    */
   async _getAccessToken(): Promise<string | null | AxiosPromise<string>> {
-    const storedExp = await this.bagelStorage.getItem('bagel-expires');
+    const storedExp = Number(
+      (await this.bagelStorage.getItem('bagel-expires')) || 0,
+    );
     if (!storedExp) return this.refresh();
-    const expires = new Date(storedExp);
+    const now = new Date(storedExp);
 
     // ? check if the access token is expired
-    if (expires <= new Date()) return this.refresh();
+    if (now.setSeconds(now.getSeconds()) > storedExp) return this.refresh();
     else return this.bagelStorage.getItem('bagel-access');
   }
 
