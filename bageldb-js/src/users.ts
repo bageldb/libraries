@@ -149,7 +149,7 @@ export default class BagelUsersRequest {
       await this._storeOtpRequestNonce(res?.data);
       return res?.data.nonce;
     } catch (error) {
-      return error;
+      throw new Error(error as any);
     }
   }
 
