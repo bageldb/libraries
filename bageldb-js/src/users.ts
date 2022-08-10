@@ -5,6 +5,7 @@ import {
   isNode,
   isReactNative,
   getExpires,
+  getParsedJwt,
 } from './common';
 import type { bagelType, BagelUser } from './interfaces';
 import type FormData from 'form-data';
@@ -74,7 +75,7 @@ export default class BagelUsersRequest {
               return;
             }
             await this._storeTokens(data);
-            await this._storeBagelUser(data.user_id);
+            await this._storeBagelUser(data?.user_id || '');
             resolve(data.user_id);
           } else {
             reject(res);
@@ -103,7 +104,7 @@ export default class BagelUsersRequest {
     try {
       const res = await this.axios.post(url, body);
       await this._storeTokens(res?.data);
-      await this._storeBagelUser(res?.data.user_id);
+      await this._storeBagelUser(res?.data?.user_id || '');
 
       return res?.data.user_id;
     } catch (err) {
@@ -306,8 +307,18 @@ export default class BagelUsersRequest {
    * @param {Record<string, any>} data
    */
   async _storeTokens(data: Record<string, any>): Promise<void> {
-    if (data?.access_token)
+    if (data?.access_token) {
       await this.bagelStorage.setItem('bagel-access', data.access_token);
+
+      if (!data?.user_id) {
+        const token = getParsedJwt(data.access_token);
+        if (token)
+          await this.bagelStorage.setItem(
+            'bagel-user',
+            `${token?.bagelUserID || ''}`,
+          );
+      }
+    }
 
     const expires = getExpires(data?.expires_in);
 
@@ -325,9 +336,15 @@ export default class BagelUsersRequest {
    * db.users().getBagelUserID()
    * @returns The bagelUserID
    */
-  async getBagelUserID() {
-    const bagelUser = (await this.bagelStorage.getItem('bagel-user')) as string;
-    return bagelUser;
+  async getBagelUserID(): Promise<string> {
+    try {
+      const bagelUser = await this.bagelStorage.getItem('bagel-user');
+      if (!bagelUser)
+        throw new Error('A Bagel User must be logged in to get Bagel User ID');
+      return bagelUser;
+    } catch (error) {
+      throw new Error(JSON.stringify({ error }));
+    }
   }
 
   /**
