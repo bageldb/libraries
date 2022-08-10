@@ -4,6 +4,7 @@ import {
   AxiosResponse,
   isNode,
   isReactNative,
+  getExpires,
 } from './common';
 import type { bagelType, BagelUser } from './interfaces';
 import type FormData from 'form-data';
@@ -164,12 +165,9 @@ export default class BagelUsersRequest {
     nonce: string;
     expires_in: number;
   }) {
-    const expires = new Date();
-    const storedExpire = `${expires.setSeconds(
-      expires.getSeconds() + expires_in,
-    )}`;
+    const expires = getExpires(expires_in);
     await this.bagelStorage.setItem('bagel-nonce', nonce);
-    await this.bagelStorage.setItem('bagel-expires', storedExpire);
+    await this.bagelStorage.setItem('bagel-expires', expires);
   }
 
   /**
@@ -311,12 +309,10 @@ export default class BagelUsersRequest {
     if (data?.access_token)
       await this.bagelStorage.setItem('bagel-access', data.access_token);
 
-    const expires = new Date().setSeconds(
-      new Date().getSeconds() + data?.expires_in,
-    );
+    const expires = getExpires(data?.expires_in);
 
     if (data?.expires_in)
-      await this.bagelStorage.setItem('bagel-expires', `${expires}`);
+      await this.bagelStorage.setItem('bagel-expires', expires);
 
     if (data?.refresh_token)
       await this.bagelStorage.setItem('bagel-refresh', data.refresh_token);
