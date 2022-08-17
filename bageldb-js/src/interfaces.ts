@@ -38,6 +38,11 @@ interface structArgs {
 }
 
 type BagelGeoPointQuery = ReturnType<typeof Bagel.GeoPointQuery>;
+interface BagelConfigOptions {
+  isServer?: boolean;
+  customStorage?: Storage;
+  customBaseEndpoint?: string;
+}
 
 export type {
   fileUploadArgs,
@@ -49,6 +54,7 @@ export type {
   bagelType,
   structArgs,
   BagelGeoPointQuery,
+  BagelConfigOptions,
 };
 
 export type { BagelUsersRequest, BagelDBRequest, BagelMetaRequest, Bagel };
