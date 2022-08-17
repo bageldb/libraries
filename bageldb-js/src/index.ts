@@ -8,17 +8,11 @@ import { axios, baseEndpoint } from './common';
 class Bagel {
   [x: string]: any;
 
-  isServer?: boolean;
-
-  customStorage?: Storage;
-
-  apiToken: string;
-
   axiosInstance: AxiosInstance;
 
   constructor(
-    apiToken: string,
-    options: {
+    public apiToken: string,
+    public options: {
       isServer?: boolean;
       customStorage?: Storage;
       customBaseEndpoint?: string;
