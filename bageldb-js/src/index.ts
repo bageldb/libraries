@@ -4,24 +4,21 @@ import BagelDBRequest from './bagelDBRequest';
 import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
 import { axios, baseEndpoint } from './common';
+import { BagelConfigOptions } from './interfaces';
+
+const defaultOptions: BagelConfigOptions = {
+  isServer: false,
+  customStorage: undefined,
+  customBaseEndpoint: baseEndpoint,
+};
 
 class Bagel {
   [x: string]: any;
 
   axiosInstance: AxiosInstance;
 
-  constructor(
-    public apiToken: string,
-    public options: {
-      isServer?: boolean;
-      customStorage?: Storage;
-      customBaseEndpoint?: string;
-    } = {
-      isServer: false,
-      customStorage: undefined,
-      customBaseEndpoint: baseEndpoint,
-    },
-  ) {
+  constructor(public apiToken: string, public options = defaultOptions) {
+    options = { ...defaultOptions, ...options };
     // ? bagel config options
     this.isServer = !!options.isServer;
     this.customStorage = options.customStorage;
