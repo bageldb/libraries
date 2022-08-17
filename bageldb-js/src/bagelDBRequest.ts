@@ -498,8 +498,9 @@ export default class BagelDBRequest {
    * @see Docs {@link https://docs.bageldb.com/content-api/#get-collection}
    * @see Docs {@link https://docs.bageldb.com/content-api/#get-a-single-item}
    */
-  get(): AxiosPromise {
-    return new Promise((resolve, reject) => {
+  async get() {
+    try {
+
       const params = new URLSearchParams();
       const nestedID = this.nestedCollectionsIDs.join('.');
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -520,26 +521,17 @@ export default class BagelDBRequest {
 
       const itemID = this._item ? '/' + this._item : '';
 
-      let url = `${this.instance.baseEndpoint}/collection/${
-        this.collectionID
-      }/items${itemID}?${params.toString()}`;
+      let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items${itemID}?${params.toString()}`;
       if (this._query.length > 0)
         url = url + '&query=' + this._query.join('%2B');
       if (nestedID) url = url + `&nestedID=${nestedID}`;
+      const res = await this.instance.axiosInstance.get(url);
+      return res;
 
-      this.instance.axiosInstance
-        .get(url)
-        .then((res) => {
-          if (res?.status >= 200 && res?.status < 400) {
-            resolve(res);
-          } else {
-            reject(res);
-          }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+    } catch (error) {
+      throw new Error(JSON.stringify({ error }, null, 2));
+
+    }
   }
 
   /**
@@ -571,15 +563,15 @@ export default class BagelDBRequest {
   }
 
   /**
-   * @summary
-   * This function adds a user to the associated bagelUsers item's array
-   * @NOTE ⚠️ **_In order to add a Bagel user - the api token must have User Admin permissions, it is suggested to only use this token server side_**
-   * @example
-   * db.collection('COLLECTION_SLUG').item('ITEM_ID').addUser('USER_ID');
-   * @param {string} bagelUserID - The ID of the user you want to add to the item.
-   * @returns A promise that resolves to the response from the server.
-   * @see Docs {@link https://docs.bageldb.com/content-api/#add-a-bagel-user}
-   */
+     * @summary
+     * This function adds a user to the associated bagelUsers item's array
+     * @NOTE ⚠️ **_In order to add a Bagel user - the api token must have User Admin permissions, it is suggested to only use this token server side_**
+     * @example
+     * db.collection('COLLECTION_SLUG').item('ITEM_ID').addUser('USER_ID');
+     * @param {string} bagelUserID - The ID of the user you want to add to the item.
+     * @returns A promise that resolves to the response from the server.
+     * @see Docs {@link https://docs.bageldb.com/content-api/#add-a-bagel-user}
+     */
   addUser(bagelUserID: string): AxiosPromise {
     if (!this._item) {
       throw new Error('Users can only be added in relation to an item');
@@ -600,15 +592,15 @@ export default class BagelDBRequest {
   }
 
   /**
-   * @summary
-   * This function removes a user to the associated bagelUsers item's array
-   * @NOTE ⚠️ **_In order to remove a Bagel user - the api token must have User Admin permissions, it is suggested to only use this token server side_**
-   * @example
-   * db.collection('COLLECTION_SLUG').item('ITEM_ID').addUser('USER_ID');
-   * @param {string} bagelUserID - The ID of the user you want to remove from the item.
-   * @returns A promise that resolves to the response from the server.
-   * @see Docs {@link hhttps://docs.bageldb.com/content-api/#remove-a-bagel-user}
-   */
+     * @summary
+     * This function removes a user to the associated bagelUsers item's array
+     * @NOTE ⚠️ **_In order to remove a Bagel user - the api token must have User Admin permissions, it is suggested to only use this token server side_**
+     * @example
+     * db.collection('COLLECTION_SLUG').item('ITEM_ID').addUser('USER_ID');
+     * @param {string} bagelUserID - The ID of the user you want to remove from the item.
+     * @returns A promise that resolves to the response from the server.
+     * @see Docs {@link hhttps://docs.bageldb.com/content-api/#remove-a-bagel-user}
+     */
   removeUser(bagelUserID: string): AxiosPromise {
     if (!this._item) {
       throw new Error('Users can only be removed in relation to an item');
@@ -662,11 +654,11 @@ export default class BagelDBRequest {
     this.client = new eventSrc(url);
 
     /**
-     * If the client is closed, and the user is active, refresh the user, get the
-     * access token, and create a new client
-     * @param event - The event object that was passed to the event handler.
-     * @returns The function errorHandler is being returned.
-     */
+       * If the client is closed, and the user is active, refresh the user, get the
+       * access token, and create a new client
+       * @param event - The event object that was passed to the event handler.
+       * @returns The function errorHandler is being returned.
+       */
     const errorHandler = async (event: Event) => {
       if (this.client.readyState === eventSrc.CLOSED) {
         if (await this.instance.users()._bagelUserActive()) {

@@ -4,7 +4,7 @@ import BagelDBRequest from './bagelDBRequest';
 import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
 import { axios, baseEndpoint } from './common';
-import { BagelConfigOptions } from './interfaces';
+import { BagelConfigOptions, BagelStorageType } from './interfaces';
 
 const defaultOptions: BagelConfigOptions = {
   isServer: false,
@@ -18,15 +18,24 @@ class Bagel {
 
   axiosInstance: AxiosInstance;
 
-  constructor(public apiToken: string, public options = defaultOptions) {
-    options = { ...defaultOptions, ...options };
-    // ? bagel config options
-    this.isServer = !!options.isServer;
-    this.customStorage = options.customStorage;
-    this.baseEndpoint = options.customBaseEndpoint;
-    this.customReqHeaders = options.customReqHeaders;
+  customReqHeaders?: AxiosRequestHeaders;
 
-    this.apiToken = apiToken;
+  customStorage?: BagelStorageType;
+
+  baseEndpoint?: string;
+
+  options: BagelConfigOptions;
+
+  constructor(public apiToken: string, options?: BagelConfigOptions) {
+    this.options = { ...defaultOptions, ...options };
+    // ? bagel config options
+    Object.keys(this.options).forEach((key: string) => {
+      if (key === 'isServer') {
+        this[key] = !!(this.options?.[key] || defaultOptions[key]);
+        return;
+      }
+      this[key] = this.options?.[key] || defaultOptions[key];
+    });
     this.axiosInstance = axios.create({
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
@@ -34,32 +43,36 @@ class Bagel {
     /* Intercepting the request and adding the Authorization header to the request. */
     this.axiosInstance.interceptors.request.use(
       async (config) => {
-        (config.headers as AxiosRequestHeaders)['Accept-Version'] = 'v1';
-        if (
-          (await new BagelUsersRequest({
-            instance: this,
-          })._bagelUserActive()) &&
-          !config.url?.includes('user/token')
-        ) {
-          const bagelUserReq = new BagelUsersRequest({
-            instance: this,
-          });
-          const accessToken = await bagelUserReq._getAccessToken();
-          (config.headers as AxiosRequestHeaders).Authorization =
-            'Bearer ' + accessToken;
-        } else {
-          (config.headers as AxiosRequestHeaders).Authorization =
-            'Bearer ' + apiToken;
+        try {
+          (config.headers as AxiosRequestHeaders)['Accept-Version'] = 'v1';
+          if (
+            (await new BagelUsersRequest({
+              instance: this,
+            })._bagelUserActive()) &&
+            !config.url?.includes('user/token')
+          ) {
+            const bagelUserReq = new BagelUsersRequest({
+              instance: this,
+            });
+            const accessToken = await bagelUserReq._getAccessToken();
+            (config.headers as AxiosRequestHeaders).Authorization =
+              'Bearer ' + accessToken;
+          } else {
+            (config.headers as AxiosRequestHeaders).Authorization =
+              'Bearer ' + apiToken;
+          }
+          config.headers = {
+            ...config.headers,
+            ...this.customReqHeaders,
+          };
+          return config;
+        } catch (error) {
+          throw new Error(JSON.stringify({ error }, null, 2));
         }
-        config.headers = {
-          ...config.headers,
-          ...this.customReqHeaders,
-        };
-        return config;
       },
-      (error) => {
-        return Promise.reject(error);
-      },
+      // (err) => {
+      //   throw err;
+      // },
     );
 
     /* Intercepting the response and checking if the response is 401 and if it is,
@@ -69,53 +82,57 @@ class Bagel {
         return response;
       },
       async (error: AxiosError) => {
-        if (
-          (await new BagelUsersRequest({
-            instance: this,
-          })._bagelUserActive()) &&
-          error.response &&
-          error.response?.status == 401 &&
-          !error?.config?.url?.includes?.('user/token')
-        ) {
-          return new BagelUsersRequest({ instance: this })
-            .refresh()
-            .then(async () => {
-              const config = error.config;
-              const token = await new BagelUsersRequest({
-                instance: this,
-              })._getAccessToken();
+        try {
+          if (
+            (await new BagelUsersRequest({
+              instance: this,
+            })._bagelUserActive()) &&
+            error?.response &&
+            error?.response?.status == 401 &&
+            !error?.config?.url?.includes?.('user/token')
+          ) {
+            // const token =
+            await new BagelUsersRequest({ instance: this }).refresh();
+            const config = error.config;
+            const token = await new BagelUsersRequest({
+              instance: this,
+            })._getAccessToken();
 
-              (
-                config.headers as Record<string, string>
-              ).Authorization = `Bearer ${token}`;
-              return new Promise((resolve, reject) => {
-                axios
-                  .request(config)
-                  .then((response) => {
-                    resolve(response);
-                  })
-                  .catch((err) => {
-                    reject(err);
-                  });
-              });
-            })
-            .catch(async (refreshErr: any) => {
-              try {
-                await this.users().logout();
-                Promise.reject({
+            config.headers = {
+              ...config.headers,
+              Authorization: `Bearer ${token}`,
+            };
+            const response = await this.axiosInstance.request(config);
+            return response;
+          }
+          throw error;
+        } catch (refreshErr) {
+          try {
+            await this.users().logout();
+            throw new Error(
+              JSON.stringify(
+                {
                   Error: refreshErr,
                   message: 'BagelAuth: Token expired. user logged out.',
-                });
-              } catch (logoutErr: any) {
-                Promise.reject({
+                },
+                null,
+                2,
+              ),
+            );
+          } catch (logoutErr: any) {
+            throw new Error(
+              JSON.stringify(
+                {
                   Error: logoutErr,
                   message:
                     'BagelAuth: Token expired. There was an error trying to log user out.',
-                });
-              }
-            });
+                },
+                null,
+                2,
+              ),
+            );
+          }
         }
-        Promise.reject(error);
       },
     );
   }
