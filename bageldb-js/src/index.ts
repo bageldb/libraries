@@ -8,9 +8,9 @@ import { axios, baseEndpoint } from './common';
 class Bagel {
   [x: string]: any;
 
-  isServer: boolean;
+  isServer?: boolean;
 
-  customStorage: Storage | undefined;
+  customStorage?: Storage;
 
   apiToken: string;
 
@@ -20,18 +20,18 @@ class Bagel {
     apiToken: string,
     options: {
       isServer?: boolean;
-      customStorage?: Storage | undefined;
-      customBaseEndpointOrDefault?: string;
+      customStorage?: Storage;
+      customBaseEndpoint?: string;
     } = {
       isServer: false,
       customStorage: undefined,
-      customBaseEndpointOrDefault: baseEndpoint,
+      customBaseEndpoint: baseEndpoint,
     },
   ) {
     // ? bagel config options
     this.isServer = !!options.isServer;
     this.customStorage = options.customStorage;
-    this.baseEndpoint = options.customBaseEndpointOrDefault;
+    this.baseEndpoint = options.customBaseEndpoint;
 
     this.apiToken = apiToken;
     this.axiosInstance = axios.create({
