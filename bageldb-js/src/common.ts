@@ -34,6 +34,7 @@ const getParsedJwt = <T extends object = { [k: string]: string | number }>(
     return undefined;
   }
 };
+
 export type { AxiosInstance, AxiosPromise, AxiosResponse };
 export {
   axios,

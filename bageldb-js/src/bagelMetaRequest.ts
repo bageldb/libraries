@@ -1,5 +1,4 @@
 import { AxiosPromise } from 'axios';
-import { baseEndpoint } from './common';
 import BagelDBRequest from './bagelDBRequest';
 import { structArgs } from './interfaces';
 export default class BagelMetaRequest extends BagelDBRequest {
@@ -19,7 +18,7 @@ export default class BagelMetaRequest extends BagelDBRequest {
    */
   get(): AxiosPromise {
     return new Promise((resolve, reject) => {
-      const url = `${baseEndpoint}/collection/${this.collectionID}/schema`;
+      const url = `${this.baseEndpoint}/collection/${this.collectionID}/schema`;
       this.instance.axiosInstance
         .get(url)
         .then((res) => {
