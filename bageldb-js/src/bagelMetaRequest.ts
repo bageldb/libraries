@@ -18,7 +18,7 @@ export default class BagelMetaRequest extends BagelDBRequest {
    */
   get(): AxiosPromise {
     return new Promise((resolve, reject) => {
-      const url = `${this.baseEndpoint}/collection/${this.collectionID}/schema`;
+      const url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/schema`;
       this.instance.axiosInstance
         .get(url)
         .then((res) => {

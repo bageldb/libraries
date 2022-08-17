@@ -250,7 +250,7 @@ export default class BagelDBRequest {
         isReactNative ? undefined : fileName,
       );
 
-    const url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
+    const url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
     if (isReactNative) {
       //   //? react-native
       const res = await this.instance.axiosInstance.put(url, form, {
@@ -279,7 +279,7 @@ export default class BagelDBRequest {
    */
   delete() {
     const nestedID = this.nestedCollectionsIDs.join('.');
-    let url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}`;
+    let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}`;
     if (nestedID) url = url + `?nestedID=${nestedID}`;
     return new Promise((resolve, reject) => {
       this.instance.axiosInstance
@@ -303,7 +303,7 @@ export default class BagelDBRequest {
    */
   set(data: Record<string, any>): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
-    let url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}?set=true`;
+    let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}?set=true`;
     if (nestedID) url = url + `&nestedID=${nestedID}`;
     return new Promise((resolve, reject) => {
       this.instance.axiosInstance
@@ -327,7 +327,7 @@ export default class BagelDBRequest {
    */
   put(data: Record<string, any>): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
-    let url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}`;
+    let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}`;
     if (nestedID) url = url + `?nestedID=${nestedID}`;
     return new Promise((resolve, reject) => {
       this.instance.axiosInstance
@@ -352,7 +352,7 @@ export default class BagelDBRequest {
   post(data: Record<string, any>): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
-      let url = `${this.baseEndpoint}/collection/${this.collectionID}/items`;
+      let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items`;
       if (nestedID) url = url + `/${this._item}?nestedID=${nestedID}`;
       this.instance.axiosInstance
         .post(url, data)
@@ -379,7 +379,7 @@ export default class BagelDBRequest {
   append(fieldSlug: string, ItemRefID: string): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
-      let url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
+      let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
       this.instance.axiosInstance
         .put(url, { value: ItemRefID })
@@ -407,7 +407,7 @@ export default class BagelDBRequest {
     if (nestedID)
       throw new Error('Unset is not yet supported in nested collections');
     return new Promise((resolve, reject) => {
-      let url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
+      let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
       this.instance.axiosInstance
         .delete(url, { data: { value: ItemRefID } })
@@ -434,7 +434,7 @@ export default class BagelDBRequest {
       throw new Error('Increment value must be a number');
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
-      let url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${this._field}?increment=${incrementValue}`;
+      let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${this._field}?increment=${incrementValue}`;
       if (nestedID) url = url + `&nestedID=${nestedID}`;
       this.instance.axiosInstance
         .put(url)
@@ -457,7 +457,7 @@ export default class BagelDBRequest {
     if (decrementValue > 0) decrementValue = decrementValue * -1;
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
-      let url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${this._field}?increment=${decrementValue}`;
+      let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${this._field}?increment=${decrementValue}`;
       if (nestedID) url = url + `&nestedID=${nestedID}`;
       this.instance.axiosInstance
         .put(url)
@@ -473,7 +473,7 @@ export default class BagelDBRequest {
   value(fieldSlug: string, value: unknown): AxiosPromise {
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
-      let url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
+      let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/field/${fieldSlug}`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
       this.instance.axiosInstance
         .delete(url, { data: { value } })
@@ -520,7 +520,7 @@ export default class BagelDBRequest {
 
       const itemID = this._item ? '/' + this._item : '';
 
-      let url = `${this.baseEndpoint}/collection/${
+      let url = `${this.instance.baseEndpoint}/collection/${
         this.collectionID
       }/items${itemID}?${params.toString()}`;
       if (this._query.length > 0)
@@ -557,7 +557,7 @@ export default class BagelDBRequest {
     }
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
-      let url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/bagelUsers`;
+      let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/bagelUsers`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
       this.instance.axiosInstance
         .get(url)
@@ -586,7 +586,7 @@ export default class BagelDBRequest {
     }
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
-      let url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/bagelUsers`;
+      let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/bagelUsers`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
       this.instance.axiosInstance
         .put(url, { userID: bagelUserID })
@@ -615,7 +615,7 @@ export default class BagelDBRequest {
     }
     const nestedID = this.nestedCollectionsIDs.join('.');
     return new Promise((resolve, reject) => {
-      let url = `${this.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/bagelUsers`;
+      let url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/bagelUsers`;
       if (nestedID) url = url + `?nestedID=${nestedID}`;
       this.instance.axiosInstance
         .delete(url, { data: { userID: bagelUserID } })
