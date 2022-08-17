@@ -3,7 +3,7 @@ import { AxiosError, AxiosInstance, AxiosRequestHeaders } from 'axios';
 import BagelDBRequest from './bagelDBRequest';
 import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
-import { axios } from './common';
+import { axios, baseEndpoint } from './common';
 
 class Bagel {
   [x: string]: any;
@@ -18,13 +18,21 @@ class Bagel {
 
   constructor(
     apiToken: string,
-    options: { isServer?: boolean; customStorage?: Storage | undefined } = {
+    options: {
+      isServer?: boolean;
+      customStorage?: Storage | undefined;
+      customBaseEndpointOrDefault?: string;
+    } = {
       isServer: false,
       customStorage: undefined,
+      customBaseEndpointOrDefault: baseEndpoint,
     },
   ) {
+    // ? bagel config options
     this.isServer = !!options.isServer;
     this.customStorage = options.customStorage;
+    this.baseEndpoint = options.customBaseEndpointOrDefault;
+
     this.apiToken = apiToken;
     this.axiosInstance = axios.create({
       maxContentLength: Infinity,
