@@ -7,6 +7,7 @@ import Bagel from '.';
 import BagelDBRequest from './bagelDBRequest';
 import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
+import { AxiosRequestHeaders } from 'axios';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 type fileUploadArgs = {
   selectedImage?: any;
@@ -42,6 +43,7 @@ interface BagelConfigOptions {
   isServer?: boolean;
   customStorage?: Storage;
   customBaseEndpoint?: string;
+  customReqHeaders?: AxiosRequestHeaders;
 }
 
 export type {

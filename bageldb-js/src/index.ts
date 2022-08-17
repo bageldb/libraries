@@ -10,6 +10,7 @@ const defaultOptions: BagelConfigOptions = {
   isServer: false,
   customStorage: undefined,
   customBaseEndpoint: baseEndpoint,
+  customReqHeaders: {},
 };
 
 class Bagel {
@@ -23,6 +24,7 @@ class Bagel {
     this.isServer = !!options.isServer;
     this.customStorage = options.customStorage;
     this.baseEndpoint = options.customBaseEndpoint;
+    this.customReqHeaders = options.customReqHeaders;
 
     this.apiToken = apiToken;
     this.axiosInstance = axios.create({
@@ -49,6 +51,10 @@ class Bagel {
           (config.headers as AxiosRequestHeaders).Authorization =
             'Bearer ' + apiToken;
         }
+        config.headers = {
+          ...config.headers,
+          ...this.customReqHeaders,
+        };
         return config;
       },
       (error) => {
