@@ -1,4 +1,3 @@
-import { AxiosPromise } from 'axios';
 import BagelDBRequest from './bagelDBRequest';
 import { structArgs } from './interfaces';
 export default class BagelMetaRequest extends BagelDBRequest {
@@ -13,24 +12,19 @@ export default class BagelMetaRequest extends BagelDBRequest {
    * Schema will be retrieved for the parent collection, and will contain the schema for all nested collections inside the parent collection.
    * @example Request:
    * const {data: schema} = await db.schema("chat").get();
-   * @returns {AxiosPromise} A Promise with the schema of the collection.
+   * @returns A Promise with the schema of the collection.
    * @see Docs {@link https://docs.bageldb.com/meta-api/#get-schema}
    */
-  get(): AxiosPromise {
-    return new Promise((resolve, reject) => {
-      const url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/schema`;
-      this.instance.axiosInstance
-        .get(url)
-        .then((res) => {
-          if (res?.status >= 200 && res?.status < 400) {
-            resolve(res);
-          } else {
-            reject(res);
-          }
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+  async get() {
+    try {
+      const url = `${this.baseEndpoint}/collection/${this.collectionID}/schema`;
+
+      const res = await this.axiosInstance.get(url);
+      return res;
+
+    } catch (error) {
+      throw new Error(JSON.stringify({ error }, null, 2));
+
+    }
   }
 }

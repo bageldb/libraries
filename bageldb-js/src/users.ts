@@ -7,7 +7,7 @@ import {
   getExpires,
   getParsedJwt,
 } from './common';
-import type { bagelType, BagelUser } from './interfaces';
+import type { BagelStorageType, bagelType, BagelUser } from './interfaces';
 import type FormData from 'form-data';
 
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
@@ -17,7 +17,7 @@ export default class BagelUsersRequest {
 
   axios: AxiosInstance;
 
-  bagelStorage: Storage;
+  bagelStorage: BagelStorageType;
 
   [x: string]: any;
 
@@ -346,7 +346,7 @@ export default class BagelUsersRequest {
    */
   async getBagelUserID(): Promise<string | null> {
     try {
-      const bagelUser = await this.bagelStorage.getItem('bagel-user');
+      const bagelUser = await this.bagelStorage.getItem<string>('bagel-user');
       return bagelUser;
     } catch (error) {
       throw new Error(JSON.stringify({ error }));
@@ -360,7 +360,9 @@ export default class BagelUsersRequest {
    * @returns A promise that resolves to a string or null.
    */
   async _getRefreshToken(): Promise<string | null> {
-    const refreshToken = await this.bagelStorage.getItem('bagel-refresh');
+    const refreshToken = await this.bagelStorage.getItem<string>(
+      'bagel-refresh',
+    );
     return refreshToken;
   }
 
