@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.37-alpha.1.8",
+  "version": "0.3.37-alpha.1.9",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "types": "./dist/index.d.ts",
   "unpkg": "./dist/bageldb.js",
@@ -91,7 +91,8 @@
   },
   "files": [
     "src",
-    "dist"
+    "dist",
+    "./tsconfig.json"
   ],
   "eslintIgnore": [
     "node_modules/",
