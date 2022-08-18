@@ -9,7 +9,7 @@
       "DOM",
       "ESNext",
     ],
-    "module": "esnext",
+    "module": "UMD",
     "target": "ES2015",
     "rootDir": "src",
     "skipLibCheck": true,
@@ -41,7 +41,7 @@
     "listFiles": false,
     "noFallthroughCasesInSwitch": true,
     "pretty": true,
-    "resolveJsonModule": true,
+    // "resolveJsonModule": true,
     "traceResolution": false,
   },
   "include": [

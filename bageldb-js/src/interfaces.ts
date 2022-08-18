@@ -1,11 +1,9 @@
 import type bagelDBRequestType from './bagelDBRequest';
-import type bagelMetaRequestType from './bagelMetaRequest';
 import type bagelUsersRequestType from './users';
 import type bagelType from '.';
 import Bagel from '.';
 
 import BagelDBRequest from './bagelDBRequest';
-import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
 import { AxiosRequestHeaders } from 'axios';
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -14,14 +12,7 @@ type fileUploadArgs = {
   imageLink?: string;
   altText?: string;
   fileName?: string;
-} & (
-  | {
-    selectedImage: any;
-  }
-  | {
-    imageLink: string;
-  }
-);
+} & ({ selectedImage: any } | { imageLink: string });
 
 type UserGroups = string;
 interface BagelUser {
@@ -78,7 +69,7 @@ type BagelStorageType =
 interface BagelConfigOptions {
   isServer?: boolean;
   customStorage?: BagelStorageType;
-  customBaseEndpoint?: string;
+  baseEndpoint?: string;
   customReqHeaders?: AxiosRequestHeaders;
 }
 export type {
@@ -86,7 +77,6 @@ export type {
   BagelUser,
   UserGroups,
   bagelDBRequestType,
-  bagelMetaRequestType,
   bagelUsersRequestType,
   bagelType,
   structArgs,
@@ -95,4 +85,4 @@ export type {
   BagelStorageType,
 };
 
-export type { BagelUsersRequest, BagelDBRequest, BagelMetaRequest, Bagel };
+export type { BagelUsersRequest, BagelDBRequest, Bagel };
