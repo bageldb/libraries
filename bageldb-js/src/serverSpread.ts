@@ -1,2 +1,2 @@
-import { BagelUsersRequest, BagelDBRequest, BagelMetaRequest, BagelDB } from './server';
-export default { BagelUsersRequest, BagelDBRequest, BagelMetaRequest, BagelDB };
+import { BagelUsersRequest, BagelDBRequest, BagelDB } from './server';
+export default { BagelUsersRequest, BagelDBRequest, BagelDB };

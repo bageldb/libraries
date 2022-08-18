@@ -1,7 +1,6 @@
 import { AxiosError, AxiosInstance, AxiosRequestHeaders } from 'axios';
 
 import BagelDBRequest from './bagelDBRequest';
-import BagelMetaRequest from './bagelMetaRequest';
 import BagelUsersRequest from './users';
 import { axios, baseEndpoint } from './common';
 import { BagelConfigOptions, BagelStorageType } from './interfaces';
@@ -9,7 +8,7 @@ import { BagelConfigOptions, BagelStorageType } from './interfaces';
 const defaultOptions: BagelConfigOptions = {
   isServer: false,
   customStorage: undefined,
-  customBaseEndpoint: baseEndpoint,
+  baseEndpoint,
   customReqHeaders: {},
 };
 
@@ -45,12 +44,11 @@ class Bagel {
       async (config) => {
         try {
           (config.headers as AxiosRequestHeaders)['Accept-Version'] = 'v1';
-          if (
-            (await new BagelUsersRequest({
-              instance: this,
-            })._bagelUserActive()) &&
-            !config.url?.includes('user/token')
-          ) {
+          const bagelUserActive = await new BagelUsersRequest({
+            instance: this,
+          })._bagelUserActive();
+
+          if (bagelUserActive && !config.url?.includes('user/token')) {
             const bagelUserReq = new BagelUsersRequest({
               instance: this,
             });
@@ -83,10 +81,11 @@ class Bagel {
       },
       async (error: AxiosError) => {
         try {
+          const bagelUserActive = await new BagelUsersRequest({
+            instance: this,
+          })._bagelUserActive();
           if (
-            (await new BagelUsersRequest({
-              instance: this,
-            })._bagelUserActive()) &&
+            bagelUserActive &&
             error?.response &&
             error?.response?.status == 401 &&
             !error?.config?.url?.includes?.('user/token')
@@ -105,7 +104,6 @@ class Bagel {
             const response = await this.axiosInstance.request(config);
             return response;
           }
-          throw error;
         } catch (refreshErr) {
           try {
             await this.users().logout();
@@ -133,6 +131,7 @@ class Bagel {
             );
           }
         }
+        throw error;
       },
     );
   }
@@ -149,7 +148,23 @@ class Bagel {
    * @see {@link https://docs.bageldb.com/meta-api/#get-schema}
    */
   schema(collectionID: string) {
-    return new BagelMetaRequest({ instance: this, collectionID });
+    // return new BagelMetaRequest({ instance: this, collectionID });
+    /**
+     * @summary
+     * Retrieve the schema of a collection.
+     * This enables implementing things like dynamic forms or other dynamic pages, which rely on the schema to display different page components.
+     * Schema will be retrieved for the parent collection, and will contain the schema for all nested collections inside the parent collection.
+     * @example Request:
+     * const {data: schema} = await db.schema("chat").get();
+     * @returns A Promise with the schema of the collection.
+     * @see Docs {@link https://docs.bageldb.com/meta-api/#get-schema}
+     */
+    return {
+      get: () => {
+        const url = `${this.baseEndpoint}/collection/${collectionID}/schema`;
+        return this.axiosInstance.get(url);
+      },
+    };
   }
 
   /**
@@ -219,9 +234,4 @@ class Bagel {
 }
 
 export default Bagel;
-export {
-  BagelUsersRequest,
-  BagelDBRequest,
-  BagelMetaRequest,
-  Bagel as BagelDB,
-};
+export { BagelUsersRequest, BagelDBRequest, Bagel as BagelDB };
