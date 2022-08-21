@@ -1,4 +1,9 @@
-import { isUndefined, without, keys, size, includes } from 'lodash';
+// import { isUndefined, without, keys, size, includes } from 'lodash';
+import isUndefined from 'lodash/isUndefined';
+import without from 'lodash/without';
+import keys from 'lodash/keys';
+import size from 'lodash/size';
+import includes from 'lodash/includes';
 
 export default class FallbackStorage {
   key: (index: any) => any;

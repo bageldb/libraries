@@ -10,6 +10,7 @@ const defaultOptions: BagelConfigOptions = {
   customStorage: undefined,
   baseEndpoint,
   customReqHeaders: {},
+  enableDebug: false,
 };
 
 class Bagel {
@@ -39,6 +40,13 @@ class Bagel {
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
     });
+
+    if (this.enableDebug) {
+      (async (axiosInstance) => {
+        const curlirize = await (await import('axios-curlirize')).default;
+        curlirize(axiosInstance);
+      })(this.axiosInstance);
+    }
     /* Intercepting the request and adding the Authorization header to the request. */
     this.axiosInstance.interceptors.request.use(
       async (config) => {

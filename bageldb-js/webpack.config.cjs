@@ -9,29 +9,29 @@ const generalConfig = {
   devtool: "inline-source-map",
   watchOptions: {
     aggregateTimeout: 600,
-    ignored: /node_modules/,
+    ignored: /node_modules/
   },
   module: {
     rules: [
-              {
-                test: /\.tsx?$/,
-                use: [
-                  {
-                    loader: 'ts-loader',
-                    // loader: 'esbuild-loader',
+      {
+        test: /\.tsx?$/,
+        use: [
+          {
+            loader: "ts-loader",
+            // loader: 'esbuild-loader',
 
-                    options: {
-                        transpileOnly: false,
+            options: {
+              transpileOnly: false
 
-                      // loader: 'ts',  // Or 'ts' if you don't need tsx
-                      // target: 'es2015',
-                      // sourcemap: true
-                      // tsconfigRaw: require('./tsconfig.json')
-                    }
+              // loader: 'ts',  // Or 'ts' if you don't need tsx
+              // target: 'es2015',
+              // sourcemap: true
+              // tsconfigRaw: require('./tsconfig.json')
+            }
           }
         ],
-        exclude: /node_modules/,
-      },
+        exclude: /node_modules/
+      }
       // {
       //   test: path.resolve(__dirname, "./dist/index.js"),
       //   loader: "exports-loader",
@@ -39,22 +39,22 @@ const generalConfig = {
       //     exports:"default Bagel"
       //   },
       // },
-    ],
+    ]
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"],
+    extensions: [".tsx", ".ts", ".js"]
   },
-   plugins: [
+  plugins: [
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
-      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
-    }),
+      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")]
+    })
 
-      // new NodePolyfillPlugin(),
+    // new NodePolyfillPlugin(),
     // new HtmlWebpackPlugin({
     //   title: "bageldb-js",
     // }),
-  ],
+  ]
 };
 
 const nodeConfig = {
@@ -64,33 +64,33 @@ const nodeConfig = {
       library: {
         umdNamedDefine: true,
         type: "umd",
-        export: "default",
-      },
+        export: "default"
+      }
     },
     serverSpread: {
       import: "./src/serverSpread.ts",
       library: {
         umdNamedDefine: true,
         type: "umd",
-        export: "default",
-      },
-    },
+        export: "default"
+      }
+    }
   },
   target: "node",
   externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
   externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
-   plugins: [
+  plugins: [
     new CleanWebpackPlugin({
       cleanStaleWebpackAssets: false,
-      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
+      cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")]
     }),
-    new NodePolyfillPlugin(),
+    new NodePolyfillPlugin()
   ],
   output: {
     globalObject: "this",
     path: path.join(__dirname, "./dist"),
-    filename: "[name].cjs",
-  },
+    filename: "[name].cjs"
+  }
 };
 
 const esmConfig = {
@@ -98,21 +98,21 @@ const esmConfig = {
   //   splitChunks: {
   //     // include all types of chunks
   //     chunks: "all",
-  //     name: "shared",
-  //   },
+  //     name: "shared"
+  //   }
   // },
   experiments: {
-    outputModule: true,
+    outputModule: true
   },
   entry: {
     index: {
       import: "./src/index.ts",
       library: {
         umdNamedDefine: true,
-        type: "module",
+        type: "module"
         // export: "default",
-      },
-    },
+      }
+    }
   },
   // target: "web",
   externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
@@ -122,18 +122,17 @@ const esmConfig = {
   //     cleanStaleWebpackAssets: false,
   //     cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
   //   }),
-    // new NodePolyfillPlugin(),
+  // new NodePolyfillPlugin(),
   // ],
   output: {
     globalObject: "this",
     path: path.join(__dirname, "./dist"),
-    filename: "[name].mjs",
-  },
+    filename: "[name].mjs"
+  }
 };
 
 const browserConfig = {
-  resolve: {
-  },
+  resolve: {},
   entry: "./src/index.ts",
   target: "web",
   externalsPresets: { node: true },
@@ -145,9 +144,9 @@ const browserConfig = {
       umdNamedDefine: true,
       name: "Bagel",
       type: "umd",
-      export: "default",
-    },
-  },
+      export: "default"
+    }
+  }
 };
 
 module.exports = (env, argv) => {
@@ -160,7 +159,7 @@ module.exports = (env, argv) => {
   }
 
   Object.assign(browserConfig, generalConfig);
-  Object.assign(nodeConfig, generalConfig,nodeConfig);
+  Object.assign(nodeConfig, generalConfig, nodeConfig);
   Object.assign(esmConfig, generalConfig);
   // Object.assign(reactNativeConfig, generalConfig);
 
@@ -168,6 +167,6 @@ module.exports = (env, argv) => {
     nodeConfig,
     esmConfig,
     // reactNativeConfig,
-    browserConfig,
-    ];
+    browserConfig
+  ];
 };

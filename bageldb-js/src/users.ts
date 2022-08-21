@@ -42,7 +42,7 @@ export default class BagelUsersRequest {
   async _bagelUserActive(): Promise<boolean> {
     const isBrowser = this._isBrowser();
     try {
-      const bagelUserID = isBrowser && await this.getBagelUserID();
+      const bagelUserID = isBrowser && (await this.getBagelUserID());
       return bagelUserID !== null && (bagelUserID || '')?.length > 0;
     } catch (error) {
       throw new Error(error as any);
@@ -218,7 +218,7 @@ export default class BagelUsersRequest {
       if (!userIsActive) {
         throw new Error(
           'a Bagel User must be logged in to get Bagel User info ' +
-          userIsActive,
+            userIsActive,
         );
       }
       const url = `${AUTH_ENDPOINT}/user`;

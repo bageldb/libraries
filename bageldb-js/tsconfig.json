@@ -9,7 +9,7 @@
       "DOM",
       "ESNext",
     ],
-    "module": "UMD",
+    "module": "ESNext",
     "target": "ES2015",
     "rootDir": "src",
     "skipLibCheck": true,
@@ -23,7 +23,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    "suppressImplicitAnyIndexErrors": true,
+    // "suppressImplicitAnyIndexErrors": true,
     "forceConsistentCasingInFileNames": true,
     // "noImplicitAny": false,
     "useDefineForClassFields": true,
@@ -45,13 +45,15 @@
     "traceResolution": false,
   },
   "include": [
-    "src"
+    "src",
+    "test/_test.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
     ".eslintrc.cjs",
     // "webpack.config.ts",
-    "tsconfig.json"
+    "tsconfig.json",
+    "test/_test.ts"
   ]
 }

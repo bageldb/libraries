@@ -1,7 +1,7 @@
 import type bagelDBRequestType from './bagelDBRequest';
 import type bagelUsersRequestType from './users';
-import type bagelType from '.';
-import Bagel from '.';
+import type bagelType from './index';
+import Bagel from './index';
 
 import BagelDBRequest from './bagelDBRequest';
 import BagelUsersRequest from './users';
@@ -67,10 +67,12 @@ type BagelStorageType =
   };
 
 interface BagelConfigOptions {
+  [key: string]: any;
   isServer?: boolean;
   customStorage?: BagelStorageType;
   baseEndpoint?: string;
   customReqHeaders?: AxiosRequestHeaders;
+  enableDebug?: boolean;
 }
 export type {
   fileUploadArgs,
