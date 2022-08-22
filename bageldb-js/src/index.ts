@@ -4,6 +4,7 @@ import BagelDBRequest from './bagelDBRequest';
 import BagelUsersRequest from './users';
 import { axios, baseEndpoint } from './common';
 import { BagelConfigOptions, BagelStorageType } from './interfaces';
+import curlirize from 'axios-curlirize';
 
 const defaultOptions: BagelConfigOptions = {
   isServer: false,
@@ -42,10 +43,7 @@ class Bagel {
     });
 
     if (this.enableDebug) {
-      (async (axiosInstance) => {
-        const curlirize = await (await import('axios-curlirize')).default;
-        curlirize(axiosInstance);
-      })(this.axiosInstance);
+      curlirize(this.axiosInstance);
     }
     /* Intercepting the request and adding the Authorization header to the request. */
     this.axiosInstance.interceptors.request.use(
