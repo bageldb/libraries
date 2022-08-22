@@ -47,8 +47,8 @@ export default class BagelUsersRequest {
     try {
       const bagelUserID = isBrowser && (await this.getBagelUserID());
       return bagelUserID !== null && (bagelUserID || '')?.length > 0;
-    } catch (error) {
-      throw new Error(error as any);
+    } catch (err) {
+      throw err;
     }
   }
 
@@ -156,8 +156,8 @@ export default class BagelUsersRequest {
       const res = await this.axios.post(url, body);
       await this._storeOtpRequestNonce(res?.data);
       return res?.data.nonce;
-    } catch (error) {
-      throw new Error(JSON.stringify(error));
+    } catch (err) {
+      throw err;
     }
   }
 
@@ -201,8 +201,8 @@ export default class BagelUsersRequest {
       await this._storeTokens(data);
       await this._storeBagelUser(data.user_id);
       return data.user_id;
-    } catch (error) {
-      throw new Error(JSON.stringify({ error }, null, 2));
+    } catch (err) {
+      throw err;
     }
   }
 
@@ -227,8 +227,8 @@ export default class BagelUsersRequest {
       const url = `${AUTH_ENDPOINT}/user`;
       const res = await this.axios.get<BagelUser>(url);
       return res;
-    } catch (error: any) {
-      throw new Error(error);
+    } catch (err) {
+      throw err;
     }
   }
 
@@ -351,8 +351,8 @@ export default class BagelUsersRequest {
     try {
       const bagelUser = await this.bagelStorage.getItem<string>('bagel-user');
       return bagelUser;
-    } catch (error) {
-      throw new Error(JSON.stringify({ error }));
+    } catch (err) {
+      throw err;
     }
   }
 
@@ -450,8 +450,8 @@ export default class BagelUsersRequest {
         await this._storeTokens(data);
         return data.access_token;
       }
-    } catch (error: any) {
-      throw new Error(error);
+    } catch (err) {
+      throw err;
     }
   }
 }
