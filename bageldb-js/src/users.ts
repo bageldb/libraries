@@ -9,6 +9,7 @@ import {
 } from './common';
 import type { BagelStorageType, bagelType, BagelUser } from './interfaces';
 import type FormData from 'form-data';
+import FallbackStorage from './fbStorage';
 
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 
@@ -25,7 +26,9 @@ export default class BagelUsersRequest {
     this.instance = instance;
     this.axios = this.instance.axiosInstance;
     this.bagelStorage =
-      this.instance?.customStorage || globalThis?.localStorage;
+      this.instance?.customStorage ||
+      globalThis?.localStorage ||
+      new FallbackStorage({});
   }
 
   _isBrowser(): boolean {
