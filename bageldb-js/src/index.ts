@@ -142,6 +142,12 @@ class Bagel {
     );
   }
 
+  getProject(withSchemas = false) {
+    let url = `${this.baseEndpoint}/project`;
+    if (withSchemas) url += '?withSchemas=true';
+    return this.axiosInstance.get(url);
+  }
+
   /**
    * @summary
    * Retrieve the schema of a collection.

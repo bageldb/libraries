@@ -485,12 +485,6 @@ export default class BagelDBRequest {
     });
   }
 
-  getProject(withSchemas = false) {
-    let url = `${this.instance.baseEndpoint}/project`;
-    if (withSchemas) url += '?withSchemas=true';
-    return this.instance.axiosInstance.get(url);
-  }
-
   async getCount() {
     try {
       this.itemsPerPage = 0;
