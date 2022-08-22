@@ -56,6 +56,21 @@ const generalConfig = {
     // }),
   ]
 };
+const optimizeConfig = {
+  optimization: {
+    splitChunks: {
+      // include all types of chunks
+      chunks: "all",
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all"
+        }
+      }
+    }
+  }
+};
 
 const nodeConfig = {
   entry: {
@@ -94,13 +109,6 @@ const nodeConfig = {
 };
 
 const esmConfig = {
-  // optimization: {
-  //   splitChunks: {
-  //     // include all types of chunks
-  //     chunks: "all",
-  //     name: "shared"
-  //   }
-  // },
   experiments: {
     outputModule: true
   },
@@ -160,7 +168,7 @@ module.exports = (env, argv) => {
 
   Object.assign(browserConfig, generalConfig);
   Object.assign(nodeConfig, generalConfig, nodeConfig);
-  Object.assign(esmConfig, generalConfig);
+  Object.assign(esmConfig, generalConfig, optimizeConfig);
   // Object.assign(reactNativeConfig, generalConfig);
 
   return [
