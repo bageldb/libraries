@@ -71,12 +71,12 @@ class Bagel {
           };
           return config;
         } catch (error) {
-          throw new Error(JSON.stringify({ error }, null, 2));
+          throw new Error(JSON.stringify(error, null, 2));
         }
       },
-      // (err) => {
-      //   throw err;
-      // },
+      (err) => {
+        throw err;
+      },
     );
 
     /* Intercepting the response and checking if the response is 401 and if it is,
