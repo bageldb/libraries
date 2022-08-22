@@ -70,8 +70,8 @@ class Bagel {
             ...this.customReqHeaders,
           };
           return config;
-        } catch (error) {
-          throw new Error(JSON.stringify(error, null, 2));
+        } catch (err) {
+          throw err;
         }
       },
       (err) => {

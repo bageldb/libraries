@@ -127,7 +127,6 @@ export default class BagelDBRequest {
    * @see Docs {@link https://docs.bageldb.com/content-api/#get-a-single-item}
    */
   item(_id: string) {
-    // try {
     if (!_id)
       throw new Error(`
       item id must be defined as a non-empty string value.
@@ -143,9 +142,6 @@ export default class BagelDBRequest {
       this._item = _id;
     }
     return this;
-    // } catch (error: any) {
-    //   return new Error(error);
-    // }
   }
 
   /**
@@ -490,8 +486,8 @@ export default class BagelDBRequest {
       this.itemsPerPage = 0;
       const res = await this.get();
       return res.headers['item-count'];
-    } catch (error) {
-      throw new Error(JSON.stringify(error));
+    } catch (err) {
+      throw err;
     }
   }
 
@@ -535,14 +531,7 @@ export default class BagelDBRequest {
     }/items${itemID}?${params.toString()}`;
     if (this._query.length > 0) url = url + '&query=' + this._query.join('%2B');
     if (nestedID) url = url + `&nestedID=${nestedID}`;
-    // const res = await
     return this.instance.axiosInstance.get(url);
-    // return res;
-
-    // } catch (error) {
-    //   throw new Error(JSON.stringify({ error }, null, 2));
-
-    // }
   }
 
   /**
