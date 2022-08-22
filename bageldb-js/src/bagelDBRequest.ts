@@ -485,6 +485,22 @@ export default class BagelDBRequest {
     });
   }
 
+  getProject(withSchemas = false) {
+    let url = `${this.instance.baseEndpoint}/project`;
+    if (withSchemas) url += '?withSchemas=true';
+    return this.instance.axiosInstance.get(url);
+  }
+
+  async getCount() {
+    try {
+      this.itemsPerPage = 0;
+      const res = await this.get();
+      return res.headers['item-count'];
+    } catch (error) {
+      throw new Error(JSON.stringify(error));
+    }
+  }
+
   /**
    * @summary
    * Depending on how the {@link collection|collection()} and {@link item|item()} methods were chained together.
