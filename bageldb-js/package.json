@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.37-alpha.2.8",
+  "version": "0.3.37-alpha.2.9",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "type": "module",
   "types": "./dist/index.d.ts",
