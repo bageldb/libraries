@@ -1,13 +1,19 @@
-import { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
+import type { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
 import type FormData from 'form-data';
 import { axios, liveEndpoint, isNode, isReactNative } from './common';
-import {
+import type {
   bagelType,
   fileUploadArgs,
   BagelGeoPointQuery,
   structArgs,
 } from './interfaces';
-
+import type {
+  Document as mongoDoc,
+  // RootFilterOperators,
+  // FilterOperators,
+  Filter,
+  // FilterOperations,
+} from 'mongodb';
 export default class BagelDBRequest {
   instance: bagelType;
 
@@ -63,6 +69,27 @@ export default class BagelDBRequest {
     // this.client;
     this._item = undefined;
     this._field = undefined;
+  }
+
+  /**
+   *@summary
+   * The function takes in a query object and adds it to the query chain.
+   * @example
+   * db.collection('posts').find({
+   *    "authorName": "John",
+   *    "dateField": "Date(2022-02-22)",
+   * }).get()
+   * @param mongoQueryObj
+   * @returns class instance
+   */
+  find<TSchema extends mongoDoc>(
+    mongoQueryObj: Filter<TSchema | Filter<TSchema>>,
+    // | FilterOperations<TSchema>
+    // | FilterOperators<TSchema>
+    // | RootFilterOperators<TSchema>,
+  ) {
+    this._rawMongoQuery = JSON.stringify(mongoQueryObj);
+    return this;
   }
 
   // Pagination
@@ -483,7 +510,8 @@ export default class BagelDBRequest {
 
   async getCount() {
     try {
-      this.itemsPerPage = 0;
+      this._pageNumber = 1;
+      this.itemsPerPage = '0';
       const res = await this.get();
       return res.headers['item-count'];
     } catch (err) {

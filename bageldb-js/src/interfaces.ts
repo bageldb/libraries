@@ -6,6 +6,7 @@ import Bagel from './index';
 import BagelDBRequest from './bagelDBRequest';
 import BagelUsersRequest from './users';
 import { AxiosRequestHeaders } from 'axios';
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
 type fileUploadArgs = {
   selectedImage?: any;
@@ -74,6 +75,10 @@ interface BagelConfigOptions {
   customReqHeaders?: AxiosRequestHeaders;
   enableDebug?: boolean;
 }
+
+type DateQuery =
+  `Date(${number}${number}${number}${number}-${number}${number}-${number}${number})`;
+
 export type {
   fileUploadArgs,
   BagelUser,
@@ -85,6 +90,7 @@ export type {
   BagelGeoPointQuery,
   BagelConfigOptions,
   BagelStorageType,
+  DateQuery,
 };
 
 export type { BagelUsersRequest, BagelDBRequest, Bagel };
