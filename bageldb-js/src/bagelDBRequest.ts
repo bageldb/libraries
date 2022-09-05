@@ -66,6 +66,7 @@ export default class BagelDBRequest {
     this.requestID = '';
     this.sortField = '';
     this.sortOrder = '';
+    this._rawMongoQuery = undefined;
     // this.client;
     this._item = undefined;
     this._field = undefined;
@@ -78,12 +79,17 @@ export default class BagelDBRequest {
    * db.collection('posts').find({
    *    "authorName": "John",
    *    "dateField": "Date(2022-02-22)",
+   *    "nestedCollection": {
+   *     "$elemMatch": {
+   *        "nestedField": "nestedValue"
+   *      }
+   *    }
    * }).get()
    * @param mongoQueryObj
    * @returns class instance
    */
   find<TSchema extends mongoDoc>(
-    mongoQueryObj: Filter<TSchema | Filter<TSchema>>,
+    mongoQueryObj: Filter<TSchema | Filter<TSchema>> & Record<string, any>,
     // | FilterOperations<TSchema>
     // | FilterOperators<TSchema>
     // | RootFilterOperators<TSchema>,
@@ -263,14 +269,16 @@ export default class BagelDBRequest {
     const nestedID = this.nestedCollectionsIDs.join('.');
 
     if (altText) form.append('altText', altText);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    imageLink
-      ? form.append('imageLink', imageLink)
-      : form.append(
+
+    if (imageLink) {
+      form.append('imageLink', imageLink);
+    } else {
+      form.append(
         'imageFile',
         selectedImage,
         isReactNative ? undefined : fileName,
       );
+    }
 
     const url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
     if (isReactNative) {
@@ -536,21 +544,22 @@ export default class BagelDBRequest {
 
     const params = new URLSearchParams();
     const nestedID = this.nestedCollectionsIDs.join('.');
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    this._pageNumber && params.append('pageNumber', `${this._pageNumber}`);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    this.sortField && params.append('sort', this.sortField);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    this.sortOrder && params.append('order', this.sortOrder);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    this.itemsPerPage && params.append('perPage', `${this.itemsPerPage}`);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    this.callEverything &&
+
+    if (this._pageNumber) params.append('pageNumber', `${this._pageNumber}`);
+
+    if (this.sortField) params.append('sort', this.sortField);
+
+    if (this.sortOrder) params.append('order', this.sortOrder);
+
+    if (this.itemsPerPage) params.append('perPage', `${this.itemsPerPage}`);
+
+    if (this.callEverything)
       params.append('everything', `${this.callEverything}`);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    this._projectOff != '' && params.append('projectOff', this._projectOff);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    this._projectOn != '' && params.append('projectOn', this._projectOn);
+
+    if (this._projectOff != '') params.append('projectOff', this._projectOff);
+
+    if (this._projectOn != '') params.append('projectOn', this._projectOn);
+    if (this._rawMongoQuery) params.append('find', this._rawMongoQuery);
 
     const itemID = this._item ? '/' + this._item : '';
 
