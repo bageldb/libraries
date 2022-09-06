@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "declaration": true,
+    // "declarationMap": true,
     "strictNullChecks": true,
     "strict": true,
     "sourceMap": true,
@@ -14,8 +15,10 @@
     "rootDir": "src",
     "skipLibCheck": true,
     "typeRoots": [
+      "./src/index.d.ts",
       "@types",
-      "./node_modules/@types"
+      "./node_modules/@types",
+      "./node_modules/mongodb/mongodb.d.ts",
     ],
     "moduleResolution": "node",
     "outDir": "dist",
@@ -43,6 +46,9 @@
     "pretty": true,
     // "resolveJsonModule": true,
     "traceResolution": false,
+    "types": [
+      "mongodb"
+    ]
   },
   "include": [
     "src",
