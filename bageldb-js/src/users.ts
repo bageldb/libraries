@@ -397,6 +397,8 @@ export default class BagelUsersRequest {
     await this.bagelStorage.removeItem('bagel-user');
     await this.bagelStorage.removeItem('bagel-access');
     await this.bagelStorage.removeItem('bagel-refresh');
+    await this.bagelStorage.removeItem('bagel-expires');
+    await this.bagelStorage.removeItem('bagel-nonce');
   }
 
   /**
