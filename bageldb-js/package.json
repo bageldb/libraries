@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bagel-db",
-  "version": "0.3.37-beta.1.8",
+  "version": "0.3.41",
   "description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -30,8 +30,8 @@
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "build:types": "yarn run tsc --emitDeclarationOnly",
-    "publish:prod": "npm publish --access public --tag beta",
-    "publish:dev": "npm publish --access public --dry-run --tag beta"
+    "publish:prod": "npm publish --access public",
+    "publish:dev": "npm publish --access public --dry-run"
   },
   "repository": {
     "type": "git",
