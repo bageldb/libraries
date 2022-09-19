@@ -2,7 +2,7 @@ import { AxiosError, AxiosInstance, AxiosRequestHeaders } from 'axios';
 
 import BagelDBRequest from './bagelDBRequest';
 import BagelUsersRequest from './users';
-import { axios, baseEndpoint } from './common';
+import { axios, baseEndpoint, getCircularReplacer } from './common';
 import { BagelConfigOptions, BagelStorageType } from './interfaces';
 import curlirize from 'axios-curlirize';
 
@@ -114,26 +114,26 @@ class Bagel {
           try {
             await this.users().logout();
             throw new Error(
-              // JSON.stringify(
-              `${{
-                Error: refreshErr,
-                message: 'BagelAuth: Token expired. user logged out.',
-              }}`,
-              //   null,
-              //   2,
-              // ),
+              JSON.stringify(
+                {
+                  Error: refreshErr,
+                  message: 'BagelAuth: Token expired. user logged out.',
+                },
+                getCircularReplacer(),
+                2,
+              ),
             );
           } catch (logoutErr: any) {
             throw new Error(
-              // JSON.stringify(
-              `${{
-                Error: logoutErr,
-                message:
-                  'BagelAuth: Token expired. There was an error trying to log user out.',
-              }}`,
-              //   null,
-              //   2,
-              // ),
+              JSON.stringify(
+                {
+                  Error: logoutErr,
+                  message:
+                    'BagelAuth: Token expired. There was an error trying to log user out.',
+                },
+                getCircularReplacer(),
+                2,
+              ),
             );
           }
         }
