@@ -1,8 +1,8 @@
-import { AxiosError, AxiosInstance, AxiosRequestHeaders } from 'axios';
+import type { AxiosError, AxiosInstance, AxiosRequestHeaders, AxiosResponse } from 'axios';
 
 import BagelDBRequest from './bagelDBRequest';
 import BagelUsersRequest from './users';
-import { axios, baseEndpoint, getCircularReplacer } from './common';
+import { REFRESH_TOKEN_ENDPOINT, axios, baseEndpoint, getCircularReplacer } from './common';
 import { BagelConfigOptions, BagelStorageType } from './interfaces';
 import curlirize from 'axios-curlirize';
 
@@ -54,7 +54,7 @@ class Bagel {
             instance: this,
           })._bagelUserActive();
 
-          if (bagelUserActive && !config.url?.includes('user/token')) {
+          if (bagelUserActive && config.url !== REFRESH_TOKEN_ENDPOINT) {
             const bagelUserReq = new BagelUsersRequest({
               instance: this,
             });
@@ -90,11 +90,11 @@ class Bagel {
           const bagelUserActive = await new BagelUsersRequest({
             instance: this,
           })._bagelUserActive();
+          const ERROR_401 = error?.response && error?.response?.status == 401;
           if (
             bagelUserActive &&
-            error?.response &&
-            error?.response?.status == 401 &&
-            !error?.config?.url?.includes?.('user/token')
+            ERROR_401 &&
+            error?.config?.url !== REFRESH_TOKEN_ENDPOINT
           ) {
             // const token =
             await new BagelUsersRequest({ instance: this }).refresh();
@@ -110,13 +110,16 @@ class Bagel {
             const response = await this.axiosInstance.request(config);
             return response;
           }
+          if (bagelUserActive && ERROR_401) {
+            await this.users().logout();
+          }
         } catch (refreshErr) {
           try {
             await this.users().logout();
             throw new Error(
               JSON.stringify(
                 {
-                  Error: refreshErr,
+                  refreshErr,
                   message: 'BagelAuth: Token expired. user logged out.',
                 },
                 getCircularReplacer(),
@@ -127,7 +130,7 @@ class Bagel {
             throw new Error(
               JSON.stringify(
                 {
-                  Error: logoutErr,
+                  logoutErr,
                   message:
                     'BagelAuth: Token expired. There was an error trying to log user out.',
                 },
@@ -142,7 +145,7 @@ class Bagel {
     );
   }
 
-  getProject(withSchemas = false) {
+  getProject(withSchemas = false): Promise<AxiosResponse<any, any>> {
     let url = `${this.baseEndpoint}/project`;
     if (withSchemas) url += '?withSchemas=true';
     return this.axiosInstance.get(url);
@@ -159,7 +162,9 @@ class Bagel {
    * @returns A new instance of the BagelMetaRequest class.
    * @see {@link https://docs.bageldb.com/meta-api/#get-schema}
    */
-  schema(collectionID: string) {
+  schema(collectionID: string) : {
+    get: () => Promise<AxiosResponse<any, any>>;
+  } {
     // return new BagelMetaRequest({ instance: this, collectionID });
     /**
      * @summary
