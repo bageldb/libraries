@@ -112,6 +112,16 @@ class Bagel {
           }
           if (bagelUserActive && ERROR_401) {
             await this.users().logout();
+            throw new Error(
+              JSON.stringify(
+                {
+                  error,
+                  message: 'BagelAuth: Token expired. user logged out.',
+                },
+                getCircularReplacer(),
+                2,
+              ),
+            );
           }
         } catch (refreshErr) {
           try {
