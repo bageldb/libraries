@@ -6,12 +6,13 @@ import {
   isReactNative,
   getExpires,
   getParsedJwt,
+  AUTH_ENDPOINT,
+  REFRESH_TOKEN_ENDPOINT,
 } from './common';
 import type { BagelStorageType, bagelType, BagelUser } from './interfaces';
 import type FormData from 'form-data';
 import FallbackStorage from './fbStorage';
 
-const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 
 export default class BagelUsersRequest {
   instance: bagelType;
@@ -416,8 +417,7 @@ export default class BagelUsersRequest {
       if (!refreshToken) {
         throw new Error('No Bagel User is logged in');
       }
-
-      const url = `${AUTH_ENDPOINT}/user/token`;
+      const url = REFRESH_TOKEN_ENDPOINT;
       const form = new globalThis.FormData();
 
       form.append('grant_type', 'refresh_token');

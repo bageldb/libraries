@@ -3,6 +3,8 @@ import axios, { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
 // const baseEndpoint = 'https://api.bageldb.com';
 const baseEndpoint = 'https://api.bagelstudio.co/api/public';
 const liveEndpoint = 'https://live.bageldb.com/api/public';
+const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
+const REFRESH_TOKEN_ENDPOINT = `${AUTH_ENDPOINT}/user/token`;
 
 const isReactNative =
   typeof navigator !== 'undefined' && navigator?.product === 'ReactNative';
@@ -35,7 +37,7 @@ const getParsedJwt = <T extends object = { [k: string]: string | number }>(
 
 const getCircularReplacer = () => {
   const seen = new WeakSet();
-  return (key: any, value: any) => {
+  return (_: any, value: any) => {
     if (typeof value === 'object' && value !== null) {
       if (seen.has(value)) {
         return;
@@ -51,6 +53,8 @@ export {
   axios,
   baseEndpoint,
   liveEndpoint,
+  AUTH_ENDPOINT,
+  REFRESH_TOKEN_ENDPOINT,
   isReactNative,
   isNode,
   getExpires,
