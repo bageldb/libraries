@@ -11,7 +11,7 @@ import {
   REFRESH_TOKEN_ENDPOINT,
   axios,
   baseEndpoint,
-  getCircularReplacer,
+  // getCircularReplacer,
 } from './common';
 import { BagelConfigOptions, BagelStorageType } from './interfaces';
 import curlirize from 'axios-curlirize';
@@ -97,11 +97,10 @@ class Bagel {
       },
       async (error: AxiosError) => {
         const ERROR_401 = error?.response && error?.response?.status == 401;
-        let bagelUserActive;
+        const bagelUserActive = await new BagelUsersRequest({
+          instance: this,
+        })._bagelUserActive();
         try {
-          bagelUserActive = await new BagelUsersRequest({
-            instance: this,
-          })._bagelUserActive();
           if (
             bagelUserActive &&
             ERROR_401 &&
@@ -124,43 +123,15 @@ class Bagel {
         } catch (refreshErr) {
           try {
             await this.users().logout();
-            throw new Error(
-              JSON.stringify(
-                {
-                  refreshErr,
-                  message: 'BagelAuth: Token expired. user logged out.',
-                },
-                getCircularReplacer(),
-                2,
-              ),
-            );
+            throw new Error('Auth: user logged out.');
           } catch (logoutErr: any) {
-            throw new Error(
-              JSON.stringify(
-                {
-                  logoutErr,
-                  message:
-                    'BagelAuth: Token expired. There was an error trying to log user out.',
-                },
-                getCircularReplacer(),
-                2,
-              ),
-            );
+            throw new Error('Auth: There was an error trying to log user out.');
           }
         }
 
         if (bagelUserActive && ERROR_401) {
           await this.users().logout();
-          throw new Error(
-            JSON.stringify(
-              {
-                error,
-                message: 'BagelAuth: Token expired. user logged out.',
-              },
-              getCircularReplacer(),
-              2,
-            ),
-          );
+          throw new Error('Auth: user logged out.');
         }
         throw error;
       },
