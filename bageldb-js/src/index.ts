@@ -1,8 +1,18 @@
-import type { AxiosError, AxiosInstance, AxiosRequestHeaders, AxiosResponse } from 'axios';
+import type {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestHeaders,
+  AxiosResponse,
+} from 'axios';
 
 import BagelDBRequest from './bagelDBRequest';
 import BagelUsersRequest from './users';
-import { REFRESH_TOKEN_ENDPOINT, axios, baseEndpoint, getCircularReplacer } from './common';
+import {
+  REFRESH_TOKEN_ENDPOINT,
+  axios,
+  baseEndpoint,
+  getCircularReplacer,
+} from './common';
 import { BagelConfigOptions, BagelStorageType } from './interfaces';
 import curlirize from 'axios-curlirize';
 
@@ -86,11 +96,12 @@ class Bagel {
         return response;
       },
       async (error: AxiosError) => {
+        const ERROR_401 = error?.response && error?.response?.status == 401;
+        let bagelUserActive;
         try {
-          const bagelUserActive = await new BagelUsersRequest({
+          bagelUserActive = await new BagelUsersRequest({
             instance: this,
           })._bagelUserActive();
-          const ERROR_401 = error?.response && error?.response?.status == 401;
           if (
             bagelUserActive &&
             ERROR_401 &&
@@ -109,19 +120,6 @@ class Bagel {
             };
             const response = await this.axiosInstance.request(config);
             return response;
-          }
-          if (bagelUserActive && ERROR_401) {
-            await this.users().logout();
-            throw new Error(
-              JSON.stringify(
-                {
-                  error,
-                  message: 'BagelAuth: Token expired. user logged out.',
-                },
-                getCircularReplacer(),
-                2,
-              ),
-            );
           }
         } catch (refreshErr) {
           try {
@@ -150,6 +148,20 @@ class Bagel {
             );
           }
         }
+
+        if (bagelUserActive && ERROR_401) {
+          await this.users().logout();
+          throw new Error(
+            JSON.stringify(
+              {
+                error,
+                message: 'BagelAuth: Token expired. user logged out.',
+              },
+              getCircularReplacer(),
+              2,
+            ),
+          );
+        }
         throw error;
       },
     );
@@ -172,7 +184,7 @@ class Bagel {
    * @returns A new instance of the BagelMetaRequest class.
    * @see {@link https://docs.bageldb.com/meta-api/#get-schema}
    */
-  schema(collectionID: string) : {
+  schema(collectionID: string): {
     get: () => Promise<AxiosResponse<any, any>>;
   } {
     // return new BagelMetaRequest({ instance: this, collectionID });
