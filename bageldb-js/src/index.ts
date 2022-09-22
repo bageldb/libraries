@@ -131,7 +131,9 @@ class Bagel {
 
         if (bagelUserActive && ERROR_401) {
           await this.users().logout();
-          throw new Error('Auth: user logged out.');
+          throw new Error(
+            'Auth: issue with user token refresh. user logged out.',
+          );
         }
         throw error;
       },

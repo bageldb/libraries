@@ -13,7 +13,6 @@ import type { BagelStorageType, bagelType, BagelUser } from './interfaces';
 import type FormData from 'form-data';
 import FallbackStorage from './fbStorage';
 
-
 export default class BagelUsersRequest {
   instance: bagelType;
 
