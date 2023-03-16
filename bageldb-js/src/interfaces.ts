@@ -7,13 +7,19 @@ import BagelDBRequest from './bagelDBRequest';
 import BagelUsersRequest from './users';
 import { AxiosRequestHeaders } from 'axios';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-type fileUploadArgs = {
+type FileUploadArgs = {
   selectedImage?: any;
   imageLink?: string;
   altText?: string;
   fileName?: string;
 } & ({ selectedImage: any } | { imageLink: string });
+
+type AssetUploadArgs = {
+  selectedAsset?: any;
+  assetLink?: string;
+  altText?: string;
+  fileName?: string;
+} & ({ selectedAsset: any } | { assetLink: string });
 
 type UserGroups = string;
 interface BagelUser {
@@ -80,7 +86,9 @@ type DateQuery =
   `Date(${number}${number}${number}${number}-${number}${number}-${number}${number})`;
 
 export type {
-  fileUploadArgs,
+  FileUploadArgs as fileUploadArgs,
+  FileUploadArgs,
+  AssetUploadArgs,
   BagelUser,
   UserGroups,
   bagelDBRequestType,
