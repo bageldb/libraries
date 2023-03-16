@@ -3,10 +3,10 @@ import type FormData from 'form-data';
 import { axios, liveEndpoint, isNode, isReactNative } from './common';
 import type {
   bagelType,
-  fileUploadArgs,
   BagelGeoPointQuery,
-  structArgs, /* Exporting the type Filter
-  from the mongodb module. */
+  structArgs /* Exporting the type Filter from the mongodb module. */,
+  FileUploadArgs,
+  AssetUploadArgs,
 } from './interfaces';
 
 import type {
@@ -253,12 +253,61 @@ export default class BagelDBRequest {
   }
 
   /**
+   * selectedAsset expects a file stream i.e fs.createReadStream(filename) OR a blob
+   * assetLink can be a link to a file stored somewhere on the web
+   * The method checks if assetLink exists and if not will use selectedAsset
+   * The request is sent via a FormData request.
+  // ! * @param {string} assetSlug - The field's slug of the asset you want to upload.
+   * @NOTE ⚠️ **_Either assetLink or assetFile must be included but not both_**
+   * @param {AssetUploadArgs[]} assets - { selectedAsset, assetLink, altText, fileName }[]
+   *
+   * @returns The response from the server.
+   * @see Docs {@link https://docs.bageldb.com/content-api/#uploading-asset}
+   */
+  async uploadAssets(
+    assets: AssetUploadArgs[],
+  ): Promise<AxiosResponse<any, any>> {
+    const form = new globalThis.FormData();
+
+    for (let idx = 0; idx < assets.length; idx++) {
+      const { selectedAsset, assetLink, /* altText, */ fileName } = assets[idx];
+
+      // if (altText) form.append('altText', altText);
+
+      if (assetLink) {
+        form.append('urlAssets', assetLink);
+      } else {
+        form.append('fileAssets', selectedAsset, fileName);
+      }
+    }
+
+    const url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/assets`;
+    if (isReactNative) {
+      const res = await this.instance.axiosInstance.put(url, form, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        transformRequest: () => form,
+      });
+      return res;
+    }
+    let formHeaders: FormData.Headers | undefined;
+
+    if (isNode()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
+
+    const res = await this.instance.axiosInstance.post(url, form, {
+      headers: formHeaders,
+    });
+    return res;
+  }
+
+  /**
    * selectedImage expects a file stream i.e fs.createReadStream(filename) OR a blob
    * imageLink can be a link to a file stored somewhere on the web
    * The method checks if imageLink exists and if not will use selectedImage
    * The request is sent via a FormData request.
    * @param {string} imageSlug - The field's slug of the image you want to upload.
-   * @param {fileUploadArgs} Object - { selectedImage, imageLink, altText, fileName }
+   * @param {FileUploadArgs} Object - { selectedImage, imageLink, altText, fileName }
    * @NOTE ⚠️ **_Either imageLink or imageFile must be included but not both_**
    *
    * @returns The response from the server.
@@ -266,7 +315,7 @@ export default class BagelDBRequest {
    */
   async uploadImage(
     imageSlug: string,
-    { selectedImage, imageLink, altText, fileName }: fileUploadArgs,
+    { selectedImage, imageLink, altText, fileName }: FileUploadArgs,
   ): Promise<AxiosResponse<any, any>> {
     const form = new globalThis.FormData();
     const nestedID = this.nestedCollectionsIDs.join('.');
@@ -285,7 +334,6 @@ export default class BagelDBRequest {
 
     const url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/items/${this._item}/image?imageSlug=${imageSlug}&nestedID=${nestedID}`;
     if (isReactNative) {
-      //   //? react-native
       const res = await this.instance.axiosInstance.put(url, form, {
         headers: {
           'Content-Type': 'multipart/form-data',
