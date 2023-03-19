@@ -17,9 +17,15 @@ type FileUploadArgs = {
 type AssetUploadArgs = {
   selectedAsset?: any;
   assetLink?: string;
-  altText?: string;
   fileName?: string;
 } & ({ selectedAsset: any } | { assetLink: string });
+
+type AssetUploadRes = {
+  imageName: string | '';
+  altText: string | '';
+  imageUrl: string | '';
+  extension: string | '';
+}[];
 
 type UserGroups = string;
 interface BagelUser {
@@ -89,6 +95,7 @@ export type {
   FileUploadArgs as fileUploadArgs,
   FileUploadArgs,
   AssetUploadArgs,
+  AssetUploadRes,
   BagelUser,
   UserGroups,
   bagelDBRequestType,

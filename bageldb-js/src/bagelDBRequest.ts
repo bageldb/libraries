@@ -7,6 +7,7 @@ import type {
   structArgs /* Exporting the type Filter from the mongodb module. */,
   FileUploadArgs,
   AssetUploadArgs,
+  AssetUploadRes,
 } from './interfaces';
 
 import type {
@@ -257,27 +258,26 @@ export default class BagelDBRequest {
    * assetLink can be a link to a file stored somewhere on the web
    * The method checks if assetLink exists and if not will use selectedAsset
    * The request is sent via a FormData request.
-  // ! * @param {string} assetSlug - The field's slug of the asset you want to upload.
    * @NOTE ⚠️ **_Either assetLink or assetFile must be included but not both_**
-   * @param {AssetUploadArgs[]} assets - { selectedAsset, assetLink, altText, fileName }[]
+   * @param {AssetUploadArgs & FileUploadArgs[]} assets - { selectedAsset, assetLink, fileName }[]
    *
-   * @returns The response from the server.
+   * @returns {AssetUploadRes} an array of asset objects which can be used to update an item's asset field => Image (Gallery)
    * @see Docs {@link https://docs.bageldb.com/content-api/#uploading-asset}
    */
   async uploadAssets(
-    assets: AssetUploadArgs[],
-  ): Promise<AxiosResponse<any, any>> {
+    assets: Partial<AssetUploadArgs & FileUploadArgs>[],
+  ): Promise<AxiosResponse<AssetUploadRes, any>> {
     const form = new globalThis.FormData();
 
     for (let idx = 0; idx < assets.length; idx++) {
-      const { selectedAsset, assetLink, /* altText, */ fileName } = assets[idx];
+      const { selectedAsset, assetLink, fileName, imageLink, selectedImage } =
+        assets[idx];
 
-      // if (altText) form.append('altText', altText);
-
-      if (assetLink) {
-        form.append('urlAssets', assetLink);
+      const imageOrAssetLink = assetLink || imageLink;
+      if (imageOrAssetLink) {
+        form.append('urlAssets', imageOrAssetLink);
       } else {
-        form.append('fileAssets', selectedAsset, fileName);
+        form.append('fileAssets', selectedAsset || selectedImage, fileName);
       }
     }
 
@@ -295,10 +295,9 @@ export default class BagelDBRequest {
 
     if (isNode()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
 
-    const res = await this.instance.axiosInstance.post(url, form, {
+    return this.instance.axiosInstance.post(url, form, {
       headers: formHeaders,
     });
-    return res;
   }
 
   /**
