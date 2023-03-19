@@ -261,7 +261,7 @@ export default class BagelDBRequest {
    * @NOTE ⚠️ **_Either assetLink or assetFile must be included but not both_**
    * @param {AssetUploadArgs & FileUploadArgs[]} assets - { selectedAsset, assetLink, fileName }[]
    *
-   * @returns {AssetUploadRes} an array of asset objects which can be used to update an item's asset field => Image (Gallery)
+   * @returns {AssetUploadRes} an array of asset objects which can be used to update an item's asset field of Image or Image Gallery type
    * @see Docs {@link https://docs.bageldb.com/content-api/#uploading-asset}
    */
   async uploadAssets(

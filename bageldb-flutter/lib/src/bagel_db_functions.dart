@@ -295,6 +295,25 @@ class BagelDBRequest {
     return BagelResponse(data: res.data, statusCode: res.statusCode!);
   }
 
+/**
+   * selectedAsset expects a file stream i.e fs.createReadStream(filename) OR a blob
+   * assetLink can be a link to a file stored somewhere on the web
+   * The method checks if assetLink exists and if not will use selectedAsset
+   * The request is sent via a FormData request.
+   * @NOTE ⚠️ **_Either assetLink or assetFile must be included but not both_**
+   * @param {AssetUploadArgs & FileUploadArgs[]} assets - { selectedAsset, assetLink, fileName }[]
+   *
+   * @returns {AssetUploadRes} an array of asset objects which can be used to update an item's asset field of Image or Image Gallery type
+   * @see Docs {@link https://docs.bageldb.com/content-api/#uploading-asset}
+   */
+  Future<BagelResponse> uploadAssets(Map<String, dynamic> assets) async {
+    FormData formData = FormData.fromMap(assets);
+    String url = '$baseEndpoint/collection/$collectionID/assets';
+    Dio dio = await _dio();
+    Response res = await dio.post(url, data: formData);
+    return BagelResponse(data: res.data, statusCode: res.statusCode!);
+  }
+
   /// Build and execute a put request to bagelDB. [item] should follow the collection schema as defined at app.bageldb.com
   Future<BagelResponse> put(Map<String, dynamic> item) async {
     if (_item == null) throw ("item id must be set to use the method put");
