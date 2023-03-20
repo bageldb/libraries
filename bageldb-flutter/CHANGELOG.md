@@ -137,3 +137,36 @@
 # 0.1.28
 
 - Fix query double encoding
+
+# 0.1.29
+
+- When a refresh token is no longer valid, logges the user out and requires re-authentication
+
+# 0.1.30
+
+- Added `deleteUser()` mthod to allow users to delete themselves or admins (with admin toekn) delete a user.
+
+# 0.2.0
+
+- This version is a major refactor and includes breaking Changes:
+    - Now an async method `init()` must be called before using the db instance.
+    - authStateChange is now a method, and not a static, and should be called as follows: `authStateChange()`
+    - static strings for queries are now lower case and should be changed to the folowing:
+    `ASC` => `asc`
+    `DESC` => `desc`
+    `EQUAL` => `equal`
+    `NOT_EQUAL` => `notEqual`
+    `GREATER_THAN` => `greaterThan`
+    `LESS_THAN` => `lessThan`
+    `WITHIN` => `within`
+    `GeoPointQuery(lat, lng, distance)` => `geoPointQuery(lat, lng, distance)`
+
+# 0.2.01
+
+- Formatting fixes
+- close stream when authStateChange is cancelled
+
+
+# 0.2.02
+
+- Added `find()` method

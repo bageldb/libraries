@@ -29,7 +29,6 @@ class AuthEvent {
 class BagelUsersRequest {
   BagelDB instance;
   late Dio dio;
-
   BagelUser? _user;
   BagelUser? get user => _user;
   BagelUsersRequest(this.instance) {
@@ -37,27 +36,36 @@ class BagelUsersRequest {
       'Authorization': 'Bearer ${instance.token}',
       "Accept-Version": "v1"
     }));
-    _getLocalUser();
+  }
+
+  init() async {
+    await _getLocalUser();
   }
 
   _getLocalUser() async {
     Map usr = instance.sp.get(Collections.user);
-    _userHandler(usr);
+    await _userHandler(usr);
   }
 
-  final StreamController<AuthEvent> _userStateController =
-      StreamController<AuthEvent>.broadcast(
-    sync: true,
-  );
+  String? _getUserID() {
+    Map usr = instance.sp.get(Collections.user);
+    return usr["userID"];
+  }
 
-  Stream<AuthEvent> get authStateChange {
-    _getLocalUser();
-    return _userStateController.stream;
+  StreamController<AuthEvent>? _userStateController;
+
+  Stream<AuthEvent> authStateChange() {
+    if (_userStateController == null || _userStateController!.isClosed)
+      _userStateController = StreamController<AuthEvent>.broadcast(
+          onListen: () => _getLocalUser(),
+          onCancel: () => _userStateController?.close(),
+          sync: true);
+    return _userStateController!.stream;
   }
 
   @Deprecated(
       'use the getter [user] to get BagelUser or Null to determine if a user is logged in')
-  Future<bool> isLoggedIn() async {
+  bool isLoggedIn() {
     return _user != null;
   }
 
@@ -72,15 +80,14 @@ class BagelUsersRequest {
     return _user?.userID;
   }
 
-  void _userHandler(usr) async {
+  _userHandler(usr) async {
     if (usr.isEmpty) {
       // user has logged out
-      _userStateController.add(AuthEvent(loggedin: false));
+      _userStateController?.sink.add(AuthEvent());
       return;
     }
     Map<String, dynamic>? access = instance.sp.get(Collections.access);
     if (access.isEmpty) return _logout();
-
     try {
       DateTime now = DateTime.now();
       DateTime expiryTime = DateTime.parse(access["expires_in"]);
@@ -88,7 +95,7 @@ class BagelUsersRequest {
     } catch (err) {
       rethrow;
     }
-    await _setUser(usr["userID"], email: usr["email"], phone: usr["phone"]);
+    _setUser(usr["userID"], email: usr["email"], phone: usr["phone"]);
   }
 
   /// Create a user with a an email and password
@@ -98,14 +105,14 @@ class BagelUsersRequest {
     try {
       Response res = await dio.post(url, data: body);
       _storeTokens(res.data);
-      return await _setUser(res.data["user_id"], email: email);
+      return _setUser(res.data["user_id"], email: email);
     } catch (err) {
       if (err is DioError) throw (err.response.toString());
     }
     return null;
   }
 
-  Future<String> _getOtpRequestNonce() async {
+  String? _getOtpRequestNonce() {
     Map<String, dynamic>? otpRequest = instance.sp.get(Collections.nonce);
     if (otpRequest.isNotEmpty) {
       DateTime expiryTime = DateTime.parse(otpRequest["expires_in"]);
@@ -114,7 +121,7 @@ class BagelUsersRequest {
       }
       return otpRequest["nonce"];
     } else {
-      return "";
+      return null;
     }
   }
 
@@ -137,13 +144,15 @@ class BagelUsersRequest {
 
   /// Validate the user's received One Time Password
   Future<BagelUser?> validateOtp(String otp) async {
-    String nonce = await _getOtpRequestNonce();
+    String? nonce = _getOtpRequestNonce();
+    if (nonce == null)
+      throw ("Couldn't find OTP nonce, please run requestOTP first");
     String url = '$authEndpoint/user/otp/verify/$nonce';
     Map body = {"otp": otp};
     try {
       Response res = await dio.post(url, data: body);
       _storeTokens(res.data);
-      return await _getUser();
+      return _getUser();
     } catch (e) {
       if (e is DioError) throw (e.response.toString());
     }
@@ -152,7 +161,9 @@ class BagelUsersRequest {
 
   /// Sends the OTP message again via a different provider when the user did not receive the message
   Future<String?> resendOtp() async {
-    String nonce = await _getOtpRequestNonce();
+    String? nonce = _getOtpRequestNonce();
+    if (nonce == null)
+      throw ("Couldn't find OTP nonce, please run requestOTP first");
     try {
       String url = '$authEndpoint/user/otp/resend/$nonce';
       Response res = await dio.post(url);
@@ -178,6 +189,7 @@ class BagelUsersRequest {
     return null;
   }
 
+  /// When the user is logged in via email and password, requesting a password reset will send them an email with a link to reset their password.
   Future<void> requestPasswordReset(String email) async {
     String url = '$authEndpoint/user/resetpassword';
     Map body = {"email": email};
@@ -188,9 +200,34 @@ class BagelUsersRequest {
     }
   }
 
+  /// This method can delete a user in one of 2 situations: the first is an authenticated deleting themselves (do not provide [userID]). The second is an admin deleting a user using an admin token. When a [userID], the method will assume the instance token has Admin access.
+  Future<void> deleteUser({String? userID}) async {
+    String? token;
+    if (userID != null)
+      token = instance.token;
+    else {
+      token = getAccessToken();
+      userID = _getUserID();
+    }
+    if (token == null || userID == null)
+      throw ("UserID not provided, a user must be authenticated or userID provided");
+
+    Options options = Options(
+        headers: {'Authorization': 'Bearer $token', "Accept-Version": "v1"});
+
+    String url = '$authEndpoint/user/$userID';
+    try {
+      await Dio().delete(url, options: options);
+      return _logout();
+    } catch (err) {
+      if (err is DioError) throw (err.response.toString());
+    }
+    return;
+  }
+
   /// Get the currently logged in user's info
   Future<BagelUser?> _getUser() async {
-    String? accessToken = await getAccessToken();
+    String? accessToken = getAccessToken();
     Options options = Options(headers: {
       'Authorization': 'Bearer $accessToken',
       "Accept-Version": "v1"
@@ -198,7 +235,7 @@ class BagelUsersRequest {
     String url = '$authEndpoint/user';
     try {
       Response res = await dio.get(url, options: options);
-      return await _setUser(
+      return _setUser(
         res.data["userID"],
         email: res.data["email"],
         phone: res.data["phone"],
@@ -214,7 +251,7 @@ class BagelUsersRequest {
         {"userID": user.userID, "email": user.email, "phone": user.phone});
   }
 
-  void _storeTokens(data) {
+  Future _storeTokens(data) async {
     String accessToken = data["access_token"],
         refreshToken = data["refresh_token"];
     int expires = data["expires_in"];
@@ -225,12 +262,12 @@ class BagelUsersRequest {
     });
   }
 
-  Future<String?> _getRefreshToken() {
+  Future<String?> _getRefreshToken() async {
     Map<String, dynamic>? refreshToken = instance.sp.get(Collections.access);
     return refreshToken["refreshToken"];
   }
 
-  Future<String?> getAccessToken() {
+  String? getAccessToken() {
     Map<String, dynamic>? accessToken = instance.sp.get(Collections.access);
     return accessToken["accessToken"];
   }
@@ -242,13 +279,13 @@ class BagelUsersRequest {
     _user!.userID = userID;
     _storeBagelUser(_user!);
     AuthEvent event = AuthEvent(user: _user, loggedin: true);
-    _userStateController.add(event);
+    _userStateController?.sink.add(event);
     return _user;
   }
 
-  void _logout() async {
+  void _logout() {
     _user = null;
-    _userStateController.add(AuthEvent());
+    _userStateController?.sink.add(AuthEvent());
     instance.sp.delete(Collections.access);
     instance.sp.delete(Collections.user);
   }
@@ -257,8 +294,9 @@ class BagelUsersRequest {
   void logout() => _logout();
 
   /// is used to refresh the users auth token without having to login with username and password
-  Future<Response> _refresh() async {
+  Future<Response?> _refresh() async {
     if (await _getRefreshToken() == null) {
+      _logout();
       throw ("Couldn't get refresh token");
     }
 
@@ -274,11 +312,12 @@ class BagelUsersRequest {
       });
       Response res = await dio.post(url, data: body, options: options);
       if (res.statusCode == 200) {
-        _storeTokens(res.data);
+        await _storeTokens(res.data);
       }
       return res;
     } catch (err) {
-      rethrow;
+      _logout();
     }
+    return null;
   }
 }
