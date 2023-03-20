@@ -10,6 +10,7 @@ class SP {
   }
 
   Map<String, dynamic> get(String key) {
+    if (!hasInit) throw ("Must init BagelDB before running");
     final res = <String, dynamic>{};
     String? str = instance.getString(key);
     if (str == null) return res;
@@ -22,8 +23,8 @@ class SP {
     return res;
   }
 
-  delete(String key) {
-    instance.remove(key);
+  delete(String key) async {
+    await instance.remove(key);
   }
 
   set(String key, Map<String, dynamic> value) {
