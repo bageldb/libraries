@@ -13,7 +13,14 @@ import {
   baseEndpoint,
   // getCircularReplacer,
 } from './common';
-import { BagelConfigOptions, BagelStorageType } from './interfaces';
+import {
+  AssetUploadArgs,
+  AssetUploadRes,
+  BagelConfigOptions,
+  BagelStorageType,
+  FileUploadArgs,
+  StructArgs,
+} from './interfaces';
 import curlirize from 'axios-curlirize';
 
 const defaultOptions: BagelConfigOptions = {
@@ -242,6 +249,25 @@ class Bagel {
    */
   static GeoPointQuery(lat: number, lng: number, distance: number) {
     return `${lat},${lng},${distance}`;
+  }
+
+  /**
+   * selectedAsset expects a file stream i.e fs.createReadStream(filename) OR a blob
+   * assetLink can be a link to a file stored somewhere on the web
+   * The method checks if assetLink exists and if not will use selectedAsset
+   * The request is sent via a FormData request.
+   * @NOTE ⚠️ **_Either assetLink or assetFile must be included but not both_**
+   * @param {AssetUploadArgs & FileUploadArgs[]} assets - { selectedAsset, assetLink, fileName }[]
+   *
+   * @returns {AssetUploadRes} an array of asset objects which can be used to update an item's asset field => Image (Gallery)
+   * @see Docs {@link https://docs.bageldb.com/content-api/#uploading-asset}
+   */
+  async uploadAssets(
+    assets: Partial<AssetUploadArgs & FileUploadArgs>[],
+  ): Promise<AxiosResponse<AssetUploadRes, any>> {
+    return new BagelDBRequest({
+      instance: this,
+    } as unknown as StructArgs).uploadAssets(assets);
   }
 }
 

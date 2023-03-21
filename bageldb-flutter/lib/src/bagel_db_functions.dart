@@ -1,29 +1,24 @@
 import 'dart:async';
-import 'dart:typed_data';
+
+// import 'package:bagel_db/src/bage_db_shared_prefs.dart';
+import 'package:flutter/foundation.dart';
+
+import './bage_db_shared_prefs.dart';
 import 'package:universal_io/io.dart';
 import 'package:dio/dio.dart';
-import 'bage_db_shared_prefs.dart';
 import 'bagel_db_users.dart';
-import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 
 ///## **BagelDB** is a content management system with rich API features. For more info, visit here bageldb.com
 
 /// *BagelDB* class is the base class for any bagelDB request, it must be given the api [token] created at app.bageldb.com
 class BagelDB {
-  late String token;
-  late BagelUsersRequest bagelUsersRequest;
-  late SP sp = SP();
+  String token;
+  SP sp;
 
-  Future<BagelDB> _init({token}) async {
-    await sp.init();
-    this.token = token;
-    this.bagelUsersRequest = BagelUsersRequest(this);
-    return this;
-  }
-
-  static Future<BagelDB> init({required String token}) async {
-    return BagelDB()._init(token: token);
-  }
+  late BagelUsersRequest bagelUsersRequest = BagelUsersRequest(this);
+  BagelDB(this.token, this.sp);
 
   /// return a *BagelDBRequest* object for a specific [collection]
   BagelDBRequest collection(String collection) {
@@ -35,29 +30,77 @@ class BagelDB {
     return bagelUsersRequest;
   }
 
+  static Future<BagelDB> init({token}) async {
+    SP _sp = SP();
+    await _sp.init();
+    BagelDB instance = BagelDB(token, _sp);
+    await instance.users().init();
+    return instance;
+  }
+
   /// Get information about the collection schema
   BagelMetaRequest schema(String collection) {
     return BagelMetaRequest(instance: this, collectionID: collection);
   }
 
-  static String get ASC => "ASC";
+  static String get asc => "ASC";
 
-  static String get DESC => "DESC";
+  static String get desc => "DESC";
 
-  static String get EQUAL => "=";
+  static String get equal => "=";
 
-  static String get NOT_EQUAL => "!=";
+  static String get notEqual => "!=";
 
-  static String get GREATER_THAN => ">";
+  static String get greaterThan => ">";
 
-  static String get LESS_THAN => "<";
+  static String get lessThan => "<";
 
   /// used in GeoPoint Query for
-  static String get WITHIN => "within";
+  static String get within => "within";
 
   /// construct a geopoint query with a latitude longitude and the radius distance in meters to query the data
-  static String GeoPointQuery(lat, lng, distance) {
+  static String geoPointQuery(lat, lng, distance) {
     return '$lat,$lng,$distance';
+  }
+
+  /// `selectedAsset` expects a file stream, which can be obtained in Flutter using a File object from the `file_picker` package.
+  /// Alternatively, it can also be a blob.
+  /// assetLink can be a link to a file stored somewhere on the web, but the link should be accessible to the device.
+  /// The method checks if assetLink exists and if not will use selectedAsset
+  /// The request is sent via a FormData request.
+  /// @NOTE ⚠️ Either assetLink or selectedAsset must be included but not both
+  /// @param {List<Map<String, dynamic>>} assets - a slice of maps containing { 'selectedAsset', 'assetLink', 'fileName' }
+  ///
+  /// @returns {Future<BagelResponse>} an array of asset objects which can be used to update an item's asset field of Image or Image Gallery type.
+  /// @see Docs {@link https://docs.bageldb.com/content-api/#uploading-asset}
+  Future<BagelResponse> uploadAssets(List<Map<String, dynamic>> assets) async {
+    BagelDBRequest request = BagelDBRequest(bagelDB: this, collectionID: '');
+    Dio dio = await request._dio();
+    FormData formData = FormData();
+
+    for (int i = 0; i < assets.length; i++) {
+      Map<String, dynamic> asset = assets[i];
+      dynamic assetLink = asset['assetLink'] ?? asset['imageLink'];
+      if (assetLink != null) {
+        formData.fields.add(MapEntry('urlAssets', assetLink));
+      } else {
+        String fileName = asset['fileName'] ?? '';
+
+        File file = asset['selectedAsset'] ?? asset['selectedImage'];
+        MultipartFile multipartFile = await MultipartFile.fromFile(
+          file.path,
+          filename: fileName,
+        );
+
+        formData.files.add(MapEntry('fileAssets', multipartFile));
+      }
+    }
+
+    String url = '$request.baseEndpoint/assets';
+    Options options = Options(contentType: 'multipart/form-data');
+    return dio.post(url, data: formData, options: options).then((res) {
+      return BagelResponse(data: (res.data), statusCode: res.statusCode!);
+    });
   }
 }
 
@@ -122,7 +165,7 @@ class BagelMetaRequest {
 class BagelDBRequest {
   final BagelDB bagelDB;
   String collectionID, sortField, sortOrder;
-  String? _item, _projectOff, _projectOn;
+  String? _item, _projectOff, _projectOn, _rawMongoQuery;
   List<String> nestedCollectionsIDs = [];
   int _pageNumber = 1;
   int? _perPage;
@@ -137,7 +180,7 @@ class BagelDBRequest {
     if (!dioInitialized) {
       BagelUsersRequest userRequest = BagelUsersRequest(bagelDB);
       Map<String, dynamic> headers = {"Accept-Version": "v1"};
-      String? token = await userRequest.getAccessToken();
+      String? token = userRequest.getAccessToken();
       if (token != null) {
         headers['authorization'] = 'Bearer $token';
       } else {
@@ -157,81 +200,17 @@ class BagelDBRequest {
     this.callEverything = false,
   });
 
-  Future<Stream<BagelEvent>?> asStream() async {
-    String requestID = "", nestedID = "";
-    if (nestedCollectionsIDs.isNotEmpty)
-      nestedID = nestedCollectionsIDs.join(".");
-    List<dynamic> data = [];
-    BagelResponse res = await get();
-    if (_item != null && nestedCollectionsIDs.length % 2 != 0) {
-      data.add(res.data);
-    } else {
-      data = res.data;
-    }
-
-    Map<String, dynamic> params = {
-      "authorization":
-          await BagelUsersRequest(bagelDB).getAccessToken() ?? bagelDB.token,
-      "requestID": requestID,
-      "nestedID": nestedID,
-      "itemID": _item ?? "",
-      "everything": everything,
-    };
-    String uri = '$liveEndpoint/collection/$collectionID/live';
-    Dio dio = await _dio();
-    Response<ResponseBody> rs = await dio.get<ResponseBody>(uri,
-        queryParameters: params,
-        options: Options(
-          responseType: ResponseType.stream,
-          headers: {'Access-Control-Allow-Origin': true},
-        ));
-
-    return await rs.data?.stream.map((e) {
-      Event event = Event.fromUint8List(e);
-      Map<String, dynamic> response = {};
-      if (event.type == "start") {
-        requestID = event.data;
-      } else if (event.type == "stop") {
-        print("stopped");
-      } else if (event.type == "message") {
-        RegExp r = RegExp(r'"itemID":"(\w*)');
-        response["itemID"] = r.firstMatch(event.data)?.group(1);
-        _item = response["itemID"];
-        response["item"] = {};
-        RegExp trgr = RegExp(r'"trigger":"(\w*)');
-        response["trigger"] = trgr.firstMatch(event.data)?.group(1);
-        switch (response["trigger"]) {
-          case "update":
-            var i = data
-                .indexWhere((element) => element["_id"] == response["itemID"]);
-            if (i != -1) {
-              // BagelResponse res = await get();
-              response["item"] = res.data;
-              data[i] = response["item"];
-            }
-            break;
-          case "delete":
-            data = data
-                .where((element) => element["_id"] != response["itemID"])
-                .toList();
-            break;
-          case "create":
-            // BagelResponse res = await get();
-            response["item"] = res.data;
-            data.add(response["item"]);
-            break;
-        }
-      }
-      return BagelEvent.fromPayload(response, data);
-    });
-    // _listen();
-    // return _subscription;
+  /// Use [find] to use a mongodb query format
+  BagelDBRequest find(Object mongoQueryObj) {
+    this._rawMongoQuery = json.encode(mongoQueryObj);
+    return this;
   }
 
   /// Build and execute a get request to bagelDB, for both full collection and item requests
   Future<BagelResponse> get() async {
     Map<String, dynamic> params = <String, dynamic>{};
     if (_query.isNotEmpty) params["query"] = _query.join("+");
+    if (_rawMongoQuery != null) params["find"] = _rawMongoQuery;
     if (_pageNumber != 1) params["pageNumber"] = _pageNumber.toString();
     if (sortField != "") params["sort"] = sortField;
     if (sortOrder != "") params["order"] = sortOrder;
@@ -249,15 +228,14 @@ class BagelDBRequest {
         '$baseEndpoint/collection/$collectionID/items$itemID',
         queryParameters: params);
     Headers headers = response.headers;
-    BagelResponse _bagelResponse =
-        BagelResponse(data: response.data, statusCode: response.statusCode);
-
+    BagelResponse res = BagelResponse(
+      data: response.data,
+      statusCode: response.statusCode!,
+    );
     if (_item == null) {
-      _bagelResponse.itemCount =
-          int.tryParse((headers["item-count"]?.first ?? ""));
+      res.itemCount = int.tryParse((headers["item-count"]?.first ?? ""));
     }
-    // return _myfuture.value(_bagelResponse)
-    return Future<BagelResponse>.value(_bagelResponse);
+    return res;
   }
 
   /// Build and execute a post request to bagelDB. [item] should follow the collection schema as defined at app.bageldb.com
@@ -471,7 +449,7 @@ class BagelDBRequest {
 
     _listen() async {
       String token =
-          await BagelUsersRequest(bagelDB).getAccessToken() ?? bagelDB.token;
+          BagelUsersRequest(bagelDB).getAccessToken() ?? bagelDB.token;
       String uri =
           '$liveEndpoint/collection/$collectionID/live?authorization=$token&requestID=$requestID&nestedID=$nestedID&itemID=${_item ?? ""}&everything=$everything';
       Dio dio = await _dio();

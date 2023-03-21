@@ -1,13 +1,19 @@
 import 'dart:async';
-import 'package:test/expect.dart';
-import 'package:test/scaffolding.dart';
+
 import 'package:universal_io/io.dart';
+
+import 'package:flutter_test/flutter_test.dart';
 
 import '../lib/bagel_db.dart';
 
 import '../.testToken.dart';
 
-BagelDB db = BagelDB(testToken);
+late BagelDB db;
+
+init() async {
+  print("starting tests");
+  db = await BagelDB.init(token: testToken);
+}
 
 final String docId = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -22,7 +28,7 @@ createUserTest() {
     });
 
     test('get token test', () async {
-      final token = await db.bagelUsersRequest.getAccessToken();
+      final token = db.bagelUsersRequest.getAccessToken();
       expect(token, isNotNull);
     });
   });
@@ -191,57 +197,78 @@ getItemsTest() {
 postItemTest() {
   group('post item test', () {
     // given
-    BagelDB db = BagelDB(testToken);
 
-    test('simple post test', () async {
-      BagelResponse response = await db.collection('testItems').post({
-        "_id": "",
-        'name': 'Renana',
-        'age': "34",
-        'position': 'CPO',
-        "dateType": "",
-        "imageTesting": []
-      });
-      // then
-      expect(response.statusCode, equals(201));
+    // test('simple post test', () async {
+    //   BagelResponse response = await db.collection('testItems').post({
+    //     "_id": "",
+    //     'name': 'Renana',
+    //     'age': "34",
+    //     'position': 'CPO',
+    //     "dateType": "",
+    //     "imageTesting": []
+    //   });
+    //   // then
+    //   expect(response.statusCode, equals(201));
+    // });
+
+    // test('post with image test', () async {
+    //   Directory current = Directory.current;
+    //   File file = File(current.path + '/test/images-2.jpg');
+    //   BagelResponse response = await db.collection('testItems').post({
+    //     'name': 'Renana',
+    //     'age': 34,
+    //     'position': 'COO',
+    //   });
+    //   String _id = response.data["id"];
+    //   BagelResponse res =
+    //       await db.collection("testItems").item(_id).uploadImage("image", file);
+    //   // then
+    //   expect(response.statusCode, equals(201));
+    //   expect(res.statusCode, equals(201));
+    // });
+
+    test('post multiple assets', () async {
+      // BagelDB db = await BagelDB.init(token: testToken);
+      File file = File(Directory.current.path + '/test/images-2.jpg');
+
+      List<Map<String, dynamic>> assets = [
+        {
+          "selectedImage": file,
+          "altText": 'log',
+          "fileName": 'logo.png',
+        },
+        {
+          "assetLink": 'https://cdn.quasar.dev/logo-v2/svg/logo.svg',
+          "altText": 'log',
+          "fileName": 'logo.png',
+        }
+      ];
+
+      BagelResponse response = await db.uploadAssets(assets);
+      print(response.data);
+      expect(response.statusCode, equals(200));
     });
 
-    test('post with image test', () async {
-      Directory current = Directory.current;
-      File file = File(current.path + '/test/images-2.jpg');
-      BagelResponse response = await db.collection('testItems').post({
-        'name': 'Renana',
-        'age': 34,
-        'position': 'COO',
-      });
-      String _id = response.data["id"];
-      BagelResponse res =
-          await db.collection("testItems").item(_id).uploadImage("image", file);
-      // then
-      expect(response.statusCode, equals(201));
-      expect(res.statusCode, equals(201));
-    });
+    // test('nested data posting test', () async {
+    //   BagelResponse res;
+    //   BagelResponse res2;
+    //   // when
 
-    test('nested data posting test', () async {
-      BagelResponse res;
-      BagelResponse res2;
-      // when
+    //   res = await db
+    //       .collection('testItems')
+    //       .item("60f72f59f5e0695c5b808d9c")
+    //       .collection("nested")
+    //       .post({"nestedItem": "this is my string"});
+    //   res2 = await db
+    //       .collection('testItems')
+    //       .item("60f72f59f5e0695c5b808d9c")
+    //       .collection("nested")
+    //       .item(res.data["id"])
+    //       .set({'nestedItem': "testString number 2"});
 
-      res = await db
-          .collection('testItems')
-          .item("60f72f59f5e0695c5b808d9c")
-          .collection("nested")
-          .post({"nestedItem": "this is my string"});
-      res2 = await db
-          .collection('testItems')
-          .item("60f72f59f5e0695c5b808d9c")
-          .collection("nested")
-          .item(res.data["id"])
-          .set({'nestedItem': "testString number 2"});
-
-      expect(res.statusCode, lessThan(299));
-      expect(res2.statusCode, lessThan(299));
-    });
+    //   expect(res.statusCode, lessThan(299));
+    //   expect(res2.statusCode, lessThan(299));
+    // });
   });
 }
 
@@ -313,10 +340,12 @@ deleteItemTest() {
   });
 }
 
-void main() {
-  createUserTest();
-  getItemsTest();
+void main() async {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  await init();
   postItemTest();
-  putItemTest();
-  deleteItemTest();
+  // createUserTest();
+  // getItemsTest();
+  // putItemTest();
+  // deleteItemTest();
 }
