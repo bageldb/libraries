@@ -281,7 +281,7 @@ export default class BagelDBRequest {
       }
     }
 
-    const url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/assets`;
+    const url = `${this.instance.baseEndpoint}/assets`;
     if (isReactNative) {
       const res = await this.instance.axiosInstance.put(url, form, {
         headers: {

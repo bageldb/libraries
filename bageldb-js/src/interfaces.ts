@@ -37,7 +37,7 @@ interface BagelUser {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-interface structArgs {
+interface StructArgs {
   instance: bagelType;
   collectionID: string;
 }
@@ -101,7 +101,7 @@ export type {
   bagelDBRequestType,
   bagelUsersRequestType,
   bagelType,
-  structArgs,
+  StructArgs as structArgs,
   BagelGeoPointQuery,
   BagelConfigOptions,
   BagelStorageType,

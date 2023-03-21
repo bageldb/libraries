@@ -62,6 +62,46 @@ class BagelDB {
   static String geoPointQuery(lat, lng, distance) {
     return '$lat,$lng,$distance';
   }
+
+  /// `selectedAsset` expects a file stream, which can be obtained in Flutter using a File object from the `file_picker` package.
+  /// Alternatively, it can also be a blob.
+  /// assetLink can be a link to a file stored somewhere on the web, but the link should be accessible to the device.
+  /// The method checks if assetLink exists and if not will use selectedAsset
+  /// The request is sent via a FormData request.
+  /// @NOTE ⚠️ Either assetLink or selectedAsset must be included but not both
+  /// @param {List<Map<String, dynamic>>} assets - a slice of maps containing { 'selectedAsset', 'assetLink', 'fileName' }
+  ///
+  /// @returns {Future<BagelResponse>} an array of asset objects which can be used to update an item's asset field of Image or Image Gallery type.
+  /// @see Docs {@link https://docs.bageldb.com/content-api/#uploading-asset}
+  Future<BagelResponse> uploadAssets(List<Map<String, dynamic>> assets) async {
+    BagelDBRequest request = BagelDBRequest(bagelDB: this, collectionID: '');
+    Dio dio = await request._dio();
+    FormData formData = FormData();
+
+    for (int i = 0; i < assets.length; i++) {
+      Map<String, dynamic> asset = assets[i];
+      dynamic assetLink = asset['assetLink'] ?? asset['imageLink'];
+      if (assetLink != null) {
+        formData.fields.add(MapEntry('urlAssets', assetLink));
+      } else {
+        String fileName = asset['fileName'] ?? '';
+
+        File file = asset['selectedAsset'] ?? asset['selectedImage'];
+        MultipartFile multipartFile = await MultipartFile.fromFile(
+          file.path,
+          filename: fileName,
+        );
+
+        formData.files.add(MapEntry('fileAssets', multipartFile));
+      }
+    }
+
+    String url = '$request.baseEndpoint/assets';
+    Options options = Options(contentType: 'multipart/form-data');
+    return dio.post(url, data: formData, options: options).then((res) {
+      return BagelResponse(data: (res.data), statusCode: res.statusCode!);
+    });
+  }
 }
 
 /// The base bagelDB response class, the response from bagelDB is inserted into the class
@@ -210,45 +250,6 @@ class BagelDBRequest {
     Dio dio = await _dio();
     return dio.post(url, data: item).then((Response res) async {
       return BagelResponse(data: res.data, statusCode: res.statusCode!);
-    });
-  }
-
-  /// `selectedAsset` expects a file stream, which can be obtained in Flutter using a File object from the `file_picker` package.
-  /// Alternatively, it can also be a blob.
-  /// assetLink can be a link to a file stored somewhere on the web, but the link should be accessible to the device.
-  /// The method checks if assetLink exists and if not will use selectedAsset
-  /// The request is sent via a FormData request.
-  /// @NOTE ⚠️ Either assetLink or selectedAsset must be included but not both
-  /// @param {List<Map<String, dynamic>>} assets - a slice of maps containing { 'selectedAsset', 'assetLink', 'fileName' }
-  ///
-  /// @returns {Future<BagelResponse>} an array of asset objects which can be used to update an item's asset field of Image or Image Gallery type.
-  /// @see Docs {@link https://docs.bageldb.com/content-api/#uploading-asset}
-  Future<BagelResponse> uploadAssets(List<Map<String, dynamic>> assets) async {
-    Dio dio = await _dio();
-    FormData formData = FormData();
-
-    for (int i = 0; i < assets.length; i++) {
-      Map<String, dynamic> asset = assets[i];
-      dynamic assetLink = asset['assetLink'] ?? asset['imageLink'];
-      if (assetLink != null) {
-        formData.fields.add(MapEntry('urlAssets', assetLink));
-      } else {
-        String fileName = asset['fileName'];
-
-        File file = asset['selectedAsset'] ?? asset['selectedImage'];
-        MultipartFile multipartFile = await MultipartFile.fromFile(
-          file.path,
-          filename: fileName,
-        );
-
-        formData.files.add(MapEntry('fileAssets', multipartFile));
-      }
-    }
-
-    String url = '$baseEndpoint/collection/$collectionID/assets';
-    Options options = Options(contentType: 'multipart/form-data');
-    return dio.post(url, data: formData, options: options).then((res) {
-      return BagelResponse(data: (res.data), statusCode: res.statusCode!);
     });
   }
 
