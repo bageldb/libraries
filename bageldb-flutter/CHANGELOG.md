@@ -113,10 +113,9 @@
 
 - Refactor code and cleanup
 - Add support to new methods in `users()` like:
-    - `resendOtp()` Resends the OTP message to the user, utilizing an independant provider, to ensure maximum reliablity.
-    - `requestPasswordReset(email)` will send a password reset email to the user
+  - `resendOtp()` Resends the OTP message to the user, utilizing an independant provider, to ensure maximum reliablity.
+  - `requestPasswordReset(email)` will send a password reset email to the user
 - Replaced localstore to `SharedPreferences`, this will log users out. To import the locally stored users tokens to the with this [migration code](https://github.com/bageldb/migrate_stored_users)
-
 
 # 0.1.24
 
@@ -149,24 +148,19 @@
 # 0.2.0
 
 - This version is a major refactor and includes breaking Changes:
-    - Now an async method `init()` must be called before using the db instance.
-    - authStateChange is now a method, and not a static, and should be called as follows: `authStateChange()`
-    - static strings for queries are now lower case and should be changed to the folowing:
-    `ASC` => `asc`
-    `DESC` => `desc`
-    `EQUAL` => `equal`
-    `NOT_EQUAL` => `notEqual`
-    `GREATER_THAN` => `greaterThan`
-    `LESS_THAN` => `lessThan`
-    `WITHIN` => `within`
-    `GeoPointQuery(lat, lng, distance)` => `geoPointQuery(lat, lng, distance)`
+  - Now an async method `init()` must be called before using the db instance.
+  - authStateChange is now a method, and not a static, and should be called as follows: `authStateChange()`
+  - static strings for queries are now lower case and should be changed to the folowing: `ASC` => `asc` `DESC` => `desc` `EQUAL` => `equal` `NOT_EQUAL` => `notEqual` `GREATER_THAN` => `greaterThan` `LESS_THAN` => `lessThan` `WITHIN` => `within` `GeoPointQuery(lat, lng, distance)` => `geoPointQuery(lat, lng, distance)`
 
 # 0.2.01
 
 - Formatting fixes
 - close stream when authStateChange is cancelled
 
-
 # 0.2.02
 
 - Added `find()` method
+
+# 0.2.21
+
+- Added `uploadAssets()` method
