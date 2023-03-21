@@ -4,7 +4,7 @@ import { axios, liveEndpoint, isNode, isReactNative } from './common';
 import type {
   bagelType,
   BagelGeoPointQuery,
-  structArgs /* Exporting the type Filter from the mongodb module. */,
+  StructArgs /* Exporting the type Filter from the mongodb module. */,
   FileUploadArgs,
   AssetUploadArgs,
   AssetUploadRes,
@@ -55,7 +55,7 @@ export default class BagelDBRequest {
 
   [x: string]: any;
 
-  constructor({ instance, collectionID }: structArgs) {
+  constructor({ instance, collectionID }: StructArgs) {
     this.instance = instance;
     this.collectionID = collectionID;
     this._pageNumber = 1;
@@ -281,7 +281,7 @@ export default class BagelDBRequest {
       }
     }
 
-    const url = `${this.instance.baseEndpoint}/assets`;
+    const url = `${this.instance.baseEndpoint}/collection/${this.collectionID}/assets`;
     if (isReactNative) {
       const res = await this.instance.axiosInstance.put(url, form, {
         headers: {
