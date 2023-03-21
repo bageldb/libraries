@@ -84,7 +84,7 @@ class BagelDB {
       if (assetLink != null) {
         formData.fields.add(MapEntry('urlAssets', assetLink));
       } else {
-        String fileName = asset['fileName'] ?? '';
+        String fileName = asset['fileName'] ?? 'fallbackFileName$i';
 
         File file = asset['selectedAsset'] ?? asset['selectedImage'];
         MultipartFile multipartFile = await MultipartFile.fromFile(
@@ -95,8 +95,8 @@ class BagelDB {
         formData.files.add(MapEntry('fileAssets', multipartFile));
       }
     }
-
-    String url = '$request.baseEndpoint/assets';
+    final baseUrl = request.baseEndpoint;
+    String url = '$baseUrl/assets';
     Options options = Options(contentType: 'multipart/form-data');
     return dio.post(url, data: formData, options: options).then((res) {
       return BagelResponse(data: (res.data), statusCode: res.statusCode!);
