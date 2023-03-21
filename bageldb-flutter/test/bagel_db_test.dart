@@ -244,8 +244,7 @@ postItemTest() {
         }
       ];
 
-      BagelResponse response =
-          await db.collection('flutterTest').uploadAssets(assets);
+      BagelResponse response = await db.uploadAssets(assets);
       print(response.data);
       expect(response.statusCode, equals(200));
     });
