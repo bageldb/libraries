@@ -101,7 +101,7 @@ export type {
   bagelDBRequestType,
   bagelUsersRequestType,
   bagelType,
-  StructArgs as structArgs,
+  StructArgs,
   BagelGeoPointQuery,
   BagelConfigOptions,
   BagelStorageType,

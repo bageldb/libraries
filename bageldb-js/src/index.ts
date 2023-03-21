@@ -19,7 +19,7 @@ import {
   BagelConfigOptions,
   BagelStorageType,
   FileUploadArgs,
-  structArgs,
+  StructArgs,
 } from './interfaces';
 import curlirize from 'axios-curlirize';
 
@@ -267,7 +267,7 @@ class Bagel {
   ): Promise<AxiosResponse<AssetUploadRes, any>> {
     return new BagelDBRequest({
       instance: this,
-    } as unknown as structArgs).uploadAssets(assets);
+    } as unknown as StructArgs).uploadAssets(assets);
   }
 }
 
