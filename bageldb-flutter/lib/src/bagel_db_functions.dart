@@ -229,7 +229,7 @@ class BagelDBRequest {
   }
 
   /// Build and execute a get request to bagelDB, for both full collection and item requests
-  Future<BagelResponse> get() async {
+  Future<BagelResponse> get({bool logCurl = false}) async {
     Map<String, dynamic> params = <String, dynamic>{};
     if (_query.isNotEmpty) params["query"] = _query.join("+");
     if (_pageNumber != 1) params["pageNumber"] = _pageNumber.toString();
@@ -245,6 +245,8 @@ class BagelDBRequest {
     String itemID = _item != null ? '/${_item!}' : '';
 
     Dio dio = await _dio();
+    dio.interceptors.add(CurlInterceptor(logCurl: logCurl));
+
     Response response = await dio.get(
         '$baseEndpoint/collection/$collectionID/items$itemID',
         queryParameters: params);
