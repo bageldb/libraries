@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import './bage_db_shared_prefs.dart';
+import './bagel_db_shared_prefs.dart';
 import 'package:universal_io/io.dart';
 import 'package:dio/dio.dart';
 import 'bagel_db_users.dart';
