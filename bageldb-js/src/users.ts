@@ -221,7 +221,7 @@ export default class BagelUsersRequest {
       if (!userIsActive) {
         throw new Error(
           'a Bagel User must be logged in to get Bagel User info ' +
-            userIsActive,
+          userIsActive,
         );
       }
       const url = `${AUTH_ENDPOINT}/user`;
@@ -271,21 +271,19 @@ export default class BagelUsersRequest {
    * @returns {AxiosPromise<unknown>} A promise
    */
   updatePassword(
-    email: string,
+    emailOrPhone: string,
     updatedPassword: string,
   ): AxiosPromise<unknown> {
-    email = email.toLowerCase().trim();
+    const body:{ email?:string, phone?:string, password: string } = { password: updatedPassword };
+    if (emailOrPhone.match(/@/)) body.email = emailOrPhone.toLowerCase().trim();
+    else body.phone = emailOrPhone;
     return new Promise((resolve, reject) => {
       if (this._isBrowser()) {
-        reject(
-          new Error(
-            'Update Password feature is only available when using NodeJS',
-          ),
+        reject(new Error('Update Password feature is only available when using NodeJS'),
         );
         return;
       }
       const url = `${AUTH_ENDPOINT}/user/updatePassword`;
-      const body = { email: email, password: updatedPassword };
       this.axios
         .post(url, body)
         .then((res) => {
