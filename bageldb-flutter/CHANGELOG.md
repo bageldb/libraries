@@ -164,3 +164,8 @@
 # 0.2.21
 
 - Added `uploadAssets()` method
+
+# 0.2.22
+
+- Added `phone` or `email` options in auth methods
+- Added config option `logCurl` to allow logging of curl requests

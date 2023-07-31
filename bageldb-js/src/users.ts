@@ -187,16 +187,23 @@ export default class BagelUsersRequest {
    * @NOTE ⚠️ **_There is no need to refresh the user's tokens as this will happen automatically when using the JS library_**
    * @example
    * const userID = await db.users().validate(email, password);
-   * @param {string} email - string - The email of the user
+   * @param {string} emailOrPhone - string - The email/phone of the user
    * @param {string} password - string - The password of the user
    * @returns A promise that resolves to the user_id of the user that was validated.
    */
-  async validate(email: string, password: string): Promise<string> {
+  async validate(emailOrPhone: string, password: string): Promise<string> {
+    const body: { email?: string; phone?: string; password: string } = {
+      password,
+    };
     try {
-      email = email.toLowerCase().trim();
-      if (!email || !password) throw new Error('email or password is empty');
+      const _emailOrPhone = emailOrPhone?.toLowerCase()?.trim();
+      if (!_emailOrPhone || !password)
+        throw new Error('email or password is empty');
       const url = `${AUTH_ENDPOINT}/user/verify`;
-      const body = { email, password };
+
+      if (_emailOrPhone.match(/@/)) body.email = _emailOrPhone;
+      else body.phone = _emailOrPhone;
+
       const { data } = await this.axios.post(url, body);
       await this._storeTokens(data);
       await this._storeBagelUser(data.user_id);
@@ -266,15 +273,22 @@ export default class BagelUsersRequest {
    * @NOTE ⚠️ **_Using this function in the browser will throw an error_**
    * @example
    * db.users().updatePassword("test@gmail.com", "NewPasswordThatShouldBeStrong")
-   * @param {string} email - The email of the user you want to update the password for.
+   * @param {string} emailOrPhone - The email/phone of the user you want to update the password for.
    * @param {string} updatedPassword - The new password that you want to set for the user.
    * @returns {AxiosPromise<unknown>} A promise
    */
   updatePassword(
-    email: string,
+    emailOrPhone: string,
     updatedPassword: string,
   ): AxiosPromise<unknown> {
-    email = email.toLowerCase().trim();
+    const body: { email?: string; phone?: string; password: string } = {
+      password: updatedPassword,
+    };
+    const _emailOrPhone = emailOrPhone?.toLowerCase()?.trim();
+
+    if (_emailOrPhone.match(/@/)) body.email = _emailOrPhone;
+    else body.phone = _emailOrPhone;
+
     return new Promise((resolve, reject) => {
       if (this._isBrowser()) {
         reject(
@@ -285,7 +299,6 @@ export default class BagelUsersRequest {
         return;
       }
       const url = `${AUTH_ENDPOINT}/user/updatePassword`;
-      const body = { email: email, password: updatedPassword };
       this.axios
         .post(url, body)
         .then((res) => {
