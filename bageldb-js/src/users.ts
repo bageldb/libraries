@@ -273,7 +273,7 @@ export default class BagelUsersRequest {
    * @NOTE ⚠️ **_Using this function in the browser will throw an error_**
    * @example
    * db.users().updatePassword("test@gmail.com", "NewPasswordThatShouldBeStrong")
-   * @param {string} _emailOrPhone - The email/phone of the user you want to update the password for.
+   * @param {string} emailOrPhone - The email/phone of the user you want to update the password for.
    * @param {string} updatedPassword - The new password that you want to set for the user.
    * @returns {AxiosPromise<unknown>} A promise
    */
