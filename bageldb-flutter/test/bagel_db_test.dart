@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -11,8 +12,11 @@ import '../.testToken.dart';
 late BagelDB db;
 
 init() async {
-  print("starting tests");
-  db = await BagelDB.init(token: testToken);
+  print("starting tests ... \n\n\n");
+
+  SharedPreferences.setMockInitialValues({});
+
+  db = await BagelDB.init(token: testToken, logCurl: true);
 }
 
 final String docId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -30,6 +34,38 @@ createUserTest() {
     test('get token test', () async {
       final token = db.bagelUsersRequest.getAccessToken();
       expect(token, isNotNull);
+    });
+  });
+}
+
+createUserWithPhoneTest() {
+  group('phone auth test', () {
+    test('create user with phone test', () async {
+      try {
+        final res = await db.bagelUsersRequest.requestOtp(testPhone);
+        print({"res": res});
+        expect(res, isNotNull);
+      } catch (e) {
+        print('\n');
+        print({"e": e});
+      }
+    });
+  });
+}
+
+// b4 the this next test the use should have a password set
+logUserInUsingPhoneTest() {
+  group('phone auth test', () {
+    test('login user with phone test', () async {
+      try {
+        final res =
+            await db.bagelUsersRequest.validate(testPhone, testPassword);
+        print({"pass": res!.phone == testPhone});
+        expect(res.phone, testPhone);
+      } catch (e) {
+        print('\n');
+        print({"e": e});
+      }
     });
   });
 }
@@ -340,10 +376,15 @@ deleteItemTest() {
   });
 }
 
-void main() async {
+Future<void> main() async {
+  setUpAll(() {
+    // ↓ required to avoid HTTP error 400 mocked returns
+    HttpOverrides.global = null;
+  });
   TestWidgetsFlutterBinding.ensureInitialized();
   await init();
-  postItemTest();
+  logUserInUsingPhoneTest();
+  // postItemTest();
   // createUserTest();
   // getItemsTest();
   // putItemTest();

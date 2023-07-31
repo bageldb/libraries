@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:bagel_db/src/interceptors/curl_interceptor.dart';
+
 import '../bagel_db.dart';
 import 'package:dio/dio.dart';
 import 'bagel_db_functions.dart';
@@ -36,6 +38,9 @@ class BagelUsersRequest {
       'Authorization': 'Bearer ${instance.token}',
       "Accept-Version": "v1"
     }));
+    if (instance.logCurl == true) {
+      dio.interceptors.add(CurlInterceptor(logCurl: true));
+    }
   }
 
   init() async {
@@ -107,7 +112,7 @@ class BagelUsersRequest {
       _storeTokens(res.data);
       return _setUser(res.data["user_id"], email: email);
     } catch (err) {
-      if (err is DioError) throw (err.response.toString());
+      if (err is DioException) throw (err.response.toString());
     }
     return null;
   }
@@ -154,7 +159,7 @@ class BagelUsersRequest {
       _storeTokens(res.data);
       return _getUser();
     } catch (e) {
-      if (e is DioError) throw (e.response.toString());
+      if (e is DioException) throw (e.response.toString());
     }
     return null;
   }
@@ -170,21 +175,32 @@ class BagelUsersRequest {
       _storeOtpRequestNonce(res.data);
       return res.data["nonce"];
     } catch (e) {
-      if (e is DioError) throw (e.response.toString());
+      if (e is DioException) throw (e.response.toString());
     }
     return null;
   }
 
-  /// Authenticate the user with an email and password
-  Future<BagelUser?> validate(String email, String password) async {
+  /// Authenticate the user with an email/phone and password
+  Future<BagelUser?> validate(String emailOrPhone, String password) async {
     String url = '$authEndpoint/user/verify';
-    Map body = {"email": email, "password": password};
+    Map body = {"password": password};
+    String _emailOrPhone = emailOrPhone.trim().toLowerCase();
+
+    if (_emailOrPhone.contains('@'))
+      body["email"] = _emailOrPhone;
+    else
+      body["phone"] = _emailOrPhone;
+
     try {
       Response res = await dio.post(url, data: body);
       _storeTokens(res.data);
-      return await _setUser(res.data["user_id"], email: email);
+
+      if (_emailOrPhone.contains('@'))
+        return await _setUser(res.data["user_id"], email: _emailOrPhone);
+      else
+        return await _setUser(res.data["user_id"], phone: _emailOrPhone);
     } catch (e) {
-      if (e is DioError) throw (e.response.toString());
+      if (e is DioException) throw (e.response.toString());
     }
     return null;
   }
@@ -196,7 +212,7 @@ class BagelUsersRequest {
     try {
       await dio.post(url, data: body);
     } catch (e) {
-      if (e is DioError) throw (e.response.toString());
+      if (e is DioException) throw (e.response.toString());
     }
   }
 
@@ -220,7 +236,7 @@ class BagelUsersRequest {
       await Dio().delete(url, options: options);
       return _logout();
     } catch (err) {
-      if (err is DioError) throw (err.response.toString());
+      if (err is DioException) throw (err.response.toString());
     }
     return;
   }
@@ -241,7 +257,7 @@ class BagelUsersRequest {
         phone: res.data["phone"],
       );
     } catch (err) {
-      if (err is DioError) throw (err.response.toString());
+      if (err is DioException) throw (err.response.toString());
     }
     return null;
   }
