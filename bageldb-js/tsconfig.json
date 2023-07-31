@@ -47,12 +47,15 @@
 		// "resolveJsonModule": true,
 		"traceResolution": false,
 		"types": [
-			"mongodb"
+			// "mongodb",
+			// "node_modules/mongodb/mongodb.d.ts",
 		]
 	},
 	"include": [
 		"src",
-		"test/_test.ts"
+		"test/_test.ts",
+		"node_modules/mongodb",
+		"mongodb",
 	],
 	"exclude": [
 		"node_modules",

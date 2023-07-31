@@ -10,13 +10,7 @@ import type {
   AssetUploadRes,
 } from './interfaces';
 
-import type {
-  Document as mongoDoc,
-  // RootFilterOperators,
-  // FilterOperators,
-  Filter,
-  // FilterOperations,
-} from 'mongodb/mongodb';
+import type { Document as mongoDoc, Filter } from 'mongodb/mongodb';
 
 export default class BagelDBRequest {
   instance: bagelType;
