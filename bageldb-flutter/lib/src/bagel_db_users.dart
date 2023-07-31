@@ -175,14 +175,25 @@ class BagelUsersRequest {
     return null;
   }
 
-  /// Authenticate the user with an email and password
-  Future<BagelUser?> validate(String email, String password) async {
+  /// Authenticate the user with an email/phone and password
+  Future<BagelUser?> validate(String emailOrPhone, String password) async {
     String url = '$authEndpoint/user/verify';
-    Map body = {"email": email, "password": password};
+    Map body = {"password": password};
+    String _emailOrPhone = emailOrPhone.trim().toLowerCase();
+
+    if (_emailOrPhone.contains('@'))
+      body["email"] = _emailOrPhone;
+    else
+      body["phone"] = _emailOrPhone;
+
     try {
       Response res = await dio.post(url, data: body);
       _storeTokens(res.data);
-      return await _setUser(res.data["user_id"], email: email);
+
+      if (_emailOrPhone.contains('@'))
+        return await _setUser(res.data["user_id"], email: _emailOrPhone);
+      else
+        return await _setUser(res.data["user_id"], phone: _emailOrPhone);
     } catch (e) {
       if (e is DioError) throw (e.response.toString());
     }
