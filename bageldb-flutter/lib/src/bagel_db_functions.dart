@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:bagel_db/src/interceptors/curl_interceptor.dart';
+
 import './bage_db_shared_prefs.dart';
 import 'package:universal_io/io.dart';
 import 'package:dio/dio.dart';
@@ -13,9 +15,10 @@ import 'dart:typed_data';
 class BagelDB {
   String token;
   SP sp;
+  bool logCurl = false;
 
   late BagelUsersRequest bagelUsersRequest = BagelUsersRequest(this);
-  BagelDB(this.token, this.sp);
+  BagelDB(this.token, this.sp, this.logCurl);
 
   /// return a *BagelDBRequest* object for a specific [collection]
   BagelDBRequest collection(String collection) {
@@ -27,10 +30,10 @@ class BagelDB {
     return bagelUsersRequest;
   }
 
-  static Future<BagelDB> init({token}) async {
+  static Future<BagelDB> init({token, logCurl = false}) async {
     SP _sp = SP();
     await _sp.init();
-    BagelDB instance = BagelDB(token, _sp);
+    BagelDB instance = BagelDB(token, _sp, logCurl);
     await instance.users().init();
     return instance;
   }
@@ -184,6 +187,9 @@ class BagelDBRequest {
         headers['authorization'] = 'Bearer ${bagelDB.token}';
       }
       dioInstance = Dio(BaseOptions(headers: headers));
+      if (bagelDB.logCurl == true) {
+        dioInstance.interceptors.add(CurlInterceptor(logCurl: true));
+      }
       dioInitialized = true;
     }
     return dioInstance;
