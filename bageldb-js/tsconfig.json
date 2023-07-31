@@ -1,65 +1,65 @@
 {
-  "compilerOptions": {
-    "declaration": true,
-    // "declarationMap": true,
-    "strictNullChecks": true,
-    "strict": true,
-    "sourceMap": true,
-    "lib": [
-      "ES2015",
-      "DOM",
-      "ESNext",
-    ],
-    "module": "ESNext",
-    "target": "ES2015",
-    "rootDir": "src",
-    "skipLibCheck": true,
-    "typeRoots": [
-      "./src/index.d.ts",
-      "@types",
-      "./node_modules/@types",
-      "./node_modules/mongodb/mongodb.d.ts",
-    ],
-    "moduleResolution": "node",
-    "outDir": "dist",
-    "baseUrl": "./",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "allowJs": true,
-    // "suppressImplicitAnyIndexErrors": true,
-    "forceConsistentCasingInFileNames": true,
-    // "noImplicitAny": false,
-    "useDefineForClassFields": true,
-    "downlevelIteration": true,
-    // "importHelpers": true,
-    "jsx": "react",
-    "checkJs": false,
-    "experimentalDecorators": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "inlineSourceMap": false,
-    "listEmittedFiles": false,
-    "listFiles": false,
-    "noFallthroughCasesInSwitch": true,
-    "pretty": true,
-    // "resolveJsonModule": true,
-    "traceResolution": false,
-    "types": [
-      "mongodb"
-    ]
-  },
-  "include": [
-    "src",
-    "test/_test.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".eslintrc.cjs",
-    // "webpack.config.ts",
-    "tsconfig.json",
-    "test/_test.ts"
-  ]
+	"compilerOptions": {
+		"declaration": true,
+		"declarationMap": true,
+		"strictNullChecks": true,
+		"strict": true,
+		"sourceMap": true,
+		"lib": [
+			"ES2015",
+			"DOM",
+			"ESNext",
+		],
+		"module": "ESNext",
+		"target": "ES2015",
+		"rootDir": "src",
+		"skipLibCheck": true,
+		"typeRoots": [
+			"./src/index.d.ts",
+			"@types",
+			"./node_modules/@types",
+			"./node_modules/mongodb/mongodb.d.ts",
+		],
+		"moduleResolution": "node",
+		"outDir": "dist",
+		"baseUrl": "./",
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"allowJs": true,
+		// "suppressImplicitAnyIndexErrors": true,
+		"forceConsistentCasingInFileNames": true,
+		// "noImplicitAny": false,
+		"useDefineForClassFields": true,
+		"downlevelIteration": true,
+		// "importHelpers": true,
+		"jsx": "react",
+		"checkJs": false,
+		"experimentalDecorators": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"inlineSourceMap": false,
+		"listEmittedFiles": false,
+		"listFiles": false,
+		"noFallthroughCasesInSwitch": true,
+		"pretty": true,
+		// "resolveJsonModule": true,
+		"traceResolution": false,
+		"types": [
+			"mongodb"
+		]
+	},
+	"include": [
+		"src",
+		"test/_test.ts"
+	],
+	"exclude": [
+		"node_modules",
+		"dist",
+		".eslintrc.cjs",
+		// "webpack.config.ts",
+		"tsconfig.json",
+		"test/_test.ts"
+	]
 }
