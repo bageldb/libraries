@@ -4,7 +4,9 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 // const webpack  = require("webpack");
-
+/**
+ * @type {import("webpack").Configuration}
+ */
 const generalConfig = {
   devtool: 'inline-source-map',
   watchOptions: {
@@ -56,6 +58,9 @@ const generalConfig = {
     // }),
   ],
 };
+/**
+ * @type {import("webpack").Configuration}
+ */
 const optimizeConfig = {
   optimization: {
     splitChunks: {
@@ -71,7 +76,9 @@ const optimizeConfig = {
     },
   },
 };
-
+/**
+ * @type {import("webpack").Configuration}
+ */
 const nodeConfig = {
   entry: {
     index: {
@@ -107,7 +114,9 @@ const nodeConfig = {
     filename: '[name].cjs',
   },
 };
-
+/**
+ * @type {import("webpack").Configuration}
+ */
 const esmConfig = {
   experiments: {
     outputModule: true,
@@ -133,9 +142,9 @@ const esmConfig = {
   // new NodePolyfillPlugin(),
   // ],
   output: {
-    globalObject: 'this',
     path: path.join(__dirname, './dist'),
     filename: '[name].mjs',
+    publicPath: '',
   },
 };
 

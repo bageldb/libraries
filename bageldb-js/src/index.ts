@@ -21,7 +21,6 @@ import {
   FileUploadArgs,
   StructArgs,
 } from './interfaces';
-import curlirize from 'axios-curlirize';
 
 const defaultOptions: BagelConfigOptions = {
   isServer: false,
@@ -60,7 +59,20 @@ class Bagel {
     });
 
     if (this.enableDebug) {
-      curlirize(this.axiosInstance);
+     let curlirize = require?.('axios-curlirize')
+
+				try {
+					curlirize?.default?.(this.axiosInstance);
+				} catch (error) {
+					// @ts-expect-error
+					import('axios-curlirize-esm').then((curlirize) => {
+            curlirize?.(this.axiosInstance);
+					})
+					.catch((err) => {
+						console.error(err);
+					});
+          }
+
     }
     /* Intercepting the request and adding the Authorization header to the request. */
     this.axiosInstance.interceptors.request.use(
