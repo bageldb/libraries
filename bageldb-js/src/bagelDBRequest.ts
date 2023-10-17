@@ -8,6 +8,7 @@ import type {
   FileUploadArgs,
   AssetUploadArgs,
   AssetUploadRes,
+  AggregationOperators,
 } from './interfaces';
 
 import type { Document as mongoDoc, Filter } from 'mongodb/mongodb';
@@ -47,7 +48,9 @@ export default class BagelDBRequest {
 
   sortOrder: string;
 
-  [x: string]: any;
+  _rawMongoQuery?: string;
+
+  _aggPipeline?: string;
 
   constructor({ instance, collectionID }: StructArgs) {
     this.instance = instance;
@@ -64,7 +67,7 @@ export default class BagelDBRequest {
     this.requestID = '';
     this.sortField = '';
     this.sortOrder = '';
-    this._rawMongoQuery = undefined;
+
     // this.client;
     this._item = undefined;
     this._field = undefined;
@@ -93,6 +96,39 @@ export default class BagelDBRequest {
     // | RootFilterOperators<TSchema>,
   ) {
     this._rawMongoQuery = JSON.stringify(mongoQueryObj);
+    return this;
+  }
+
+  /**
+   *@summary
+   * The function takes in a stages array and adds it to the aggregation pipeline.
+   * @link to read more about Aggregation Pipeline: {https://www.mongodb.com/docs/manual/reference/operator/aggregation-pipeline/?utm_source=compass&utm_medium=product#aggregation-pipeline-stages}
+   * @example
+   * db.collection('posts').aggregationPipeline(
+   * 	[
+   * 		{
+   * 			$match: {
+   * 				"authorName": "John",
+   * 				"dateField": "Date(2022-02-22)",
+   * 				"nestedCollection": {
+   * 					"$elemMatch": {
+   * 						"nestedField": "nestedValue"
+   * 					}
+   * 				}
+   * 			},
+   * 		}
+   * 	]
+   * ).get()
+   * @param mongoQueryObj
+   * @returns class instance
+   */
+  aggregationPipeline<TSchema extends mongoDoc>(
+    aggregatePipeline: Record<
+    AggregationOperators,
+    Filter<TSchema | Filter<TSchema>> & Record<string, any>
+    >[],
+  ) {
+    this._aggPipeline = JSON.stringify(aggregatePipeline);
     return this;
   }
 
@@ -604,6 +640,8 @@ export default class BagelDBRequest {
 
     if (this._projectOn != '') params.append('projectOn', this._projectOn);
     if (this._rawMongoQuery) params.append('find', this._rawMongoQuery);
+    if (this._aggPipeline)
+      params.append('aggregationPipeline', `${this._aggPipeline}`);
 
     const itemID = this._item ? '/' + this._item : '';
 

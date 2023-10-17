@@ -59,20 +59,20 @@ class Bagel {
     });
 
     if (this.enableDebug) {
-     let curlirize = require?.('axios-curlirize')
+      const curlirize = require?.('axios-curlirize');
 
-				try {
-					curlirize?.default?.(this.axiosInstance);
-				} catch (error) {
-					// @ts-expect-error
-					import('axios-curlirize-esm').then((curlirize) => {
-            curlirize?.(this.axiosInstance);
-					})
-					.catch((err) => {
-						console.error(err);
-					});
-          }
-
+      try {
+        curlirize?.default?.(this.axiosInstance);
+      } catch (error) {
+        // @ts-expect-error
+        import('axios-curlirize-esm')
+          .then((_curlirize) => {
+            _curlirize?.(this.axiosInstance);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
     }
     /* Intercepting the request and adding the Authorization header to the request. */
     this.axiosInstance.interceptors.request.use(

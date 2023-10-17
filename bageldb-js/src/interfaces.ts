@@ -91,6 +91,48 @@ interface BagelConfigOptions {
 type DateQuery =
   `Date(${number}${number}${number}${number}-${number}${number}-${number}${number})`;
 
+enum MongoAggregationOperators {
+  $addFields,
+  $bucket,
+  $bucketAuto,
+  $changeStream,
+  $collStats,
+  $count,
+  $densify,
+  $documents,
+  $facet,
+  $fill,
+  $geoNear,
+  $graphLookup,
+  $group,
+  $indexStats,
+  $limit,
+  $listSessions,
+  $lookup,
+  $match,
+  $merge,
+  $out,
+  $planCacheStats,
+  $project,
+  $redact,
+  $replaceRoot,
+  $replaceWith,
+  $sample,
+  $set,
+  $setWindowFields,
+  $skip,
+  $sort,
+  $sortByCount,
+  $unionWith,
+  $unset,
+  $unwind,
+}
+
+
+type AggregationOperators = keyof typeof MongoAggregationOperators;
+
+
+
 export type {
   FileUploadArgs as fileUploadArgs,
   FileUploadArgs,
@@ -106,6 +148,7 @@ export type {
   BagelConfigOptions,
   BagelStorageType,
   DateQuery,
+  AggregationOperators,
 };
 
 export type { BagelUsersRequest, BagelDBRequest, Bagel };
