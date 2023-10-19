@@ -130,6 +130,7 @@ enum MongoAggregationOperators {
 
 
 type AggregationOperators = keyof typeof MongoAggregationOperators;
+type AggregationOperatorsArg = Partial<Record<AggregationOperators, any>>[];
 
 
 
@@ -149,6 +150,7 @@ export type {
   BagelStorageType,
   DateQuery,
   AggregationOperators,
+  AggregationOperatorsArg,
 };
 
 export type { BagelUsersRequest, BagelDBRequest, Bagel };

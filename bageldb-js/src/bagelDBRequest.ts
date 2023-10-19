@@ -8,7 +8,7 @@ import type {
   FileUploadArgs,
   AssetUploadArgs,
   AssetUploadRes,
-  AggregationOperators,
+  AggregationOperatorsArg,
 } from './interfaces';
 
 import type { Document as mongoDoc, Filter } from 'mongodb/mongodb';
@@ -122,12 +122,7 @@ export default class BagelDBRequest {
    * @param mongoQueryObj
    * @returns class instance
    */
-  aggregationPipeline<TSchema extends mongoDoc>(
-    aggregatePipeline: Record<
-    AggregationOperators,
-    Filter<TSchema | Filter<TSchema>> & Record<string, any>
-    >[],
-  ) {
+  aggregationPipeline(aggregatePipeline: AggregationOperatorsArg) {
     this._aggPipeline = JSON.stringify(aggregatePipeline);
     return this;
   }
