@@ -748,7 +748,7 @@ export default class BagelDBRequest {
   async listen(
     onmessage: (...args: any) => unknown,
     onerror: (...args: any) => unknown,
-  ) {
+  ): Promise<EventSource> {
     if (!onmessage) {
       throw new Error('onMessage callback must be defined');
     }

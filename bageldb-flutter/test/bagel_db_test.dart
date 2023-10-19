@@ -91,7 +91,9 @@ getSchemaTest() {
   group("get schema test", () {
     test('basic schema fetching test', () async {
       // when
-      BagelMetaResponse response = await db.schema('testItems').get();
+      BagelMetaResponse response = await db.schema('users').get();
+      // print response data to debug console
+      print(response.data);
       // then
       expect(response.statusCode, equals(200));
     });
@@ -376,6 +378,50 @@ deleteItemTest() {
   });
 }
 
+useAggregatePipelineTest() {
+  group('aggregate pipeline test', () {
+    test('aggregate pipeline test', () async {
+      // when
+      // "Using the 'users', 'test', and 'sortable' collections, create an aggregate pipeline to fetch user details with their associated test records, and sort the results based on the 'rank' in the 'sortable' collection."
+      BagelResponse response = await db.collection('test').aggregationPipeline([
+        {
+          "\$lookup": {
+            "from": "test",
+            "localField": "_id",
+            "foreignField": "user_id",
+            "as": "tests"
+          }
+        },
+        {
+          "\$lookup": {
+            "from": "sortable",
+            "localField": "_rank",
+            "foreignField": "rank",
+            "as": "sortable_details"
+          }
+        },
+        {
+          "\$sort": {"sortable_details.rank": 1}
+        }
+      ]).get();
+
+      // print(json.encode(response.data));
+
+      // then
+      expect(response.statusCode, equals(200));
+
+      expect(response.data, isNotNull); // Ensure data is not null
+
+      // Add more assertions based on the structure and expectation of your response data
+      // For example, if you expect every user to have a test and rank:
+      for (var user in response.data) {
+        expect(user['sortable_details'],
+            isNotNull); // Ensure sortable details exist
+      }
+    });
+  });
+}
+
 Future<void> main() async {
   setUpAll(() {
     // ↓ required to avoid HTTP error 400 mocked returns
@@ -383,10 +429,12 @@ Future<void> main() async {
   });
   TestWidgetsFlutterBinding.ensureInitialized();
   await init();
-  logUserInUsingPhoneTest();
+  // logUserInUsingPhoneTest();
   // postItemTest();
   // createUserTest();
   // getItemsTest();
   // putItemTest();
   // deleteItemTest();
+  // getSchemaTest();
+  useAggregatePipelineTest();
 }

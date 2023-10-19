@@ -62,7 +62,7 @@ class Bagel {
       const curlirize = require?.('axios-curlirize');
 
       try {
-        curlirize?.default?.(this.axiosInstance);
+        curlirize?.(this.axiosInstance);
       } catch (error) {
         // @ts-expect-error
         import('axios-curlirize-esm')

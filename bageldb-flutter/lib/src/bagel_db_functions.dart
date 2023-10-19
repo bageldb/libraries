@@ -163,7 +163,7 @@ class BagelMetaRequest {
 class BagelDBRequest {
   final BagelDB bagelDB;
   String collectionID, sortField, sortOrder;
-  String? _item, _projectOff, _projectOn, _rawMongoQuery;
+  String? _item, _projectOff, _projectOn, _rawMongoQuery, _aggPipeline;
   List<String> nestedCollectionsIDs = [];
   int _pageNumber = 1;
   int? _perPage;
@@ -207,11 +207,19 @@ class BagelDBRequest {
     return this;
   }
 
+  /// Use the [Aggregation Pipeline] to use a mongodb query format
+  ///
+  /// @link to read more about Aggregation Pipeline: {https://www.mongodb.com/docs/manual/reference/operator/aggregation-pipeline/?utm_source=compass&utm_medium=product#aggregation-pipeline-stages}
+  BagelDBRequest aggregationPipeline(
+      List<Map<String, dynamic>> mongoAggPipeline) {
+    this._aggPipeline = json.encode(mongoAggPipeline);
+    return this;
+  }
+
   /// Build and execute a get request to bagelDB, for both full collection and item requests
   Future<BagelResponse> get() async {
     Map<String, dynamic> params = <String, dynamic>{};
     if (_query.isNotEmpty) params["query"] = _query.join("+");
-    if (_rawMongoQuery != null) params["find"] = _rawMongoQuery;
     if (_pageNumber != 1) params["pageNumber"] = _pageNumber.toString();
     if (sortField != "") params["sort"] = sortField;
     if (sortOrder != "") params["order"] = sortOrder;
@@ -219,6 +227,9 @@ class BagelDBRequest {
     if (callEverything) params["everything"] = callEverything.toString();
     if (_projectOff != null) params["projectOff"] = _projectOff!;
     if (_projectOn != null) params["projectOn"] = _projectOn!;
+    if (_rawMongoQuery != null) params["find"] = _rawMongoQuery;
+    if (_aggPipeline != null) params["aggregationPipeline"] = _aggPipeline;
+
     if (nestedCollectionsIDs.isNotEmpty) {
       params["nestedID"] = nestedCollectionsIDs.join(".");
     }

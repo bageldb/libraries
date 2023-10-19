@@ -92,6 +92,8 @@ type DateQuery =
   `Date(${number}${number}${number}${number}-${number}${number}-${number}${number})`;
 
 enum MongoAggregationOperators {
+  // $merge, // ! not supported
+  // $out, // ! not supported
   $addFields,
   $bucket,
   $bucketAuto,
@@ -110,8 +112,6 @@ enum MongoAggregationOperators {
   $listSessions,
   $lookup,
   $match,
-  $merge,
-  $out,
   $planCacheStats,
   $project,
   $redact,
