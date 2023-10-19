@@ -402,7 +402,8 @@ useAggregatePipelineTest() {
         },
         {
           "\$sort": {"sortable_details.rank": 1}
-        }
+        },
+        // {"\$merge": {}} // ! not supported
       ]).get();
 
       // print(json.encode(response.data));
