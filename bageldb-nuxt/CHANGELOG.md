@@ -1,6 +1,10 @@
 # Changelog
 
 
+## v0.3.3
+
+[compare changes](https://github.com/bageldb/libraries/compare/v0.3.2...v0.3.3)
+
 ## v0.3.2
 
 
