@@ -1,13 +1,16 @@
 {
-	"private": true,
-	"name": "@bageldb/bageldb-nuxt-playground",
-	"type": "module",
-	"scripts": {
-		"dev": "nuxi dev",
-		"build": "nuxi build",
-		"generate": "nuxi generate"
-	},
-	"devDependencies": {
-		"nuxt": "latest"
-	}
+  "private": true,
+  "name": "@bageldb/bageldb-nuxt-playground",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "generate": "nuxi generate"
+  },
+  "devDependencies": {
+    "nuxt": "latest"
+  },
+  "dependencies": {
+    "@bageldb/bageldb-nuxt": "^0.3.2"
+  }
 }
