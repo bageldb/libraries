@@ -1,6 +1,6 @@
 import type { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
 import type FormData from 'form-data';
-import { axios, liveEndpoint, isNode, isReactNative } from './common';
+import { axios, liveEndpoint, isServerEnv, isReactNative } from './common';
 import type {
   bagelType,
   BagelGeoPointQuery,
@@ -318,7 +318,7 @@ export default class BagelDBRequest {
     }
     let formHeaders: FormData.Headers | undefined;
 
-    if (isNode()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
+    if (isServerEnv()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
 
     return this.instance.axiosInstance.post(url, form, {
       headers: formHeaders,
@@ -368,7 +368,7 @@ export default class BagelDBRequest {
     }
     let formHeaders: FormData.Headers | undefined;
 
-    if (isNode()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
+    if (isServerEnv()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
 
     const res = await this.instance.axiosInstance.put(url, form, {
       headers: formHeaders,
@@ -752,6 +752,18 @@ export default class BagelDBRequest {
     if (!onmessage) {
       throw new Error('onMessage callback must be defined');
     }
+
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    let _EventSource;
+    if (isServerEnv()) {
+      try {
+        _EventSource = await import('eventsource');
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.warn('EventSource is not supported in this environment');
+      }
+    }
+    globalThis.EventSource = globalThis?.EventSource || (_EventSource as unknown as typeof globalThis.EventSource);
 
     const eventSrc = globalThis.EventSource;
 

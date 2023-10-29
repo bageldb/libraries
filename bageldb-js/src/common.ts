@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
+// import { runtime } from 'std-env';
 
 // const baseEndpoint = 'https://api.bageldb.com';
 const baseEndpoint = 'https://api.bagelstudio.co/api/public';
@@ -9,7 +10,8 @@ const REFRESH_TOKEN_ENDPOINT = `${AUTH_ENDPOINT}/user/token`;
 const isReactNative =
   typeof navigator !== 'undefined' && navigator?.product === 'ReactNative';
 
-const isNode = () => !(typeof window != 'undefined' && window?.document);
+// const isServerEnv = () => runtime;
+const isServerEnv = () => !(typeof window != 'undefined' && window?.document);
 
 const getExpires = (expires_in: number): number => {
   const expires = new Date();
@@ -56,7 +58,7 @@ export {
   AUTH_ENDPOINT,
   REFRESH_TOKEN_ENDPOINT,
   isReactNative,
-  isNode,
+  isServerEnv,
   getExpires,
   getParsedJwt,
   // getCircularReplacer,

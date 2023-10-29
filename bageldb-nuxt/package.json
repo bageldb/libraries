@@ -1,25 +1,53 @@
 {
   "name": "@bageldb/bageldb-nuxt",
-  "version": "0.2.25-dev.1.1",
+  "version": "0.3.1",
   "description": "A BagelDB module for Nuxt.js",
-  "main": "lib/module.js",
+  "author": "BagelStudio",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bageldb/libraries/tree/main/bageldb-nuxt"
+  },
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
+    }
+  },
+  "main": "./dist/module.cjs",
+  "types": "./dist/types.d.ts",
   "files": [
-    "lib"
+    "dist"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "publish:prod": "npm publish --access public --tag dev",
-    "publish:dev": "npm publish --access public --dry-run --tag dev"
+    "prepack": "nuxt-module-build build",
+    "dev": "nuxi dev playground",
+    "dev:build": "nuxi build playground",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
+    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest watch"
   },
-  "keywords": [
-    "SSR",
-    "NuxtJS"
-  ],
-  "author": "BagelDB",
-  "license": "ISC",
   "dependencies": {
-    "@bageldb/bagel-db": "^0.3.34",
-    "axios": "^0.27.2",
+    "@bageldb/bagel-db": "beta",
+    "@nuxt/kit": "^3.8.0",
     "cookie": "^0.5.0"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxt/eslint-config": "^0.2.0",
+    "@nuxt/module-builder": "^0.5.2",
+    "@nuxt/schema": "^3.8.0",
+    "@nuxt/test-utils": "^3.8.0",
+    "@types/cookie": "^0.5.3",
+    "@types/event-source-polyfill": "^1.0.3",
+    "@types/node": "^20.8.9",
+    "changelogen": "^0.5.5",
+    "eslint": "^8.52.0",
+    "nuxt": "^3.8.0",
+    "vitest": "^0.33.0"
   }
 }

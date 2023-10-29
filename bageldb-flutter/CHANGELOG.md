@@ -169,3 +169,7 @@
 
 - Added `phone` or `email` options in auth methods
 - Added config option `logCurl` to allow logging of curl requests
+
+# 0.2.23
+
+- Added beta feature for mongodb like aggregation pipeline queries

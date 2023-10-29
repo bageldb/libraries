@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
@@ -423,6 +424,22 @@ useAggregatePipelineTest() {
   });
 }
 
+useAggregatePipeline_2Test() {
+  group('aggregate pipeline test', () {
+    test('aggregate pipeline test', () async {
+      // when
+      // "Using the 'users', 'test', and 'sortable' collections, create an aggregate pipeline to fetch user details with their associated test records, and sort the results based on the 'rank' in the 'sortable' collection."
+      BagelResponse response =
+          await db.collection('reports').aggregationPipeline(aggSteps).get();
+
+      print(json.encode(response.data));
+
+      // then
+      expect(response.statusCode, equals(200));
+    });
+  });
+}
+
 Future<void> main() async {
   setUpAll(() {
     // ↓ required to avoid HTTP error 400 mocked returns
@@ -437,5 +454,6 @@ Future<void> main() async {
   // putItemTest();
   // deleteItemTest();
   // getSchemaTest();
-  useAggregatePipelineTest();
+  // useAggregatePipelineTest();
+  useAggregatePipeline_2Test();
 }

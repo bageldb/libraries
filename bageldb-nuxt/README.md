@@ -1,23 +1,53 @@
 # BagelDB Client for NuxtJS
 
-BagelDB is a content management system with flexible database with user login
+[![npm version][npm-version-src]][npm-version-href]
+[![npm downloads][npm-downloads-src]][npm-downloads-href]
+[![License][license-src]][license-href]
+[![Nuxt][nuxt-src]][nuxt-href]
 
-## Setup
+BagelDB is a content management system with flexible database with user login for doing amazing things.
 
-- Install BagelDB-Nuxt in your project
+- [✨ &nbsp;Release Notes](/CHANGELOG.md)
+<!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/@bageldb/bageldb-nuxt?file=playground%2Fapp.vue) -->
+<!-- - [📖 &nbsp;Documentation](https://docs.bageldb.com) -->
 
-```
+## Features
+
+- ⛰ &nbsp; Flexible Database
+- 🚠 &nbsp; Simplicity First
+- 🌲 &nbsp; Powerful Editor Tools
+
+## Quick Setup
+
+1. Add `@bageldb/bageldb-nuxt` dependency to your project
+
+```bash
+# Using pnpm
+pnpm add @bageldb/bageldb-nuxt
+
+# Using yarn
+yarn add @bageldb/bageldb-nuxt
+
+# Using npm
 npm i @bageldb/bageldb-nuxt
+
+# Using bun
+bun i @bageldb/bageldb-nuxt
 ```
 
-- Add Module to nuxtConfig.js
+2. Add `@bageldb/bageldb-nuxt` to the `modules` section of `nuxt.config.ts`
 
 ```js
+export default defineNuxtConfig({
   modules: [
-    [
-        '@bageldb/bageldb-nuxt',
-        { token: process.env.NUXT_ENV_BAGEL_TOKEN, alias: "db"}]
-  ],
+    '@bageldb/bageldb-nuxt',
+    {
+      token: process.env.NUXT_ENV_BAGEL_TOKEN,
+      alias: "db", // (optional)
+      exposePublicClient: true // (optional) - this will expose the client to the browser
+    }
+  ]
+})
 ```
 
 The default alias is `$db` but can be set easily in the import. Two instances can be used in one project, but they must have different instances.
@@ -38,7 +68,7 @@ export default {
   },
 };
 ```
-
+<!--
 if you call the instance via the `fetch()` method, use `this` before calling it
 
 ```js
@@ -48,7 +78,7 @@ export default {
     return { books };
   },
 };
-```
+``` -->
 
 ## Authentication
 
@@ -76,3 +106,46 @@ export default {
 ```
 
 every call made after that will use the Auth token stored in the cookie.
+
+
+That's it! You can now use BagelNuxt in your Nuxt app ✨
+
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Generate type stubs
+npm run dev:prepare
+
+# Develop with the playground
+npm run dev
+
+# Build the playground
+npm run dev:build
+
+# Run ESLint
+npm run lint
+
+# Run Vitest
+npm run test
+npm run test:watch
+
+# Release new version
+npm run release
+```
+
+<!-- Badges -->
+[npm-version-src]: https://img.shields.io/npm/v/@bageldb/bageldb-nuxt/latest.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-version-href]: https://npmjs.com/package/@bageldb/bageldb-nuxt
+
+[npm-downloads-src]: https://img.shields.io/npm/dm/@bageldb/bageldb-nuxt.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-downloads-href]: https://npmjs.com/package/@bageldb/bageldb-nuxt
+
+[license-src]: https://img.shields.io/npm/l/@bageldb/bageldb-nuxt.svg?style=flat&colorA=18181B&colorB=28CF8D
+[license-href]: https://npmjs.com/package/@bageldb/bageldb-nuxt
+
+[nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt.js
+[nuxt-href]: https://nuxt.com

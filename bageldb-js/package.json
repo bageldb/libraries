@@ -1,6 +1,6 @@
 {
 	"name": "@bageldb/bagel-db",
-	"version": "0.4.30-beta.0.04",
+	"version": "0.4.34-beta.0.2",
 	"description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
 	"type": "module",
 	"types": "./dist/index.d.ts",
@@ -9,6 +9,10 @@
 	"exports": {
 		"./package.json": "./package.json",
 		"./dist/serverSpread.cjs": "./dist/serverSpread.cjs",
+		"./src/serverSpread": "./src/serverSpread.ts",
+		"./src/server": "./src/server.ts",
+		"./src/common": "./src/common.ts",
+		"./src/interfaces": "./src/interfaces.ts",
 		"./src/index": "./src/index.ts",
 		".": {
 			"import": "./dist/index.mjs",
@@ -50,7 +54,8 @@
 	"homepage": "https://docs.bageldb.com",
 	"dependencies": {
 		"axios": "^0.27.2",
-		"mongodb": "^6.1.0"
+		"mongodb": "^6.1.0",
+		"std-env": "^3.4.3"
 	},
 	"optionalDependencies": {
 		"axios-curlirize": "^1.3.7",

@@ -2,7 +2,7 @@ import {
   AxiosInstance,
   AxiosPromise,
   AxiosResponse,
-  isNode,
+  isServerEnv,
   isReactNative,
   getExpires,
   getParsedJwt,
@@ -196,6 +196,7 @@ export default class BagelUsersRequest {
       password,
     };
     try {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       const _emailOrPhone = emailOrPhone?.toLowerCase()?.trim();
       if (!_emailOrPhone || !password)
         throw new Error('email or password is empty');
@@ -284,6 +285,7 @@ export default class BagelUsersRequest {
     const body: { email?: string; phone?: string; password: string } = {
       password: updatedPassword,
     };
+      // eslint-disable-next-line @typescript-eslint/naming-convention
     const _emailOrPhone = emailOrPhone?.toLowerCase()?.trim();
 
     if (_emailOrPhone.match(/@/)) body.email = _emailOrPhone;
@@ -453,7 +455,7 @@ export default class BagelUsersRequest {
       }
 
       let formHeaders: FormData.Headers | undefined;
-      if (isNode()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
+      if (isServerEnv()) formHeaders = (form as unknown as FormData)?.getHeaders?.();
 
       const res = await this.axios.post(url, form, {
         headers: formHeaders,
