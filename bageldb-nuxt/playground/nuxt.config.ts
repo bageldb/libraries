@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   //     ? '@bageldb/bageldb-nuxt/dist'
   //     : fileURLToPath(new URL('../src', import.meta.url))
   // },
-  
+
   modules: [
     [
       '../src/module',

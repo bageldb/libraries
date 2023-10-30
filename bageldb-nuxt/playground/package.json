@@ -8,9 +8,8 @@
     "generate": "nuxi generate"
   },
   "devDependencies": {
-    "nuxt": "latest"
-  },
-  "dependencies": {
+    "nuxt": "latest",
     "@bageldb/bageldb-nuxt": "^0.3.3"
-  }
+  },
+  "dependencies": {}
 }

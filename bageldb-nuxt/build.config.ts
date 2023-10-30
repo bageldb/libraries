@@ -2,9 +2,9 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   declaration: true,
-  entries: [
-    'src/index'
-  ],
+  // entries: [
+  //   'src/index'
+  // ],
   externals: [
     '@nuxt/schema',
     'nitropack',
