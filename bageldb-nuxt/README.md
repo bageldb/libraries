@@ -8,7 +8,7 @@
 BagelDB is a content management system with flexible database with user login for doing amazing things.
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
-<!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/@bageldb/bageldb-nuxt?file=playground%2Fapp.vue) -->
+- [🏀 Online playground](https://stackblitz.com/github/bageldb/libraries/@bageldb/bageldb-nuxt?file=playground%2Fapp.vue)
 <!-- - [📖 &nbsp;Documentation](https://docs.bageldb.com) -->
 
 ## Features
