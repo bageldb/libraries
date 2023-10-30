@@ -11,6 +11,6 @@
     "nuxt": "latest"
   },
   "dependencies": {
-    "@bageldb/bageldb-nuxt": "^0.3.2"
+    "@bageldb/bageldb-nuxt": "^0.3.3"
   }
 }
