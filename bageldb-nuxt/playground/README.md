@@ -1,7 +1,8 @@
 # BagelNuxt Playground
 
 
-if you want to use this repo as a playground, you can clone it and run it locally. But, make sure you do the following:
+if you want to use this repo as a playground.
+You can clone also copy the playground directory and run it locally. If so, make sure you do the following:
 
 1. add an .env file with the following variables:
 
