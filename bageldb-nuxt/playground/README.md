@@ -10,5 +10,5 @@ You can clone also copy the playground directory and run it locally. If so, make
 NUXT_ENV_BAGEL_TOKEN=your-bagel-token.....
 ```
 
-2. rename ```nuxt.config-with-npm-import.ts``` to ```nuxt.config.ts```
-3. rename ```app-with-npm-import.vue``` to ```app.vue```
+2. rename ```nuxt.config-with-npm-import.ts``` to ```nuxt.config.ts``` (replace if it exists)
+3. rename ```app-with-npm-import.vue``` to ```app.vue``` (replace if it exists)
