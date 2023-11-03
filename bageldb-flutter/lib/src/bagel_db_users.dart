@@ -148,11 +148,11 @@ class BagelUsersRequest {
   }
 
   /// Validate the user's received One Time Password
-  Future<BagelUser?> validateOtp(String otp) async {
-    String? nonce = _getOtpRequestNonce();
-    if (nonce == null)
+  Future<BagelUser?> validateOtp(String otp, {String nonce = ''}) async {
+    String? _nonce = _getOtpRequestNonce() ?? nonce;
+    if (_nonce.isEmpty)
       throw ("Couldn't find OTP nonce, please run requestOTP first");
-    String url = '$authEndpoint/user/otp/verify/$nonce';
+    String url = '$authEndpoint/user/otp/verify/$_nonce';
     Map body = {"otp": otp};
     try {
       Response res = await dio.post(url, data: body);
@@ -165,12 +165,12 @@ class BagelUsersRequest {
   }
 
   /// Sends the OTP message again via a different provider when the user did not receive the message
-  Future<String?> resendOtp() async {
-    String? nonce = _getOtpRequestNonce();
-    if (nonce == null)
+  Future<String?> resendOtp({String nonce = ''}) async {
+    String? _nonce = _getOtpRequestNonce() ?? nonce;
+    if (_nonce.isEmpty)
       throw ("Couldn't find OTP nonce, please run requestOTP first");
     try {
-      String url = '$authEndpoint/user/otp/resend/$nonce';
+      String url = '$authEndpoint/user/otp/resend/$_nonce';
       Response res = await dio.post(url);
       _storeOtpRequestNonce(res.data);
       return res.data["nonce"];
@@ -213,6 +213,37 @@ class BagelUsersRequest {
       await dio.post(url, data: body);
     } catch (e) {
       if (e is DioException) throw (e.response.toString());
+    }
+  }
+
+  ///
+  /// This function updates the password of a user with the given email address or phone number.
+  /// Example:
+  /// ```
+  /// db.bagelUsersRequest.updatePassword(
+  ///     "test@gmail.com",
+  ///     "NewPasswordThatShouldBeStrong"
+  /// )
+  /// ```
+  /// - `[emailOrPhone]`: The email/phone of the user you want to update the password for.
+  /// - `[updatedPassword]`: The new password that you want to set for the user.
+  Future<Response?> updatePassword(
+      String emailOrPhone, String updatedPassword) async {
+    String url = '$authEndpoint/user/updatePassword';
+    Map body = {"password": updatedPassword};
+    String _emailOrPhone = emailOrPhone.trim().toLowerCase();
+
+    if (_emailOrPhone.contains('@'))
+      body["email"] = _emailOrPhone;
+    else
+      body["phone"] = _emailOrPhone;
+
+    try {
+      final res = await dio.post(url, data: body);
+      return res;
+    } catch (e) {
+      if (e is DioException) throw (e.response.toString());
+      return null;
     }
   }
 

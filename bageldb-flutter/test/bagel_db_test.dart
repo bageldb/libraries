@@ -43,7 +43,28 @@ createUserWithPhoneTest() {
   group('phone auth test', () {
     test('create user with phone test', () async {
       try {
-        final res = await db.bagelUsersRequest.requestOtp(testPhone);
+        final nonce = await db.bagelUsersRequest.requestOtp(testPhone);
+        print({"nonce": nonce});
+
+        // final nonce = await db.bagelUsersRequest.resendOtp(nonce: testNonce);
+        // print({"nonce": nonce});
+        expect(nonce, isNotNull);
+      } catch (e) {
+        print('\n');
+        print({"e": e});
+      }
+    });
+  });
+}
+
+updateUserPasswordTest() {
+  group('phone auth test', () {
+    test('update user password test', () async {
+      try {
+        final res = await db.bagelUsersRequest.updatePassword(
+          testPhone,
+          "123123",
+        );
         print({"res": res});
         expect(res, isNotNull);
       } catch (e) {
@@ -54,7 +75,25 @@ createUserWithPhoneTest() {
   });
 }
 
-// b4 the this next test the use should have a password set
+validateOtpTest() {
+  group('phone auth test', () {
+    test('validate otp test', () async {
+      try {
+        final res = await db.bagelUsersRequest.validateOtp(
+          testPassword,
+          nonce: testNonce,
+        );
+        print({"res": res});
+        expect(res, isNotNull);
+      } catch (e) {
+        print('\n');
+        print({"e": e});
+      }
+    });
+  });
+}
+
+// b4 the this next test the user should have a password set
 logUserInUsingPhoneTest() {
   group('phone auth test', () {
     test('login user with phone test', () async {
@@ -447,7 +486,11 @@ Future<void> main() async {
   });
   TestWidgetsFlutterBinding.ensureInitialized();
   await init();
-  // logUserInUsingPhoneTest();
+  // createUserWithPhoneTest();
+  // updateUserPasswordTest();
+  // validateOtpTest();
+  logUserInUsingPhoneTest();
+
   // postItemTest();
   // createUserTest();
   // getItemsTest();
@@ -455,5 +498,5 @@ Future<void> main() async {
   // deleteItemTest();
   // getSchemaTest();
   // useAggregatePipelineTest();
-  useAggregatePipeline_2Test();
+  // useAggregatePipeline_2Test();
 }
