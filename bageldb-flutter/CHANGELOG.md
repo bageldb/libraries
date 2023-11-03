@@ -143,7 +143,7 @@
 
 # 0.1.30
 
-- Added `deleteUser()` mthod to allow users to delete themselves or admins (with admin toekn) delete a user.
+- Add: `deleteUser()` mthod to allow users to delete themselves or admins (with admin toekn) delete a user.
 
 # 0.2.0
 
@@ -159,17 +159,21 @@
 
 # 0.2.02
 
-- Added `find()` method
+- Add: `find()` method
 
 # 0.2.21
 
-- Added `uploadAssets()` method
+- Add: `uploadAssets()` method
 
 # 0.2.22
 
-- Added `phone` or `email` options in auth methods
-- Added config option `logCurl` to allow logging of curl requests
+- Add: `phone` or `email` options in auth methods
+- Add: config option `logCurl` to allow logging of curl requests
 
 # 0.2.23
 
-- Added beta feature for mongodb like aggregation pipeline queries
+- Add: beta feature for mongodb like aggregation pipeline queries
+
+# 0.2.24
+
+- Add: `updatePassword()` method
