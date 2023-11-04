@@ -19,6 +19,7 @@ class BagelNuxtUser extends BagelUsersRequest {
     return userId !== null && userId?.length > 0
   }
 
+    // @ts-expect-error
   getUser(): Promise<AxiosResponse<BagelUser, any>> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
@@ -29,11 +30,11 @@ class BagelNuxtUser extends BagelUsersRequest {
       const url = `${AUTH_ENDPOINT}/user`;
       await this.instance
         .axiosInstance
-        .get(url)
+        .get<BagelUser>(url)
         .then(
           (res) => {
             if (res.status == 200) {
-              resolve(res)
+              resolve(res as AxiosResponse<BagelUser, any>)
             } else {
               reject(res)
             }
@@ -136,6 +137,7 @@ export default class BagelNuxt extends BagelDB {
   constructor(apiToken: string, ctx: { alias: string; token: string; }, axios: AxiosStatic) {
     super(apiToken)
     this.ctx = ctx;
+    // @ts-expect-error
     this.axiosInstance = axios.create();
 
     this.axiosInstance
@@ -189,6 +191,7 @@ export default class BagelNuxt extends BagelDB {
         });
   }
 
+    // @ts-expect-error
   users() {
     return new BagelNuxtUser({ instance: this })
   }

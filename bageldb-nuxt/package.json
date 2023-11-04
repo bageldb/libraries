@@ -32,7 +32,7 @@
     "test:watch": "vitest watch"
   },
   "dependencies": {
-    "axios": "^0.27.2",
+    "axios": "^1.6.0",
     "@bageldb/bagel-db": "0.4.34-beta.0.7",
     "@nuxt/kit": "^3.8.0"
   },
