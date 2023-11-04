@@ -2,12 +2,17 @@
 
 import { BagelUsersRequest, BagelDB } from '@bageldb/bagel-db/src/server';
 import type { BagelUser } from '@bageldb/bagel-db/src/interfaces';
-import axios from 'axios';
-import type { AxiosResponse } from 'axios';
+import type { AxiosResponse, AxiosStatic } from 'axios';
 import { parse, serialize } from './cookies';
 
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
-// const axios = _axios.default;
+
+let axios: AxiosStatic;
+if (process.client) {
+  axios = require('axios/dist/browser/axios.cjs'); // browser
+} else {
+  axios = require('axios/dist/node/axios.cjs'); // node
+}
 
 class BagelNuxtUser extends BagelUsersRequest {
   constructor({ instance }: { instance: any }) {
@@ -20,21 +25,22 @@ class BagelNuxtUser extends BagelUsersRequest {
     return userId !== null && userId?.length > 0
   }
 
+  // @ts-expect-error
   getUser(): Promise<AxiosResponse<BagelUser, any>> {
     // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       if (!this._bagelUserActive()) {
         reject(new Error("a Bagel User must be logged in to get Bagel User info"))
         return
       }
       const url = `${AUTH_ENDPOINT}/user`;
-      await this.instance
+      this.instance
         .axiosInstance
         .get(url)
         .then(
           (res) => {
             if (res.status == 200) {
-              resolve(res)
+              resolve(res as AxiosResponse<BagelUser, any>)
             } else {
               reject(res)
             }
@@ -137,6 +143,7 @@ export default class BagelNuxt extends BagelDB {
   constructor(apiToken: string, ctx: { alias: string; token: string; }) {
     super(apiToken)
     this.ctx = ctx;
+    // @ts-expect-error
     this.axiosInstance = axios.create();
 
     this.axiosInstance
@@ -190,6 +197,7 @@ export default class BagelNuxt extends BagelDB {
         });
   }
 
+  // @ts-expect-error
   users() {
     return new BagelNuxtUser({ instance: this })
   }
