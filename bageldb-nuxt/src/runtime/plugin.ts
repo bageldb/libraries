@@ -15,7 +15,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   if (process.client) {
     axios = (await import('axios')).default;
   } else {
-    axios = require?.('axios')?.default;
+    axios = (await import('axios/dist/node/axios.cjs')).default;
   }
 
 
