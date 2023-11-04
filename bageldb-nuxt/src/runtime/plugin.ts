@@ -1,14 +1,23 @@
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'
-import axios from 'axios'
+import type { AxiosStatic } from 'axios'
+
 
 import BagelNuxt from './bageldb-nuxt'
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(async (nuxtApp) => {
   const runtimeConfig = useRuntimeConfig()
 
   const ctx = runtimeConfig?.public?.bageldb || runtimeConfig?.bageldb
 
   // const _options = <%= JSON.stringify(options, null, 2) %>;
+
+  let axios: AxiosStatic;
+  if (process.client) {
+    axios = (await import('axios')).default;
+  } else {
+    axios = require?.('axios')?.default;
+  }
+
 
   const db = new BagelNuxt(ctx?.token, ctx, axios)
   // nuxtApp.provide(ctx.alias, db)
