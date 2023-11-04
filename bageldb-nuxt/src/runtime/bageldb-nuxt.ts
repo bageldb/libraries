@@ -4,9 +4,9 @@ import { BagelUsersRequest, BagelDB } from '@bageldb/bagel-db/src/server';
 import type { BagelUser } from '@bageldb/bagel-db/src/interfaces';
 // import type { AxiosResponse } from 'axios';
 import { parse, serialize } from './cookies';
-import { AUTH_ENDPOINT, type AxiosResponse, axios } from '@bageldb/bagel-db/src/common';
+import type { AxiosResponse, AxiosStatic } from 'axios';
 
-// const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
+const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 
 // let axios: AxiosStatic;
 // import('axios').then((axiosModule) => {
@@ -29,6 +29,7 @@ class BagelNuxtUser extends BagelUsersRequest {
   }
 
 
+  // @ts-expect-error
   getUser(): Promise<AxiosResponse<BagelUser, any>> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise((resolve, reject) => {
@@ -143,10 +144,11 @@ class BagelNuxtUser extends BagelUsersRequest {
 
 // module.exports =
 export default class BagelNuxt extends BagelDB {
-  constructor(apiToken: string, ctx: { alias: string; token: string; }) {
+  constructor(apiToken: string, ctx: { alias: string; token: string; }, axios: AxiosStatic) {
     super(apiToken)
     this.ctx = ctx;
 
+  // @ts-expect-error
     this.axiosInstance = axios.create();
 
     this.axiosInstance
@@ -199,7 +201,7 @@ export default class BagelNuxt extends BagelDB {
           return Promise.reject(error);
         });
   }
-
+  // @ts-expect-error
   users() {
     return new BagelNuxtUser({ instance: this })
   }
