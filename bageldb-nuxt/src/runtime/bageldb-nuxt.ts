@@ -150,8 +150,8 @@ export default class BagelNuxt extends BagelDB {
     this.ctx = ctx;
 
 
-    import('axios').then((axiosModule) => {
-       // @ts-expect-error
+    // @ts-expect-error
+    import('axios/dist/browser/axios.cjs').then((axiosModule) => {
       this.axiosInstance = axiosModule.default.create({
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
