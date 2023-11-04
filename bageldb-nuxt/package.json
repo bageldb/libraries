@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "axios": "^1.6.0",
-    "@bageldb/bagel-db": "0.4.34-beta.0.7",
+    "@bageldb/bagel-db": "0.4.34-beta.0.8",
     "@nuxt/kit": "^3.8.0"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-import * as _axios from 'axios';
+import * as Axios from 'axios';
 import type { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
 // import { runtime } from 'std-env';
 
@@ -51,7 +51,7 @@ const getParsedJwt = <T extends object = { [k: string]: string | number }>(
 //   };
 // };
 
-const axios = _axios.default;
+const axios = Axios.default;
 
 export type { AxiosInstance, AxiosPromise, AxiosResponse };
 export {
