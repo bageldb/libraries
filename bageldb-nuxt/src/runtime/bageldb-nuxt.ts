@@ -5,7 +5,7 @@ import type { BagelUser } from '@bageldb/bagel-db/src/interfaces';
 // import type { AxiosResponse } from 'axios';
 import { parse, serialize } from './cookies';
 import type { AxiosResponse } from 'axios';
-// import axios from 'axios';
+import axios from 'axios';
 
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 
@@ -13,12 +13,10 @@ const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 // import('axios').then((axiosModule) => {
 //   axios = axiosModule.default;
 // });
-let axiosImportPath: string;
-if (process.client) {
-  axiosImportPath = 'axios/dist/esm/axios'
-} else {
-  axiosImportPath = 'axios'
-}
+// if (process.client) {
+// } else {
+//   axios = require('axios').default;
+// }
 
 class BagelNuxtUser extends BagelUsersRequest {
   constructor({ instance }: { instance: any }) {
@@ -151,15 +149,10 @@ export default class BagelNuxt extends BagelDB {
     super(apiToken)
     this.ctx = ctx;
 
+  // @ts-expect-error
+    this.axiosInstance = axios.create();
 
-
-    import(axiosImportPath).then((axiosModule) => {
-      this.axiosInstance = axiosModule.default.create({
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity,
-      });
-
-      this.axiosInstance
+    this.axiosInstance
       .interceptors
       .request
       .use(
@@ -194,7 +187,7 @@ export default class BagelNuxt extends BagelDB {
               const config = error.config;
               config.headers["Authorization"] = `Bearer ${new BagelNuxtUser({ instance: this })._getAccessToken()}`;
               return new Promise((resolve, reject) => {
-                axiosModule.default.request(config)
+                axios.request(config)
                   .then((response: unknown) => {
                     resolve(response);
                   })
@@ -208,7 +201,6 @@ export default class BagelNuxt extends BagelDB {
           }
           return Promise.reject(error);
         });
-    });
   }
   // @ts-expect-error
   users() {

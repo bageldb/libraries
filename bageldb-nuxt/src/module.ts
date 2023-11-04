@@ -38,7 +38,11 @@ const module: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
     // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
     addPlugin({
       src: resolver.resolve('./runtime/plugin'),
-      // mode: 'server',
+      mode: 'server',
+    })
+    addPlugin({
+      src: resolver.resolve('./runtime/plugin'),
+      mode: 'client',
     })
 
     // Add auto imports
