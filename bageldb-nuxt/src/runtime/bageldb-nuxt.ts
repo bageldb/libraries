@@ -1,13 +1,13 @@
 
-import * as _cookie from 'cookie';
+
 import { BagelUsersRequest, BagelDB } from '@bageldb/bagel-db/src/server';
 import type { BagelUser } from '@bageldb/bagel-db/src/interfaces';
 import * as _axios from 'axios';
 import type { AxiosResponse } from 'axios';
+import { parse, serialize } from './cookies';
 
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 const axios = _axios.default;
-const { parse, serialize } = _cookie;
 
 class BagelNuxtUser extends BagelUsersRequest {
   constructor({ instance }: { instance: any }) {
@@ -52,14 +52,15 @@ class BagelNuxtUser extends BagelUsersRequest {
   }
 
   _getCookie(key: string) {
-    let cookieStr;
+    let cookieStr: string | undefined = undefined;
     if (!process.client && this.ctx.req) {
       cookieStr = this.ctx.req.headers.cookie
     } else if (process.client) {
       cookieStr = document.cookie
     }
-
     const cookies = parse(cookieStr || '') || {}
+
+
     return cookies[key]
   }
 
