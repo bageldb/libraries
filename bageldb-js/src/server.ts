@@ -4,7 +4,9 @@ import BagelDBRequest from './bagelDBRequest';
 import BagelUsersRequest from './users';
 
 
-import FormData from 'form-data';
+import * as _FormData from 'form-data';
+
+const FormData = _FormData.default;
 
 if (!globalThis?.FormData) (globalThis as any).FormData = FormData;
 
