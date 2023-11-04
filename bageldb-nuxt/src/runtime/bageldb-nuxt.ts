@@ -4,7 +4,8 @@ import { BagelUsersRequest, BagelDB } from '@bageldb/bagel-db/src/server';
 import type { BagelUser } from '@bageldb/bagel-db/src/interfaces';
 // import type { AxiosResponse } from 'axios';
 import { parse, serialize } from './cookies';
-import type { AxiosResponse, AxiosStatic } from 'axios';
+import type { AxiosResponse } from 'axios';
+import axios from 'axios';
 
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 
@@ -144,7 +145,7 @@ class BagelNuxtUser extends BagelUsersRequest {
 
 // module.exports =
 export default class BagelNuxt extends BagelDB {
-  constructor(apiToken: string, ctx: { alias: string; token: string; }, axios: AxiosStatic) {
+  constructor(apiToken: string, ctx: { alias: string; token: string; }) {
     super(apiToken)
     this.ctx = ctx;
 

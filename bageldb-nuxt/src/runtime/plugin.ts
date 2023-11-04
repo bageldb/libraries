@@ -1,5 +1,4 @@
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'
-import type { AxiosStatic } from 'axios'
 
 
 import BagelNuxt from './bageldb-nuxt'
@@ -11,15 +10,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   // const _options = <%= JSON.stringify(options, null, 2) %>;
 
-  let axios: AxiosStatic;
-  if (process.client) {
-    axios = (await import('axios')).default;
-  } else {
-    axios = (await import('axios')).default;
-  }
 
-
-  const db = new BagelNuxt(ctx?.token, ctx, axios)
+  const db = new BagelNuxt(ctx?.token, ctx)
   // nuxtApp.provide(ctx.alias, db)
   nuxtApp.vueApp.config.globalProperties.$db = db
 
