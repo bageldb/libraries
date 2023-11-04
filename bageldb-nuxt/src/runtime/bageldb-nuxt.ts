@@ -2,7 +2,9 @@
 import { parse, serialize } from 'cookie';
 import { BagelUsersRequest, BagelDB } from '@bageldb/bagel-db/src/server';
 import type { BagelUser } from '@bageldb/bagel-db/src/interfaces';
-import { axios, AUTH_ENDPOINT, type AxiosResponse } from '@bageldb/bagel-db/src/common';
+import { AUTH_ENDPOINT } from '@bageldb/bagel-db/src/common';
+import axios from 'axios';
+import type { AxiosResponse } from 'axios';
 
 class BagelNuxtUser extends BagelUsersRequest {
   constructor({ instance }: { instance: any }) {
@@ -86,8 +88,6 @@ class BagelNuxtUser extends BagelUsersRequest {
   _removeCookie(key: string) {
     this._setCookie(key, undefined, { maxAge: -1 })
   }
-
-
 
   _storeBagelUser(userID: string): any {
     this._setCookie('bagel-user', userID)

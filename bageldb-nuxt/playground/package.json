@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "nuxt": "latest",
-    "@bageldb/bageldb-nuxt": "^0.3.3"
+    "@nuxt/ui": "^0.4.1"
   },
   "dependencies": {}
 }

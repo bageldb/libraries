@@ -1,4 +1,5 @@
-import axios, { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
+import axios from 'axios';
+import type { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
 // import { runtime } from 'std-env';
 
 // const baseEndpoint = 'https://api.bageldb.com';

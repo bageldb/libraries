@@ -1,73 +1,62 @@
+
+
+<script setup lang="ts">
+const route = useRoute()
+</script>
+
 <template>
-  <div>
-    Nuxt module playground!
-    Hello!
-    <pre wrap>
-    { testSchema: {{ testSchema }} }
-      <br>
-		{{ projects }}
-    </pre>
-  </div>
+  <NuxtExampleLayout
+    repo="nuxt/examples"
+    example="routing/pages"
+  >
+    <NuxtLoadingIndicator />
+    <NuxtPage />
+
+    <template #nav>
+      <nav class="flex align-center gap-4 p-4">
+        <NuxtLink
+          to="/"
+          class="n-link-base"
+        >
+          Home
+        </NuxtLink>
+        <NuxtLink
+          to="/about"
+          class="n-link-base"
+        >
+          About
+        </NuxtLink>
+        <NuxtLink
+          to="/parent"
+          class="n-link-base"
+        >
+          Parent (index)
+        </NuxtLink>
+        <NuxtLink
+          to="/parent/b"
+          class="n-link-base"
+        >
+          Parent (b)
+        </NuxtLink>
+        <button
+          class="n-link-base"
+          @click="$router.push(`/parent/reload-${(Math.random() * 100).toFixed()}`)"
+        >
+          Keyed child
+        </button>
+        <button
+          class="n-link-base"
+          @click="$router.push(`/parent/static-${(Math.random() * 100).toFixed()}`)"
+        >
+          Non-keyed child
+        </button>
+      </nav>
+    </template>
+
+    <template #footer>
+      <div class="text-center p-4 op-50">
+        Current route: <code>{{ route.path }}</code>
+      </div>
+    </template>
+  </NuxtExampleLayout>
 </template>
-
-
-
-<script lang="ts">
-import { useAsyncData } from 'nuxt/app';
-import type BagelNuxt from '../src/runtime/bageldb-nuxt';
-
-// import { defineNuxtComponent } from 'nuxt/app';
-// import { useBagelDB } from '../src/runtime/composables';
-
-// export default defineNuxtComponent({
-// 	async asyncData({ $db }: { $db: BagelNuxt }) {
-// 		const {data: projects} = await $db.getProject();
-// 		// console.log('asyncData', {...projects});
-// 		return {
-// 			// data: {
-// 				projects
-// 			// }
-// 		}
-// 	},
-// 	data() {
-// 		return {
-// 				testSchema: null
-// 		}
-// 	},
-
-// 	async mounted() {
-// * client side request * /
-//     console.log('mounted', useBagelDB());
-
-//     const { data: testSchema} = await this.$db
-//                                           .schema('test')
-//                                           .get();
-
-//     this.testSchema = testSchema;
-
-
-// 	},
-// })
-</script>
-
-<script lang="ts" setup>
-// * client side request * /
-// import { useBagelDB } from '../src/runtime/composables';
-// const { data: projects} = await useBagelDB().getProject();
-// const { data: testSchema} = await useBagelDB().schema('test').get();
-
-// * server side request * /
-const { data } = await useAsyncData(async (NuxtApp) => {
-  const $db = NuxtApp?.$db as BagelNuxt;
-  const { data: projects} = await $db?.getProject?.() || {};
-  const { data: testSchema} = await $db?.schema?.('test').get() || {};
-  // console.log('useAsyncData', {projects, testSchema});
-
-  return {projects, testSchema};
-});
-
-const { projects, testSchema } = data.value || {};
-
-
-
-</script>

@@ -1,3 +1,5 @@
+// import { fileURLToPath } from "url";
+
 export default defineNuxtConfig({
   // alias: {
   //   '@bageldb/bageldb-nuxt': import.meta.env.NUXT_ENV_BAGEL_NUXT_ALIAS
@@ -6,8 +8,11 @@ export default defineNuxtConfig({
   // },
 
   modules: [
+    '@nuxt/ui',
+
     [
       '../src/module',
+      // '@bageldb/bageldb-nuxt',
       { token: process.env.NUXT_ENV_BAGEL_TOKEN, exposePublicClient: true }
     ]
   ],
