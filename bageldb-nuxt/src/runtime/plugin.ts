@@ -11,11 +11,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   // const _options = <%= JSON.stringify(options, null, 2) %>;
 
-  const axios: AxiosStatic = (await import('axios')).default;
-  // if (process.client) {
-  // } else {
-  //   axios = require?.('axios')?.default;
-  // }
+  let axios: AxiosStatic;
+  if (process.client) {
+    axios = (await import('axios')).default;
+  } else {
+    axios = require?.('axios')?.default;
+  }
 
 
   const db = new BagelNuxt(ctx?.token, ctx, axios)
