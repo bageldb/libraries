@@ -2,9 +2,9 @@
 import { parse, serialize } from 'cookie';
 import { BagelUsersRequest, BagelDB } from '@bageldb/bagel-db/src/server';
 import type { BagelUser } from '@bageldb/bagel-db/src/interfaces';
-import { AUTH_ENDPOINT } from '@bageldb/bagel-db/src/common';
 import axios from 'axios';
 import type { AxiosResponse } from 'axios';
+const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 
 class BagelNuxtUser extends BagelUsersRequest {
   constructor({ instance }: { instance: any }) {
