@@ -13,12 +13,12 @@ const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 // import('axios').then((axiosModule) => {
 //   axios = axiosModule.default;
 // });
-let axiosImportPath: string;
-if (process.client) {
-  axiosImportPath = 'axios/dist/esm/axios'
-} else if (process.server) {
-  axiosImportPath = 'axios'
-}
+// let axiosImport: any;
+// if (process.client) {
+//   axiosImport = import('axios/dist/esm/axios')
+// } else if (process.server) {
+//   axiosImport = import('axios/dist/node/axios.cjs')
+// }
 
 class BagelNuxtUser extends BagelUsersRequest {
   constructor({ instance }: { instance: any }) {
@@ -31,8 +31,6 @@ class BagelNuxtUser extends BagelUsersRequest {
     return userId !== null && userId?.length > 0
   }
 
-
-  // @ts-expect-error
   getUser(): Promise<AxiosResponse<BagelUser, any>> {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise((resolve, reject) => {
@@ -144,7 +142,6 @@ class BagelNuxtUser extends BagelUsersRequest {
   }
 }
 
-
 // module.exports =
 export default class BagelNuxt extends BagelDB {
   constructor(apiToken: string, ctx: { alias: string; token: string; }) {
@@ -153,7 +150,7 @@ export default class BagelNuxt extends BagelDB {
 
 
 
-    import(axiosImportPath).then((axiosModule) => {
+    import('axios').then((axiosModule) => {
       this.axiosInstance = axiosModule.default.create({
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
@@ -210,7 +207,7 @@ export default class BagelNuxt extends BagelDB {
         });
     });
   }
-  // @ts-expect-error
+
   users() {
     return new BagelNuxtUser({ instance: this })
   }
