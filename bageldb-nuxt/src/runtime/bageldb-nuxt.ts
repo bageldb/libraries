@@ -13,10 +13,12 @@ const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 // import('axios').then((axiosModule) => {
 //   axios = axiosModule.default;
 // });
-// if (process.client) {
-// } else {
-//   axios = require('axios').default;
-// }
+let axiosImportPath: string;
+if (process.client) {
+  axiosImportPath = 'axios/dist/esm/axios'
+} else {
+  axiosImportPath = 'axios'
+}
 
 class BagelNuxtUser extends BagelUsersRequest {
   constructor({ instance }: { instance: any }) {
@@ -150,8 +152,8 @@ export default class BagelNuxt extends BagelDB {
     this.ctx = ctx;
 
 
-    // @ts-expect-error
-    import('axios/dist/browser/axios.cjs').then((axiosModule) => {
+
+    import(axiosImportPath).then((axiosModule) => {
       this.axiosInstance = axiosModule.default.create({
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
