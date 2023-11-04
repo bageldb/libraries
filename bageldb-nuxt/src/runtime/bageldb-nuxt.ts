@@ -9,9 +9,11 @@ const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 
 let axios: AxiosStatic;
 if (process.client) {
-  axios = require('axios/dist/browser/axios.cjs'); // browser
+  import('axios').then((axiosModule) => {
+    axios = axiosModule.default;
+  });
 } else {
-  axios = require('axios/dist/node/axios.cjs'); // node
+  axios = require('axios').default;
 }
 
 class BagelNuxtUser extends BagelUsersRequest {
