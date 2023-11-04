@@ -8,13 +8,13 @@ import { parse, serialize } from './cookies';
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
 
 let axios: AxiosStatic;
-if (process.client) {
-  import('axios').then((axiosModule) => {
-    axios = axiosModule.default;
-  });
-} else {
-  axios = require('axios').default;
-}
+import('axios').then((axiosModule) => {
+  axios = axiosModule.default;
+});
+// if (process.client) {
+// } else {
+//   axios = require('axios').default;
+// }
 
 class BagelNuxtUser extends BagelUsersRequest {
   constructor({ instance }: { instance: any }) {
