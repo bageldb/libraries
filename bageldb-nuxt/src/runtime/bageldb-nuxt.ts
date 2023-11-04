@@ -2,23 +2,11 @@
 
 import { BagelUsersRequest, BagelDB } from '@bageldb/bagel-db/src/server';
 import type { BagelUser } from '@bageldb/bagel-db/src/interfaces';
-// import type { AxiosResponse } from 'axios';
+import type { AxiosResponse, AxiosStatic } from 'axios';
 import { parse, serialize } from './cookies';
-import type { AxiosResponse } from 'axios';
-// import axios from 'axios';
 
 const AUTH_ENDPOINT = 'https://auth.bageldb.com/api/public';
-
-// let axios: AxiosStatic;
-// import('axios').then((axiosModule) => {
-//   axios = axiosModule.default;
-// });
-// let axiosImport: any;
-// if (process.client) {
-//   axiosImport = import('axios/dist/esm/axios')
-// } else if (process.server) {
-//   axiosImport = import('axios/dist/node/axios.cjs')
-// }
+// const axios = _axios.default;
 
 class BagelNuxtUser extends BagelUsersRequest {
   constructor({ instance }: { instance: any }) {
@@ -33,19 +21,19 @@ class BagelNuxtUser extends BagelUsersRequest {
 
   getUser(): Promise<AxiosResponse<BagelUser, any>> {
     // eslint-disable-next-line no-async-promise-executor
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (!this._bagelUserActive()) {
         reject(new Error("a Bagel User must be logged in to get Bagel User info"))
         return
       }
       const url = `${AUTH_ENDPOINT}/user`;
-      this.instance
+      await this.instance
         .axiosInstance
         .get(url)
         .then(
           (res) => {
             if (res.status == 200) {
-              resolve(res as AxiosResponse<BagelUser, any>)
+              resolve(res)
             } else {
               reject(res)
             }
@@ -142,21 +130,15 @@ class BagelNuxtUser extends BagelUsersRequest {
   }
 }
 
+
 // module.exports =
 export default class BagelNuxt extends BagelDB {
-  constructor(apiToken: string, ctx: { alias: string; token: string; }) {
+  constructor(apiToken: string, ctx: { alias: string; token: string; }, axios: AxiosStatic) {
     super(apiToken)
     this.ctx = ctx;
+    this.axiosInstance = axios.create();
 
-
-
-    import('axios').then((axiosModule) => {
-      this.axiosInstance = axiosModule.default.create({
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity,
-      });
-
-      this.axiosInstance
+    this.axiosInstance
       .interceptors
       .request
       .use(
@@ -191,7 +173,7 @@ export default class BagelNuxt extends BagelDB {
               const config = error.config;
               config.headers["Authorization"] = `Bearer ${new BagelNuxtUser({ instance: this })._getAccessToken()}`;
               return new Promise((resolve, reject) => {
-                axiosModule.default.request(config)
+                axios.request(config)
                   .then((response: unknown) => {
                     resolve(response);
                   })
@@ -205,7 +187,6 @@ export default class BagelNuxt extends BagelDB {
           }
           return Promise.reject(error);
         });
-    });
   }
 
   users() {

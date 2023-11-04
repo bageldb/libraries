@@ -32,9 +32,9 @@
     "test:watch": "vitest watch"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "@bageldb/bagel-db": "0.4.34-beta.0.7",
-    "@nuxt/kit": "^3.8.0",
-    "cookie": "^0.5.0"
+    "@nuxt/kit": "^3.8.0"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
@@ -47,7 +47,6 @@
     "@types/node": "^20.8.10",
     "changelogen": "^0.5.5",
     "eslint": "^8.53.0",
-    "axios": "^0.27.2",
     "nuxt": "^3.8.0",
     "vitest": "^0.34.6"
   }

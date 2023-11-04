@@ -1,6 +1,7 @@
 import { type NuxtModule } from 'nuxt/schema';
 import { defineNuxtModule, createResolver, addPlugin, addImports } from '@nuxt/kit'
 import { defu } from 'defu'
+import { fileURLToPath } from 'url';
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
@@ -23,7 +24,7 @@ const module: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
   },
 
   setup(options, nuxt) {
-    const resolver = createResolver(import.meta.url)
+    const {resolve} = createResolver(import.meta.url)
 
     nuxt.options.runtimeConfig.bageldb = defu(nuxt.options.runtimeConfig.bageldb, {
       ...options
@@ -35,14 +36,17 @@ const module: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions>({
       })
     }
 
+
+    // Transpile runtime
+    const runtimeDir = fileURLToPath(new URL('./runtime', import.meta.url))
+    nuxt.options.build.transpile.push(runtimeDir)
+
     // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
-    addPlugin({
-      src: resolver.resolve('./runtime/plugin'),
-      // mode: 'server',
-    })
+    addPlugin(resolve(runtimeDir, 'plugins', 'bagel.client'))
+    addPlugin(resolve(runtimeDir, 'plugins', 'bagel.server'))
 
     // Add auto imports
-    const composables = resolver.resolve('./runtime/composables')
+    const composables = resolve('./runtime/composables')
     addImports([{ from: composables, name: 'useBagelDB' }])
   }
 })
