@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bageldb-nuxt",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "A BagelDB module for Nuxt.js",
   "author": "BagelStudio",
   "repository": {
@@ -47,6 +47,7 @@
     "@types/node": "^20.8.9",
     "changelogen": "^0.5.5",
     "eslint": "^8.52.0",
+    "axios": "^0.27.2",
     "nuxt": "^3.8.0",
     "vitest": "^0.33.0"
   }
