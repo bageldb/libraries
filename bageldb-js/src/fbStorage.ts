@@ -1,9 +1,12 @@
-// import { isUndefined, without, keys, size, includes } from 'lodash';
-import isUndefined from 'lodash/isUndefined';
-import without from 'lodash/without';
-import keys from 'lodash/keys';
-import size from 'lodash/size';
-import includes from 'lodash/includes';
+const isUndefined = (value: unknown): boolean  => typeof value === 'undefined';
+
+const without = <T>(array: T[], ...values: T[]): T[]  => array.filter((item) => !values.includes(item));
+
+const keys = (object: Record<string, any>): string[]  => Object.keys(object);
+
+const size = (collection: Record<string, any> | any[]): number  => collection.length;
+
+const includes = (collection: Record<string, any> | any[], value: any): boolean  => collection.includes(value);
 
 export default class FallbackStorage {
   key: (index: any) => any;

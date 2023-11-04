@@ -1,5 +1,5 @@
 import * as _axios from 'axios';
-import type { AxiosInstance, AxiosPromise, AxiosResponse, AxiosStatic } from 'axios';
+import type { AxiosInstance, AxiosPromise, AxiosResponse } from 'axios';
 // import { runtime } from 'std-env';
 
 // const baseEndpoint = 'https://api.bageldb.com';
@@ -51,14 +51,7 @@ const getParsedJwt = <T extends object = { [k: string]: string | number }>(
 //   };
 // };
 
-let axios: AxiosStatic;
-
-if (isServerEnv()) {
-  axios = _axios.default;
-} else {
-// client-side
-  axios = _axios.default;
-}
+const axios = _axios.default;
 
 export type { AxiosInstance, AxiosPromise, AxiosResponse };
 export {
