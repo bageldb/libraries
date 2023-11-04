@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bageldb-nuxt",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "A BagelDB module for Nuxt.js",
   "author": "BagelStudio",
   "repository": {
