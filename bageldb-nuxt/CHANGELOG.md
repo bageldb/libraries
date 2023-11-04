@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.3.6
+
+[compare changes](https://github.com/bageldb/libraries/compare/v0.3.5...v0.3.6)
+
+### 🏡 Chore
+
+- **release:** V0.3.4 ([ab2b6fd](https://github.com/bageldb/libraries/commit/ab2b6fd))
+- **release:** V0.3.5 ([6123669](https://github.com/bageldb/libraries/commit/6123669))
+
+### ❤️ Contributors
+
+- Nevehallon <nevehallon@gmail.com>
+
 ## v0.3.5
 
 [compare changes](https://github.com/bageldb/libraries/compare/v0.3.5...v0.3.5)
