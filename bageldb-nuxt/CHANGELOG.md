@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.3.29
+
+[compare changes](https://github.com/bageldb/libraries/compare/v0.4.35-beta.2...v0.3.29)
+
+### 🩹 Fixes
+
+- Otp and bump version ([dc41b95](https://github.com/bageldb/libraries/commit/dc41b95))
+
+### ❤️ Contributors
+
+- Nevehallon <nevehallon@gmail.com>
+
 ## v0.3.28
 
 [compare changes](https://github.com/bageldb/libraries/compare/v0.3.27...v0.3.28)
