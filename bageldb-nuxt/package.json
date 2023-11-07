@@ -1,6 +1,6 @@
 {
   "name": "@bageldb/bageldb-nuxt",
-  "version": "0.3.29",
+  "version": "0.3.30",
   "description": "A BagelDB module for Nuxt.js",
   "author": "BagelStudio",
   "repository": {
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "axios": "^1.6.0",
-    "@bageldb/bagel-db": "0.4.35-beta.2",
+    "@bageldb/bagel-db": "0.4.35",
     "@nuxt/kit": "^3.8.0"
   },
   "devDependencies": {
