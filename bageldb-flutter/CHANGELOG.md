@@ -177,3 +177,7 @@
 # 0.2.24
 
 - Add: `updatePassword()` method
+
+# 0.2.24
+
+- Add: `validateOtp()` t query param to ensure the otp is valid

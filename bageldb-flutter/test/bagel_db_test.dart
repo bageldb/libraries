@@ -61,10 +61,8 @@ updateUserPasswordTest() {
   group('phone auth test', () {
     test('update user password test', () async {
       try {
-        final res = await db.bagelUsersRequest.updatePassword(
-          testPhone,
-          "123123",
-        );
+        final res =
+            await db.bagelUsersRequest.updatePassword(testPhone, testPassword);
         print({"res": res});
         expect(res, isNotNull);
       } catch (e) {

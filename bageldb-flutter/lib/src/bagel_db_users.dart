@@ -152,7 +152,7 @@ class BagelUsersRequest {
     String? _nonce = _getOtpRequestNonce() ?? nonce;
     if (_nonce.isEmpty)
       throw ("Couldn't find OTP nonce, please run requestOTP first");
-    String url = '$authEndpoint/user/otp/verify/$_nonce';
+    String url = '$authEndpoint/user/otp/verify/$_nonce?t=${DateTime.now()}';
     Map body = {"otp": otp};
     try {
       Response res = await dio.post(url, data: body);

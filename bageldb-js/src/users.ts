@@ -102,7 +102,7 @@ export default class BagelUsersRequest {
    */
   async validateOtp(otp: string) {
     const nonce = await this._getOtpRequestNonce();
-    const url = `${AUTH_ENDPOINT}/user/otp/verify/${nonce}`;
+    const url = `${AUTH_ENDPOINT}/user/otp/verify/${nonce}?t=${Date.now()}`;
     const body = { otp };
     try {
       const res = await this.axios.post(url, body);
