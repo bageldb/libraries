@@ -1,6 +1,6 @@
 {
 	"name": "@bageldb/bagel-db",
-	"version": "0.4.35-beta.14",
+	"version": "0.4.35-beta.15",
 	"description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
 	"type": "module",
 	"types": "./dist/index.d.ts",
@@ -15,6 +15,7 @@
 		"./src/interfaces": "./src/interfaces.ts",
 		"./src/index": "./src/index.ts",
 		".": {
+			"types": "./dist/index.d.ts",
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.cjs",
 			"node": {
