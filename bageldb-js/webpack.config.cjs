@@ -114,10 +114,36 @@ const nodeConfig = {
 		filename: '[name].cjs',
 	},
 };
+
+/**
+ * @type {import("webpack").Configuration}
+ */
+const webpack4Config = {
+	entry: {
+		index: {
+			import: './src/index.ts',
+			library: {
+				umdNamedDefine: true,
+				type: 'umd',
+				// export: "default",
+			},
+		},
+	},
+
+	externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
+
+	output: {
+		path: path.join(__dirname, './dist'),
+		filename: '[name].js',
+		publicPath: '',
+	},
+};
+
 /**
  * @type {import("webpack").Configuration}
  */
 const esmConfig = {
+	// https://webpack.js.org/configuration/output/#outputmodule
 	experiments: {
 		outputModule: true,
 	},
@@ -125,26 +151,19 @@ const esmConfig = {
 		index: {
 			import: './src/index.ts',
 			library: {
-				umdNamedDefine: true,
+				// https://webpack.js.org/configuration/output/#outputmodule
 				type: 'module',
-				// export: "default",
 			},
 		},
 	},
-	// target: "web",
 	externalsPresets: { node: true }, // in order to ignore built-in modules like path, fs, etc.
-	// externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
-	//  plugins: [
-	//   new CleanWebpackPlugin({
-	//     cleanStaleWebpackAssets: false,
-	//     cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "./dist")],
-	//   }),
-	// new NodePolyfillPlugin(),
-	// ],
+
 	output: {
 		path: path.join(__dirname, './dist'),
-		filename: '[name].js',
+		filename: '[name].mjs',
 		publicPath: '',
+		// https://webpack.js.org/configuration/output/#outputmodule
+		module: true,
 	},
 };
 
@@ -177,12 +196,14 @@ module.exports = (env, argv) => {
 
 	Object.assign(browserConfig, generalConfig);
 	Object.assign(nodeConfig, generalConfig, nodeConfig);
+	Object.assign(webpack4Config, generalConfig);
 	Object.assign(esmConfig, generalConfig);
 	// Object.assign(reactNativeConfig, generalConfig);
 
 	return [
 		nodeConfig,
 		esmConfig,
+		webpack4Config,
 		// reactNativeConfig,
 		browserConfig,
 	];

@@ -1,6 +1,6 @@
 {
 	"name": "@bageldb/bagel-db",
-	"version": "0.4.35-beta.17",
+	"version": "0.4.35-beta.16",
 	"description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
 	"type": "module",
 	"types": "./dist/index.d.ts",
@@ -17,12 +17,11 @@
 		"./src/index": "./src/index.ts",
 		".": {
 			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js",
+			"import": "./dist/index.mjs",
 			"require": "./dist/index.cjs",
-			"module": "./dist/index.mjs",
 			"node": {
 				"module": "./dist/index.mjs",
-				"import": "./dist/index.js",
+				"import": "./dist/index.mjs",
 				"require": "./dist/index.cjs"
 			},
 			"default": "./dist/index.cjs"
@@ -39,7 +38,7 @@
 		"lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
 		"build:types": "yarn run tsc --emitDeclarationOnly",
-		"publish:beta:prod": "bumpp -p false && npm publish --access public --tag beta",
+		"publish:beta:prod": "bumpp -p false -t beta && npm publish --access public --tag beta",
 		"publish:prod": "bumpp -p false && npm publish --access public",
 		"publish:dev": "bumpp -p false && npm publish --access public --dry-run"
 	},
