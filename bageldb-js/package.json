@@ -36,9 +36,9 @@
 		"lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
 		"format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
 		"build:types": "yarn run tsc --emitDeclarationOnly",
-		"publish:beta:prod": "bumpp && npm publish --access public --tag beta",
-		"publish:prod": "bumpp && npm publish --access public",
-		"publish:dev": "bumpp && npm publish --access public --dry-run"
+		"publish:beta:prod": "bumpp -p false && npm publish --access public --tag beta",
+		"publish:prod": "bumpp -p false && npm publish --access public",
+		"publish:dev": "bumpp -p false && npm publish --access public --dry-run"
 	},
 	"repository": {
 		"type": "git",

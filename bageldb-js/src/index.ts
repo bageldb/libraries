@@ -1,6 +1,7 @@
 import type {
   AxiosError,
   AxiosInstance,
+  AxiosRequestConfig,
   AxiosRequestHeaders,
   AxiosResponse,
 } from 'axios';
@@ -26,7 +27,7 @@ const defaultOptions: BagelConfigOptions = {
   isServer: false,
   customStorage: undefined,
   baseEndpoint,
-  customReqHeaders: {},
+  customReqHeaders: {} as AxiosRequestHeaders,
   enableDebug: false,
 };
 
@@ -94,10 +95,12 @@ class Bagel {
             (config.headers as AxiosRequestHeaders).Authorization =
               'Bearer ' + apiToken;
           }
-          config.headers = {
-            ...config.headers,
-            ...this.customReqHeaders,
-          };
+          Object.assign(config, {
+            headers: {
+              ...config?.headers || {},
+              ...this.customReqHeaders,
+            },
+          });
           return config;
         } catch (err) {
           throw err;
@@ -127,15 +130,17 @@ class Bagel {
           ) {
             // const token =
             await new BagelUsersRequest({ instance: this }).refresh();
-            const config = error.config;
+            const config = error.config as AxiosRequestConfig;
             const token = await new BagelUsersRequest({
               instance: this,
             })._getAccessToken();
 
-            config.headers = {
-              ...config.headers,
-              Authorization: `Bearer ${token}`,
-            };
+            Object.assign(config, {
+              headers: {
+                ...config?.headers || {} as AxiosRequestHeaders,
+                Authorization: `Bearer ${token}`,
+              },
+            });
             const response = await this.axiosInstance.request(config);
             return response;
           }
