@@ -1,6 +1,6 @@
 {
 	"name": "@bageldb/bagel-db",
-	"version": "0.4.35-beta.3",
+	"version": "0.4.35-beta.4",
 	"description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
 	"type": "module",
 	"types": "./dist/index.d.ts",
@@ -25,7 +25,7 @@
 			"default": "./dist/index.cjs"
 		}
 	},
-	"module": "./dist/index.js",
+	"module": "./dist/index.esm.js",
 	"scripts": {
 		"typecheck": "tsc --noEmit",
 		"bump": "bumpp",
