@@ -178,6 +178,10 @@
 
 - Add: `updatePassword()` method
 
-# 0.2.24
+# 0.2.25
 
 - Add: `validateOtp()` t query param to ensure the otp is valid
+
+# 0.2.26-dev.1
+
+- Add: internal changes for better local testing

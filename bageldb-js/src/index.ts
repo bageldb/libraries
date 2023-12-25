@@ -9,12 +9,13 @@ import type {
 import BagelDBRequest from './bagelDBRequest';
 import BagelUsersRequest from './users';
 import {
-  REFRESH_TOKEN_ENDPOINT,
+  getRefreshTokenEndPoint,
   axios,
   baseEndpoint,
+  authEndpoint,
   // getCircularReplacer,
 } from './common';
-import {
+import type {
   AssetUploadArgs,
   AssetUploadRes,
   BagelConfigOptions,
@@ -27,6 +28,7 @@ const defaultOptions: BagelConfigOptions = {
   isServer: false,
   customStorage: undefined,
   baseEndpoint,
+  authEndpoint,
   customReqHeaders: {} as AxiosRequestHeaders,
   enableDebug: false,
 };
@@ -41,6 +43,8 @@ class Bagel {
   customStorage?: BagelStorageType;
 
   baseEndpoint?: string;
+
+  authEndpoint!: string;
 
   options: BagelConfigOptions;
 
@@ -84,7 +88,7 @@ class Bagel {
             instance: this,
           })._bagelUserActive();
 
-          if (bagelUserActive && config.url !== REFRESH_TOKEN_ENDPOINT) {
+          if (bagelUserActive && config.url !== getRefreshTokenEndPoint(this.authEndpoint)) {
             const bagelUserReq = new BagelUsersRequest({
               instance: this,
             });
@@ -126,7 +130,7 @@ class Bagel {
           if (
             bagelUserActive &&
             ERROR_401 &&
-            error?.config?.url !== REFRESH_TOKEN_ENDPOINT
+            error?.config?.url !== getRefreshTokenEndPoint(this.authEndpoint)
           ) {
             // const token =
             await new BagelUsersRequest({ instance: this }).refresh();

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:test/test.dart' as dartTest;
 import 'package:universal_io/io.dart';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -10,14 +11,35 @@ import '../lib/bagel_db.dart';
 
 import '../.testToken.dart';
 
+final isNotNull = dartTest.isNotNull;
+final greaterThan = dartTest.greaterThan;
+final contains = dartTest.contains;
+final equals = dartTest.equals;
+final lessThan = dartTest.lessThan;
+
 late BagelDB db;
+
+/* local home  */ const host = 'http://192.168.68.107';
+// /* local  */const host = 'http://192.168.200.207';
+late Map bagelOptions = {};
+const localDebug = false;
 
 init() async {
   print("starting tests ... \n\n\n");
 
   SharedPreferences.setMockInitialValues({});
 
-  db = await BagelDB.init(token: testToken, logCurl: true);
+  if (localDebug) {
+    bagelOptions = {
+      "baseEndpoint": "$host:3000/api/public",
+      "authEndpoint": "$host:3030/api/public",
+      "customReqHeaders": {
+        'X-Endpoint-API-UserInfo': localDebugToken,
+      },
+    };
+  }
+  db = await BagelDB.init(
+      token: testToken, logCurl: true, options: bagelOptions);
 }
 
 final String docId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -487,7 +509,7 @@ Future<void> main() async {
   // createUserWithPhoneTest();
   // updateUserPasswordTest();
   // validateOtpTest();
-  logUserInUsingPhoneTest();
+  // logUserInUsingPhoneTest();
 
   // postItemTest();
   // createUserTest();

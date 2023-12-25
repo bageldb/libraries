@@ -9,14 +9,21 @@ import 'dart:typed_data';
 
 ///## **BagelDB** is a content management system with rich API features. For more info, visit here bageldb.com
 
+final Map<String, dynamic> defaultOptions = {
+  "customReqHeaders": {},
+  "baseEndpoint": "https://api.bagelstudio.co/api/public",
+  "authEndpoint": "https://auth.bageldb.com/api/public"
+};
+
 /// *BagelDB* class is the base class for any bagelDB request, it must be given the api [token] created at app.bageldb.com
 class BagelDB {
   String token;
   SP sp;
   bool logCurl = false;
+  Map<String, dynamic> options;
 
+  BagelDB(this.token, this.sp, this.logCurl, this.options);
   late BagelUsersRequest bagelUsersRequest = BagelUsersRequest(this);
-  BagelDB(this.token, this.sp, this.logCurl);
 
   /// return a *BagelDBRequest* object for a specific [collection]
   BagelDBRequest collection(String collection) {
@@ -28,10 +35,14 @@ class BagelDB {
     return bagelUsersRequest;
   }
 
-  static Future<BagelDB> init({token, logCurl = false}) async {
+  static Future<BagelDB> init(
+      {token, logCurl = false, options = const {}}) async {
+    // merge options
+    Map<String, dynamic> _options = {...defaultOptions, ...options};
     SP _sp = SP();
     await _sp.init();
-    BagelDB instance = BagelDB(token, _sp, logCurl);
+    BagelDB instance = BagelDB(token, _sp, logCurl, _options);
+
     await instance.users().init();
     return instance;
   }
@@ -136,16 +147,18 @@ class BagelMetaResponse {
 class BagelMetaRequest {
   String collectionID;
   BagelDB instance;
-  final String baseEndpoint = 'https://api.bagelstudio.co/api/public';
 
   Dio dio = Dio();
   BagelMetaRequest({required this.instance, required this.collectionID});
 
   /// get meta information about a collection, namely the schema structure
   Future<BagelMetaResponse> get() async {
+    final String baseEndpoint = instance.options['baseEndpoint'];
+
     Options options = Options(headers: {
       'authorization': 'Bearer ${instance.token}',
-      "Accept-Version": "v1"
+      "Accept-Version": "v1",
+      ...instance.options['customReqHeaders'],
     });
     String url = '$baseEndpoint/collection/$collectionID/schema';
     Response response = await dio.get(url, options: options);
@@ -170,7 +183,9 @@ class BagelDBRequest {
   final List<String> _query = [];
   bool callEverything;
 
-  final String baseEndpoint = 'https://api.bagelstudio.co/api/public';
+  // final String baseEndpoint = 'https://api.bagelstudio.co/api/public';
+  late String baseEndpoint = bagelDB.options['baseEndpoint'];
+
   final String liveEndpoint = 'https://live.bageldb.com/api/public';
   late Dio dioInstance;
   bool dioInitialized = false;
@@ -178,13 +193,18 @@ class BagelDBRequest {
     if (!dioInitialized) {
       BagelUsersRequest userRequest = BagelUsersRequest(bagelDB);
       Map<String, dynamic> headers = {"Accept-Version": "v1"};
-      String? token = userRequest.getAccessToken();
-      if (token != null) {
-        headers['authorization'] = 'Bearer $token';
+      String? userAccessToken = userRequest.getAccessToken();
+      if (userAccessToken != null) {
+        headers['authorization'] = 'Bearer $userAccessToken';
       } else {
         headers['authorization'] = 'Bearer ${bagelDB.token}';
       }
-      dioInstance = Dio(BaseOptions(headers: headers));
+
+      dioInstance = Dio(BaseOptions(headers: {
+        ...headers,
+        ...bagelDB.options['customReqHeaders'],
+      }));
+
       if (bagelDB.logCurl == true) {
         dioInstance.interceptors.add(CurlInterceptor(logCurl: true));
       }

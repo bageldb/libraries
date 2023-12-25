@@ -1,21 +1,19 @@
 name: bagel_db
 description: Dart plugin to retrieve and update data on BagelDB. This library allows you to build a backend in a matter of minutes, make REST API requests and manage your content easily
-version: 0.2.25
+version: 0.2.26-dev.1
 homepage: https://www.bageldb.com/
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.12.0 <4.0.0"
 
 dependencies:
   # flutter:
   #   sdk: flutter
-  dio: ^5.0.1
-  universal_io: ^2.0.4
-  shared_preferences: ^2.0.18
+  dio: ^5.3.3
+  universal_io: ^2.2.2
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  test: ^1.20.2
-  # flutter_test:
-#     sdk: flutter
+  test: ^1.24.3

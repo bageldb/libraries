@@ -5,7 +5,7 @@ import '../bagel_db.dart';
 import 'package:dio/dio.dart';
 import 'bagel_db_functions.dart';
 
-String authEndpoint = "https://auth.bageldb.com/api/public";
+// String authEndpoint = "https://auth.bageldb.com/api/public";
 
 class Collections {
   static String user = "user";
@@ -29,14 +29,18 @@ class AuthEvent {
 }
 
 class BagelUsersRequest {
+  late String authEndpoint;
   BagelDB instance;
   late Dio dio;
   BagelUser? _user;
   BagelUser? get user => _user;
   BagelUsersRequest(this.instance) {
+    authEndpoint = instance.options['authEndpoint'];
+
     dio = Dio(BaseOptions(headers: {
       'Authorization': 'Bearer ${instance.token}',
-      "Accept-Version": "v1"
+      "Accept-Version": "v1",
+      ...instance.options['customReqHeaders'],
     }));
     if (instance.logCurl == true) {
       dio.interceptors.add(CurlInterceptor(logCurl: true));
@@ -259,8 +263,11 @@ class BagelUsersRequest {
     if (token == null || userID == null)
       throw ("UserID not provided, a user must be authenticated or userID provided");
 
-    Options options = Options(
-        headers: {'Authorization': 'Bearer $token', "Accept-Version": "v1"});
+    Options options = Options(headers: {
+      'Authorization': "Bearer $token",
+      "Accept-Version": "v1",
+      ...instance.options['customReqHeaders'],
+    });
 
     String url = '$authEndpoint/user/$userID';
     try {
@@ -275,9 +282,11 @@ class BagelUsersRequest {
   /// Get the currently logged in user's info
   Future<BagelUser?> _getUser() async {
     String? accessToken = getAccessToken();
+
     Options options = Options(headers: {
-      'Authorization': 'Bearer $accessToken',
-      "Accept-Version": "v1"
+      'Authorization': "Bearer $accessToken",
+      "Accept-Version": "v1",
+      ...instance.options['customReqHeaders'],
     });
     String url = '$authEndpoint/user';
     try {
@@ -351,10 +360,12 @@ class BagelUsersRequest {
     String? refreshToken = await _getRefreshToken();
     String body =
         'grant_type=refresh_token&refresh_token=$refreshToken&client_id=project-client';
+
     try {
       Options options = Options(headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': 'Bearer ${instance.token}',
+        ...instance.options['customReqHeaders'],
         // "Accept-Version": "v1"
       });
       Response res = await dio.post(url, data: body, options: options);

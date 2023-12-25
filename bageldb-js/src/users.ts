@@ -6,8 +6,7 @@ import {
   isReactNative,
   getExpires,
   getParsedJwt,
-  AUTH_ENDPOINT,
-  REFRESH_TOKEN_ENDPOINT,
+  getRefreshTokenEndPoint,
 } from './common';
 import type { BagelStorageType, bagelType, BagelUser } from './interfaces';
 import type FormData from 'form-data';
@@ -20,10 +19,13 @@ export default class BagelUsersRequest {
 
   bagelStorage: BagelStorageType;
 
+  authEndpoint: string;
+
   [x: string]: any;
 
   constructor({ instance }: { instance: bagelType }) {
     this.instance = instance;
+    this.authEndpoint = this.instance.authEndpoint;
     this.axios = this.instance.axiosInstance;
     this.bagelStorage =
       this.instance?.customStorage ||
@@ -52,6 +54,7 @@ export default class BagelUsersRequest {
     }
   }
 
+
   /**
    * @summary
    * It creates a new user in the database and returns the user's id
@@ -66,7 +69,7 @@ export default class BagelUsersRequest {
   create(email: string, password: string): Promise<string> {
     email = email.toLowerCase().trim();
     return new Promise((resolve, reject) => {
-      const url = `${AUTH_ENDPOINT}/user`;
+      const url = `${this.authEndpoint}/user`;
       const body = { email, password };
       this.axios
         .post(url, body)
@@ -102,7 +105,7 @@ export default class BagelUsersRequest {
    */
   async validateOtp(otp: string) {
     const nonce = await this._getOtpRequestNonce();
-    const url = `${AUTH_ENDPOINT}/user/otp/verify/${nonce}?t=${Date.now()}`;
+    const url = `${this.authEndpoint}/user/otp/verify/${nonce}?t=${Date.now()}`;
     const body = { otp };
     try {
       const res = await this.axios.post(url, body);
@@ -150,7 +153,7 @@ export default class BagelUsersRequest {
     if (!emailOrPhone)
       throw new Error('email or phone must not be empty or undefined');
     emailOrPhone = emailOrPhone.toLowerCase().trim();
-    const url = `${AUTH_ENDPOINT}/user/otp`;
+    const url = `${this.authEndpoint}/user/otp`;
     const body = { emailOrPhone: emailOrPhone };
     try {
       const res = await this.axios.post(url, body);
@@ -200,7 +203,7 @@ export default class BagelUsersRequest {
       const _emailOrPhone = emailOrPhone?.toLowerCase()?.trim();
       if (!_emailOrPhone || !password)
         throw new Error('email or password is empty');
-      const url = `${AUTH_ENDPOINT}/user/verify`;
+      const url = `${this.authEndpoint}/user/verify`;
 
       if (_emailOrPhone.match(/@/)) body.email = _emailOrPhone;
       else body.phone = _emailOrPhone;
@@ -232,7 +235,7 @@ export default class BagelUsersRequest {
             userIsActive,
         );
       }
-      const url = `${AUTH_ENDPOINT}/user`;
+      const url = `${this.authEndpoint}/user`;
       const res = await this.axios.get<BagelUser>(url);
       return res;
     } catch (err) {
@@ -251,7 +254,7 @@ export default class BagelUsersRequest {
   requestPasswordReset(email: string): AxiosPromise<unknown> {
     email = email.toLowerCase().trim();
     return new Promise((resolve, reject) => {
-      const url = `${AUTH_ENDPOINT}/user/resetpassword`;
+      const url = `${this.authEndpoint}/user/resetpassword`;
       const body = { email };
       this.axios
         .post(url, body)
@@ -300,7 +303,7 @@ export default class BagelUsersRequest {
         );
         return;
       }
-      const url = `${AUTH_ENDPOINT}/user/updatePassword`;
+      const url = `${this.authEndpoint}/user/updatePassword`;
       this.axios
         .post(url, body)
         .then((res) => {
@@ -431,7 +434,7 @@ export default class BagelUsersRequest {
       if (!refreshToken) {
         throw new Error('No Bagel User is logged in');
       }
-      const url = REFRESH_TOKEN_ENDPOINT;
+      const url = getRefreshTokenEndPoint(this.instance.authEndpoint);
       const form = new globalThis.FormData();
 
       form.append('grant_type', 'refresh_token');
