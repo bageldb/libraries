@@ -1,7 +1,9 @@
-import {
+import type {
   AxiosInstance,
   AxiosPromise,
   AxiosResponse,
+} from './common';
+import {
   isServerEnv,
   isReactNative,
   getExpires,
