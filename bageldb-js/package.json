@@ -1,6 +1,6 @@
 {
 	"name": "@bageldb/bagel-db",
-	"version": "0.4.36-beta.5",
+	"version": "0.4.36-beta.6",
 	"description": "A simple way to communicate with BagelDB, wrapping the REST http endpoints in easy to use functions",
 	"type": "module",
 	"types": "./dist/index.d.ts",
@@ -95,6 +95,14 @@
 		"webpack": "^5.89.0",
 		"webpack-cli": "^5.1.4",
 		"webpack-node-externals": "^3.0.0"
+	},
+	"peerDependencies": {
+		"@types/eventsource": "^1.1.15"
+	},
+	"peerDependenciesMeta": {
+		"@types/eventsource": {
+			"optional": true
+		}
 	},
 	"files": [
 		"src",
