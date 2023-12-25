@@ -188,8 +188,8 @@ const browserConfig = {
 module.exports = (env, argv) => {
 	if (argv.mode === 'development') {
 		generalConfig.devtool = 'cheap-module-source-map';
-		// eslint-disable-next-line no-empty
 	} else if (argv.mode === 'production') {
+		//
 	} else {
 		throw new Error('Specify env');
 	}
@@ -198,13 +198,11 @@ module.exports = (env, argv) => {
 	Object.assign(nodeConfig, generalConfig, nodeConfig);
 	Object.assign(webpack4Config, generalConfig);
 	Object.assign(esmConfig, generalConfig);
-	// Object.assign(reactNativeConfig, generalConfig);
 
 	return [
 		nodeConfig,
 		esmConfig,
 		webpack4Config,
-		// reactNativeConfig,
 		browserConfig,
 	];
 };
