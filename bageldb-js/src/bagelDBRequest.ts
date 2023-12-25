@@ -757,6 +757,7 @@ export default class BagelDBRequest {
     let _EventSource;
     if (isServerEnv()) {
       try {
+        // @ts-ignore missing @types/eventsource package
         _EventSource = await import('eventsource');
       } catch (error) {
         // eslint-disable-next-line no-console

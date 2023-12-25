@@ -5,7 +5,7 @@ import Bagel from './index';
 
 import BagelDBRequest from './bagelDBRequest';
 import BagelUsersRequest from './users';
-import { AxiosRequestHeaders } from 'axios';
+import { type AxiosRequestHeaders } from 'axios';
 
 type FileUploadArgs = {
   selectedImage?: any;
